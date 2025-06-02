@@ -1,7 +1,6 @@
 {
     "name": "ysato/catalyst",
     "description": "An Artisan command package for Laravel to improve code quality and project structure.",
-    "version": "0.0.1",
     "keywords": [
         "laravel",
         "qa"
