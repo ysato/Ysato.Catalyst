@@ -9,11 +9,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "illuminate/console": "^11.0",
-        "illuminate/support": "^11.0",
+        "illuminate/console": "^12.0",
+        "illuminate/support": "^12.0",
         "symfony/finder": "^7.0",
         "symfony/filesystem": "^7.0",
-        "laravel/prompts": "^0.1.22",
+        "laravel/prompts": "^0.3",
         "composer/composer": "^2.6"
     },
     "require-dev": {
