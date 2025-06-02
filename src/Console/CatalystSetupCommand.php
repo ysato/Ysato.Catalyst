@@ -139,6 +139,7 @@ class CatalystSetupCommand extends Command
 
         try {
             $fs->mirror($from, $to, options: ['override' => true]);
+            $fs->rename("$to/src/Skeleton.php", "$to/src/{$this->package}.php", true);
         } catch (IOException $e) {
             throw new InvalidArgumentException("Could not copy $from", $e->getCode(), $e);
         }
