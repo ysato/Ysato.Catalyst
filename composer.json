@@ -1,0 +1,41 @@
+{
+    "name": "ysato/catalyst",
+    "description": "An Artisan command package for Laravel to improve code quality and project structure.",
+    "version": "0.0.1",
+    "keywords": [
+        "laravel",
+        "qa"
+    ],
+    "homepage": "https://github.com/ysato/Ysato.Catalyst",
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "illuminate/console": "^11.0",
+        "illuminate/support": "^11.0",
+        "symfony/finder": "^7.0",
+        "symfony/filesystem": "^7.0",
+        "laravel/prompts": "^0.1.22",
+        "composer/composer": "^2.6"
+    },
+    "require-dev": {
+        "doctrine/coding-standard": "*",
+        "phpmd/phpmd": "*",
+        "squizlabs/php_codesniffer": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ysato\\Catalyst\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ysato\\Catalyst\\CatalystServiceProvider"
+            ]
+        }
+    }
+}
