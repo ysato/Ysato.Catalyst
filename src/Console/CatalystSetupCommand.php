@@ -132,34 +132,36 @@ class CatalystSetupCommand extends Command
             throw new RuntimeException('Error parsing composer.json: ' . $e->getMessage(), $e->getCode(), $e);
         }
 
-        $from = dirname(__DIR__) . '/stubs';
-        $to = dirname(__DIR__) . '/tmp';
+        $stubs = dirname(__DIR__) . '/stubs';
+        $tmp = dirname(__DIR__) . '/tmp';
+        $baselines = dirname(__DIR__) . '/baselines';
 
         $fs = new Filesystem();
 
         try {
-            $fs->mirror($from, $to, options: ['override' => true]);
-            $fs->rename("$to/src/Skeleton.php", "$to/src/{$this->package}.php", true);
+            $fs->mirror($stubs, $tmp, options: ['override' => true]);
+            $fs->rename("$tmp/src/Skeleton.php", "$tmp/src/{$this->package}.php", true);
         } catch (IOException $e) {
-            throw new InvalidArgumentException("Could not copy $from", $e->getCode(), $e);
+            throw new InvalidArgumentException("Could not copy $stubs", $e->getCode(), $e);
         }
 
         try {
-            $this->rename($to, $this->vendor, $this->package);
+            $this->rename($tmp, $this->vendor, $this->package);
+            $this->rename($baselines, $this->vendor, $this->package);
         } catch (IOException $e) {
-            throw new InvalidArgumentException("Could not rename $to", $e->getCode(), $e);
+            throw new InvalidArgumentException("Could not rename $tmp", $e->getCode(), $e);
         }
 
         try {
-            $fs->mirror($to, $this->laravel->basePath(), options: ['override' => true]);
+            $fs->mirror($tmp, $this->laravel->basePath(), options: ['override' => true]);
         } catch (IOException $e) {
-            throw new InvalidArgumentException("Could not copy $to", $e->getCode(), $e);
+            throw new InvalidArgumentException("Could not copy $tmp", $e->getCode(), $e);
         }
 
         try {
-            $fs->remove($to);
+            $fs->remove($tmp);
         } catch (IOException $e) {
-            throw new InvalidArgumentException("Could not remove $to", $e->getCode(), $e);
+            throw new InvalidArgumentException("Could not remove $tmp", $e->getCode(), $e);
         }
 
         $this->info('src architecture is set up.');
