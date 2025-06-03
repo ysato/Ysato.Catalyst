@@ -3,7 +3,7 @@
     "name": "branch-exclude-core-contributors-rule",
     "target": "branch",
     "source_type": "Repository",
-    "source": "ysato/__Vendor__.__Package__",
+    "source": "ysato/Ysato.Catalyst",
     "enforcement": "active",
     "conditions": {
         "ref_name": {

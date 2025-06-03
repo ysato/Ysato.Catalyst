@@ -34,21 +34,29 @@ class CatalystSetupCommand extends BaseCommand
                 'architecture-src' => 'src architecture',
                 'standards' => 'qa and style standards',
             ],
-            hint: 'Press the space key to select.'
+            default: ['metadata', 'architecture-src', 'standards'],
+            hint: 'Press the space key to select. (default: all)',
+            required: true,
         );
 
         $vendor = $this->askVendorName();
         $package = $this->askPackageName();
 
         foreach ($permissions as $permission) {
-            match ($permission) {
-                'metadata' => $this->call('catalyst:metadata', compact('vendor', 'package')),
-                'architecture-src' => $this->call('catalyst:architecture-src', compact('vendor', 'package')),
-                'standards' => $this->call('catalyst:standards', compact('vendor', 'package')),
+            $exitCode = match ($permission) {
+                'metadata' => $this->callSilently('catalyst:metadata', compact('vendor', 'package')),
+                'architecture-src' => $this->callSilently('catalyst:architecture-src', compact('vendor', 'package')),
+                'standards' => $this->callSilently('catalyst:standards', compact('vendor', 'package')),
             };
+
+            if ($exitCode !== 0) {
+                $this->error("Failed to set up: {$permission}");
+
+                return $exitCode;
+            }
         }
 
-        $this->info('The setup completed successfully.');
+        $this->info('The setup completed successfully!');
 
         return 0;
     }
