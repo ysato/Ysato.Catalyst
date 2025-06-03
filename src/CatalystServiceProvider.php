@@ -26,7 +26,7 @@ class CatalystServiceProvider extends ServiceProvider
             ->give(function (Application $app) {
                 $fs = $app->make(Filesystem::class);
                 $finder = $app->make(Finder::class);
-                $temp = TemporaryDirectory::make()
+                $temp = (new TemporaryDirectory())
                     ->deleteWhenDestroyed()
                     ->create();
                 $tempPath = $temp->path();
@@ -39,7 +39,7 @@ class CatalystServiceProvider extends ServiceProvider
             ->give(function (Application $app) {
                 $fs = $app->make(Filesystem::class);
                 $finder = $app->make(Finder::class);
-                $temp = TemporaryDirectory::make()
+                $temp = (new TemporaryDirectory())
                     ->deleteWhenDestroyed()
                     ->create();
                 $tempPath = $temp->path();
