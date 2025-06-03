@@ -180,7 +180,13 @@ class CatalystSetupCommand extends Command
         try {
             $fs->mirror(dirname(__DIR__) . '/.idea', $this->laravel->basePath('/.idea'), options: ['override' => true]);
         } catch (IOException $e) {
-            throw new InvalidArgumentException("Could not copy QA baselines", $e->getCode(), $e);
+            throw new InvalidArgumentException("Could not copy .idea", $e->getCode(), $e);
+        }
+
+        try {
+            $fs->mirror(dirname(__DIR__) . '/.github', $this->laravel->basePath('/.github'), options: ['override' => true]);
+        } catch (IOException $e) {
+            throw new InvalidArgumentException("Could not copy QA .github", $e->getCode(), $e);
         }
 
         $this->addQAScripts();
