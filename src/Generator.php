@@ -32,11 +32,11 @@ class Generator
             $filePath = (string) $file;
             $contents = $this->fs->readFile($filePath);
 
-            $newFilePath = str_replace($search, $replace, $filePath, $count);
+            $newFilePath = str_replace($search, $replace, $filePath);
             $newContents = str_replace($search, $replace, $contents);
 
             $this->fs->dumpFile($newFilePath, $newContents);
-            if ($count !== null) {
+            if ($filePath !== $newFilePath) {
                 $this->fs->remove($filePath);
             }
         }
@@ -48,7 +48,7 @@ class Generator
     {
         $this->mirrorToTemp();
 
-        $this->fs->appendToFile($this->temporaryDirectory->path($filename) . $filename, $contents, $lock);
+        $this->fs->appendToFile($this->temporaryDirectory->path($filename), $contents, $lock);
 
         return $this;
     }
