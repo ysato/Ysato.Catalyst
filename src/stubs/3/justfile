@@ -1,0 +1,9 @@
+build:
+    docker build -t php-composer-8.2:local .
+
+lint: build
+    docker run --rm -v "$(pwd):/var/www/html" php-composer-8.2:local composer install \
+    && composer tests
+
+clean:
+    docker rmi php-composer-8.2:local || true
