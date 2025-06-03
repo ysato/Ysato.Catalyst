@@ -14,9 +14,7 @@
         "symfony/finder": "^7.0",
         "symfony/filesystem": "^7.0",
         "laravel/prompts": "^0.3",
-        "composer/composer": "^2.6"
-    },
-    "require-dev": {
+        "composer/composer": "^2.6",
         "doctrine/coding-standard": "*",
         "phpmd/phpmd": "*",
         "squizlabs/php_codesniffer": "*"
