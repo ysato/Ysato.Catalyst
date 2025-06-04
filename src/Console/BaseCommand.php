@@ -11,16 +11,6 @@ use Throwable;
 
 abstract class BaseCommand extends Command
 {
-    public function askVendorName()
-    {
-        return $this->ask('What is the vendor name ?', 'MyVendor');
-    }
-
-    public function askPackageName()
-    {
-        return $this->ask('What is the package name ?', 'MyPackage');
-    }
-
     protected function handleUserError(Exception $e): int
     {
         $this->error('User error occurred: ' . $e->getMessage());

@@ -13,6 +13,8 @@ use Ysato\Catalyst\Generator;
 
 class ArchitectureSrcSetupCommand extends BaseCommand
 {
+    use VendorPackageAskableTrait;
+
     /**
      * The name and signature of the console command.
      *
@@ -34,8 +36,8 @@ class ArchitectureSrcSetupCommand extends BaseCommand
      */
     public function handle(Generator $generator): int
     {
-        $vendor = $this->argument('vendor') ?? $this->askVendorName();
-        $package = $this->argument('package') ?? $this->askPackageName();
+        $vendor = $this->getVendorNameOrAsk();
+        $package = $this->getPackageNameOrAsk();
 
         try {
             $json = new JsonFile(Factory::getComposerFile());

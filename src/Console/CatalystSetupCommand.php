@@ -8,6 +8,8 @@ use function Laravel\Prompts\multiselect;
 
 class CatalystSetupCommand extends BaseCommand
 {
+    use VendorPackageAskableTrait;
+
     /**
      * The name and signature of the console command.
      *
@@ -41,8 +43,8 @@ class CatalystSetupCommand extends BaseCommand
             required: true,
         );
 
-        $vendor = $this->askVendorName();
-        $package = $this->askPackageName();
+        $vendor = $this->getVendorNameOrAsk();
+        $package = $this->getPackageNameOrAsk();
 
         foreach ($permissions as $permission) {
             $exitCode = match ($permission) {

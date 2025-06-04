@@ -13,6 +13,8 @@ use Throwable;
 
 class MetadataSetupCommand extends BaseCommand
 {
+    use VendorPackageAskableTrait;
+
     /**
      * The name and signature of the console command.
      *
@@ -34,8 +36,8 @@ class MetadataSetupCommand extends BaseCommand
      */
     public function handle()
     {
-        $vendor = $this->argument('vendor') ?? $this->askVendorName();
-        $package = $this->argument('package') ?? $this->askPackageName();
+        $vendor = $this->getVendorNameOrAsk();
+        $package = $this->getPackageNameOrAsk();
 
         $json = new JsonFile(Factory::getComposerFile());
 
