@@ -13,7 +13,9 @@ class CatalystSetupCommand extends BaseCommand
      *
      * @var string
      */
-    protected $signature = 'catalyst:setup';
+    protected $signature = 'catalyst:setup
+                            {vendor=MyVendor : The vendor name (e.g.Acme) in camel case.}
+                            {package=MyPackage : The package name (e.g.Blog) in camel case.}';
 
     /**
      * The console command description.
