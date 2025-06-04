@@ -48,20 +48,10 @@ class CatalystSetupCommand extends Command
         $package = $this->getPackageNameOrAsk();
 
         foreach ($permissions as $permission) {
-            $exitCode = match ($permission) {
-                'metadata' => $this->callSilently('catalyst:metadata', compact('vendor', 'package')),
-                'architecture-src' => $this->callSilently('catalyst:architecture-src', compact('vendor', 'package')),
-                'standards' => $this->callSilently('catalyst:standards', compact('vendor', 'package')),
-            };
-
-            if ($exitCode !== 0) {
-                $this->error("Failed to set up: {$permission}");
-
-                return $exitCode;
-            }
+            $this->components->task($permission, function () use ($permission, $vendor, $package) {
+                $this->callSilently("catalyst:$permission", compact('vendor', 'package'));
+            });
         }
-
-        $this->info('The setup completed successfully!');
 
         return 0;
     }
