@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Ysato\Catalyst\Console;
+
+trait VendorPackageAskableTrait
+{
+    public function getVendorNameOrAsk()
+    {
+        return $this->argument('vendor') ?? $this->ask('What is the vendor name ?', 'MyVendor');
+    }
+
+    public function getPackageNameOrAsk()
+    {
+        return $this->argument('package') ?? $this->ask('What is the package name ?', 'MyPackage');
+    }
+}

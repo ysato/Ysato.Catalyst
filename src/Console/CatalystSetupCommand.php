@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace Ysato\Catalyst\Console;
 
+use Illuminate\Console\Command;
 use function Laravel\Prompts\multiselect;
 
-class CatalystSetupCommand extends BaseCommand
+class CatalystSetupCommand extends Command
 {
+    use VendorPackageAskableTrait;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'catalyst:setup';
+    protected $signature = 'catalyst:setup
+                            {vendor=MyVendor : The vendor name (e.g.Acme) in camel case.}
+                            {package=MyPackage : The package name (e.g.Blog) in camel case.}';
 
     /**
      * The console command description.
@@ -39,8 +44,8 @@ class CatalystSetupCommand extends BaseCommand
             required: true,
         );
 
-        $vendor = $this->askVendorName();
-        $package = $this->askPackageName();
+        $vendor = $this->getVendorNameOrAsk();
+        $package = $this->getPackageNameOrAsk();
 
         foreach ($permissions as $permission) {
             $exitCode = match ($permission) {

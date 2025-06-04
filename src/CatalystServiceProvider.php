@@ -31,7 +31,7 @@ class CatalystServiceProvider extends ServiceProvider
                     ->create();
                 $tempPath = $temp->path();
 
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/2', $tempPath);
+                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/architecture-src', $tempPath);
             });
 
         $this->app->when(StandardsSetupCommand::class)
@@ -44,7 +44,7 @@ class CatalystServiceProvider extends ServiceProvider
                     ->create();
                 $tempPath = $temp->path();
 
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/3', $tempPath);
+                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/standards', $tempPath);
             });
     }
 

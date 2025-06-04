@@ -6,21 +6,22 @@ namespace Ysato\Catalyst\Console;
 
 use Composer\Factory;
 use Composer\Json\JsonFile;
-use Exception;
+use Illuminate\Console\Command;
 use Seld\JsonLint\ParsingException;
-use Throwable;
 use Ysato\Catalyst\Generator;
 
-class ArchitectureSrcSetupCommand extends BaseCommand
+class ArchitectureSrcSetupCommand extends Command
 {
+    use VendorPackageAskableTrait;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
     protected $signature = 'catalyst:architecture-src
-                            {vendor=MyVendor : The vendor name}
-                            {package=MyPackage : The package name}';
+                            {vendor=MyVendor : The vendor name (e.g.Acme) in camel case.}
+                            {package=MyPackage : The package name (e.g.Blog) in camel case.}';
 
     /**
      * The console command description.
@@ -34,31 +35,33 @@ class ArchitectureSrcSetupCommand extends BaseCommand
      */
     public function handle(Generator $generator): int
     {
-        $vendor = $this->argument('vendor') ?? $this->askVendorName();
-        $package = $this->argument('package') ?? $this->askPackageName();
+        $vendor = $this->getVendorNameOrAsk();
+        $package = $this->getPackageNameOrAsk();
 
-        try {
+        $this->components->info('Setting up...');
+
+        $this->components->task('architecture-src', function () use ($vendor, $package, $generator) {
             $json = new JsonFile(Factory::getComposerFile());
-
-            $definition = $json->read();
-
-            $definition['autoload']['psr-4']["$vendor\\$package\\"] = 'src/';
-
+            $definition = $this->getNewDefinition($vendor, $package, $json);
             $json->write($definition);
 
             $generator
                 ->replacePlaceHolder($vendor, $package)
                 ->generate($this->laravel->basePath());
-        } catch (ParsingException $e) {
-            return $this->handleUserError($e);
-        } catch (Exception $e) {
-            return $this->handleSystemError($e);
-        } catch (Throwable $e) {
-            return $this->handleFatalError($e);
-        }
-
-        $this->info('Src architecture setup complete!');
+        });
 
         return 0;
+    }
+
+    /**
+     * @return array<string, mixed>
+     * @throws ParsingException
+     */
+    private function getNewDefinition(string $vendor, string $package, JsonFile $json): array
+    {
+        $definition = $json->read();
+        $definition['autoload']['psr-4']["$vendor\\$package\\"] = 'src/';
+
+        return $definition;
     }
 }

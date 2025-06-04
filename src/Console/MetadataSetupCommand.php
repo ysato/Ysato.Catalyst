@@ -6,21 +6,22 @@ namespace Ysato\Catalyst\Console;
 
 use Composer\Factory;
 use Composer\Json\JsonFile;
-use Exception;
+use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Seld\JsonLint\ParsingException;
-use Throwable;
 
-class MetadataSetupCommand extends BaseCommand
+class MetadataSetupCommand extends Command
 {
+    use VendorPackageAskableTrait;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
     protected $signature = 'catalyst:metadata
-                            {vendor=MyVendor : The vendor name}
-                            {package=MyPackage : The package name}';
+                            {vendor=MyVendor : The vendor name (e.g.Acme) in camel case.}
+                            {package=MyPackage : The package name (e.g.Blog) in camel case.}';
 
     /**
      * The console command description.
@@ -34,34 +35,35 @@ class MetadataSetupCommand extends BaseCommand
      */
     public function handle()
     {
-        $vendor = $this->argument('vendor') ?? $this->askVendorName();
-        $package = $this->argument('package') ?? $this->askPackageName();
+        $vendor = $this->getVendorNameOrAsk();
+        $package = $this->getPackageNameOrAsk();
 
-        $json = new JsonFile(Factory::getComposerFile());
+        $this->components->info('Setting up...');
 
-        try {
-            $definition = $json->read();
-
-            unset(
-                $definition['keywords'],
-                $definition['homepage'],
-                $definition['description'],
-            );
-
-            $definition['name'] = sprintf('%s/%s', Str::kebab($vendor), Str::kebab($package));
-            $definition['license'] = 'proprietary';
-
+        $this->components->task('metadata', function () use ($vendor, $package) {
+            $json = new JsonFile(Factory::getComposerFile());
+            $definition = $this->getNewDefinition($vendor, $package, $json);
             $json->write($definition);
-        } catch (ParsingException $e) {
-            return $this->handleUserError($e);
-        } catch (Exception $e) {
-            return $this->handleSystemError($e);
-        } catch (Throwable $e) {
-            return $this->handleFatalError($e);
-        }
-
-        $this->info('Project metadata configured successfully!');
+        });
 
         return 0;
+    }
+
+    /**
+     * @return array<string, mixed>
+     * @throws ParsingException
+     */
+    private function getNewDefinition(string $vendor, string $package, JsonFile $json): array
+    {
+        $definition = $json->read();
+        unset(
+            $definition['keywords'],
+            $definition['homepage'],
+            $definition['description'],
+        );
+        $definition['name'] = sprintf('%s/%s', Str::kebab($vendor), Str::kebab($package));
+        $definition['license'] = 'proprietary';
+
+        return $definition;
     }
 }
