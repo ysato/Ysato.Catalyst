@@ -6,12 +6,11 @@ namespace Ysato\Catalyst\Console;
 
 use Composer\Factory;
 use Composer\Json\JsonFile;
-use Exception;
+use Illuminate\Console\Command;
 use Seld\JsonLint\ParsingException;
-use Throwable;
 use Ysato\Catalyst\Generator;
 
-class ArchitectureSrcSetupCommand extends BaseCommand
+class ArchitectureSrcSetupCommand extends Command
 {
     use VendorPackageAskableTrait;
 
@@ -39,28 +38,30 @@ class ArchitectureSrcSetupCommand extends BaseCommand
         $vendor = $this->getVendorNameOrAsk();
         $package = $this->getPackageNameOrAsk();
 
-        try {
+        $this->components->info('Setting up...');
+
+        $this->components->task('architecture-src', function () use ($vendor, $package, $generator) {
             $json = new JsonFile(Factory::getComposerFile());
-
-            $definition = $json->read();
-
-            $definition['autoload']['psr-4']["$vendor\\$package\\"] = 'src/';
-
+            $definition = $this->getNewDefinition($vendor, $package, $json);
             $json->write($definition);
 
             $generator
                 ->replacePlaceHolder($vendor, $package)
                 ->generate($this->laravel->basePath());
-        } catch (ParsingException $e) {
-            return $this->handleUserError($e);
-        } catch (Exception $e) {
-            return $this->handleSystemError($e);
-        } catch (Throwable $e) {
-            return $this->handleFatalError($e);
-        }
-
-        $this->info('Src architecture setup complete!');
+        });
 
         return 0;
+    }
+
+    /**
+     * @return array<string, mixed>
+     * @throws ParsingException
+     */
+    private function getNewDefinition(string $vendor, string $package, JsonFile $json): array
+    {
+        $definition = $json->read();
+        $definition['autoload']['psr-4']["$vendor\\$package\\"] = 'src/';
+
+        return $definition;
     }
 }
