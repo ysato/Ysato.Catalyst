@@ -1,0 +1,5 @@
+extends: [ "https://raw.githubusercontent.com/baloise-incubator/spectral-ruleset/main/zalando.yml", "spectral:oas" ]
+
+rules:
+  # エラーが起きてしまうので回避
+  must-always-return-json-objects-as-top-level-data-structures: off

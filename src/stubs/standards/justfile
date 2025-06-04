@@ -1,9 +1,48 @@
-build:
-    docker build -t php-composer-8.2:local .
+# Common variables
 
-lint: build
-    docker run --rm -v "$(pwd):/var/www/html" php-composer-8.2:local composer install \
+PHP_IMAGE := "php-composer-8.2:local"
+OPENAPI_IMAGE := "stoplight/spectral"
+
+# ========================
+# Help
+# ========================
+@help:
+    echo "Usage:"
+    echo "  just build        - Build the Docker image."
+    echo "  just lint         - Run all linting tasks."
+    echo "  just clean        - Clean up Docker images."
+    echo "  just help         - Show this help message."
+
+# ========================
+# Build
+# ========================
+build:
+    docker build -t {{ PHP_IMAGE }} .
+
+# ========================
+# Lint
+# ========================
+lint: lint-php lint-openapi
+
+lint-php: build
+    docker run --rm -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer install \
     && composer tests
 
-clean:
-    docker rmi php-composer-8.2:local || true
+lint-openapi:
+    @if {{ path_exists("openapi.yaml") }}; then \
+        docker run --rm -it -v $(pwd):/tmp -w /tmp \
+        {{ OPENAPI_IMAGE }} lint openapi.yaml; \
+    else \
+        echo "\033[33mwarn\033[0m: No openapi.yaml found, skipping OpenAPI linting."; \
+    fi
+
+# ========================
+# Cleanup
+# ========================
+clean: clean-php clean-openapi
+
+clean-php:
+    docker rmi {{ PHP_IMAGE }} || true
+
+clean-openapi:
+    docker rmi {{ OPENAPI_IMAGE }} || true
