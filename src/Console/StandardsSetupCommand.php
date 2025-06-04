@@ -20,8 +20,8 @@ class StandardsSetupCommand extends Command
      * @var string
      */
     protected $signature = 'catalyst:standards
-                            {vendor=MyVendor : The vendor name (e.g.Acme) in camel case.}
-                            {package=MyPackage : The package name (e.g.Blog) in camel case.}';
+                            {vendor? : The vendor name (e.g.Acme) in camel case.}
+                            {package? : The package name (e.g.Blog) in camel case.}';
 
     /**
      * The console command description.

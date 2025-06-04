@@ -17,8 +17,8 @@ class CatalystSetupCommand extends Command
      * @var string
      */
     protected $signature = 'catalyst:setup
-                            {vendor=MyVendor : The vendor name (e.g.Acme) in camel case.}
-                            {package=MyPackage : The package name (e.g.Blog) in camel case.}';
+                            {vendor? : The vendor name (e.g.Acme) in camel case.}
+                            {package? : The package name (e.g.Blog) in camel case.}';
 
     /**
      * The console command description.
@@ -46,6 +46,8 @@ class CatalystSetupCommand extends Command
 
         $vendor = $this->getVendorNameOrAsk();
         $package = $this->getPackageNameOrAsk();
+
+        $this->components->info('Setting up...');
 
         foreach ($permissions as $permission) {
             $this->components->task($permission, function () use ($permission, $vendor, $package) {
