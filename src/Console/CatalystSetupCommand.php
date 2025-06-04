@@ -17,8 +17,8 @@ class CatalystSetupCommand extends Command
      * @var string
      */
     protected $signature = 'catalyst:setup
-                            {vendor=MyVendor : The vendor name (e.g.Acme) in camel case.}
-                            {package=MyPackage : The package name (e.g.Blog) in camel case.}';
+                            {vendor? : The vendor name (e.g.Acme) in camel case.}
+                            {package? : The package name (e.g.Blog) in camel case.}';
 
     /**
      * The console command description.
@@ -47,21 +47,13 @@ class CatalystSetupCommand extends Command
         $vendor = $this->getVendorNameOrAsk();
         $package = $this->getPackageNameOrAsk();
 
+        $this->components->info('Setting up...');
+
         foreach ($permissions as $permission) {
-            $exitCode = match ($permission) {
-                'metadata' => $this->callSilently('catalyst:metadata', compact('vendor', 'package')),
-                'architecture-src' => $this->callSilently('catalyst:architecture-src', compact('vendor', 'package')),
-                'standards' => $this->callSilently('catalyst:standards', compact('vendor', 'package')),
-            };
-
-            if ($exitCode !== 0) {
-                $this->error("Failed to set up: {$permission}");
-
-                return $exitCode;
-            }
+            $this->components->task($permission, function () use ($permission, $vendor, $package) {
+                $this->callSilently("catalyst:$permission", compact('vendor', 'package'));
+            });
         }
-
-        $this->info('The setup completed successfully!');
 
         return 0;
     }
