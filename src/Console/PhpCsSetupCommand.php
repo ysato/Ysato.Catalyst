@@ -7,10 +7,11 @@ namespace Ysato\Catalyst\Console;
 use Composer\Factory;
 use Composer\Json\JsonFile;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 use Seld\JsonLint\ParsingException;
 use Ysato\Catalyst\Generator;
 
-class StandardsSetupCommand extends Command
+class PhpCsSetupCommand extends Command
 {
     use VendorPackageAskableTrait;
 
@@ -19,7 +20,7 @@ class StandardsSetupCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'catalyst:standards
+    protected $signature = 'catalyst:phpcs
                             {vendor? : The vendor name (e.g.Acme) in camel case.}
                             {package? : The package name (e.g.Blog) in camel case.}';
 
@@ -28,7 +29,7 @@ class StandardsSetupCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Sets up essential development standards and IDE configurations for your project.';
+    protected $description = 'Initializes PHP Code Sniffer by setting up configuration files and recommended coding standards for the project.';
 
     /**
      * Execute the console command.
@@ -40,7 +41,7 @@ class StandardsSetupCommand extends Command
 
         $this->components->info('Setting up...');
 
-        $this->components->task('standards', function () use ($vendor, $package, $generator) {
+        $this->components->task('phpcs', function () use ($vendor, $package, $generator) {
             $json = new JsonFile(Factory::getComposerFile());
             $definition = $this->getNewDefinition($json);
             $json->write($definition);
@@ -49,7 +50,8 @@ class StandardsSetupCommand extends Command
 
             $generator
                 ->replacePlaceHolder($vendor, $package)
-                ->appendToFile('.gitignore', $currentIgnore)
+                ->dumpFile('.gitignore', $currentIgnore)
+                ->appendToFile('.gitignore', ".php_cs.cache\n")
                 ->generate($this->laravel->basePath());
         });
 
@@ -65,8 +67,11 @@ class StandardsSetupCommand extends Command
         $definition = $json->read();
         $definition['scripts']['cs'] = 'phpcs';
         $definition['scripts']['cs-fix'] = 'phpcbf';
-        $definition['scripts']['qa'] = 'phpmd src text ./phpmd.xml';
-        $definition['scripts']['tests'] = ['@cs', '@qa', '@test'];
+
+        $tests = Arr::get($definition, 'scripts.tests', []);
+        if (! in_array('@cs', $tests, true)) {
+            $definition['scripts']['tests'][] = '@cs';
+        }
 
         return $definition;
     }

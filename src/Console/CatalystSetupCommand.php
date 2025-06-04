@@ -38,8 +38,9 @@ class CatalystSetupCommand extends Command
                 'metadata' => 'composer.json metadata',
                 'architecture-src' => 'src architecture',
                 'standards' => 'qa and style standards',
+                'phpcs' => 'PHP_CodeSniffer',
             ],
-            default: ['metadata', 'architecture-src', 'standards'],
+            default: ['metadata', 'architecture-src', 'standards', 'phpcs'],
             hint: 'Press the space key to select. (default: all)',
             required: true,
         );

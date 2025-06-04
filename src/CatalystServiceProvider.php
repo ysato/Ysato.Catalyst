@@ -12,6 +12,7 @@ use Symfony\Component\Finder\Finder;
 use Ysato\Catalyst\Console\ArchitectureSrcSetupCommand;
 use Ysato\Catalyst\Console\CatalystSetupCommand;
 use Ysato\Catalyst\Console\MetadataSetupCommand;
+use Ysato\Catalyst\Console\PhpCsSetupCommand;
 use Ysato\Catalyst\Console\StandardsSetupCommand;
 
 class CatalystServiceProvider extends ServiceProvider
@@ -46,6 +47,19 @@ class CatalystServiceProvider extends ServiceProvider
 
                 return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/standards', $tempPath);
             });
+
+        $this->app->when(PhpCsSetupCommand::class)
+            ->needs(Generator::class)
+            ->give(function (Application $app) {
+                $fs = $app->make(Filesystem::class);
+                $finder = $app->make(Finder::class);
+                $temp = (new TemporaryDirectory())
+                    ->deleteWhenDestroyed()
+                    ->create();
+                $tempPath = $temp->path();
+
+                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/standards/phpcs', $tempPath);
+            });
     }
 
     /**
@@ -59,6 +73,7 @@ class CatalystServiceProvider extends ServiceProvider
                 MetadataSetupCommand::class,
                 ArchitectureSrcSetupCommand::class,
                 StandardsSetupCommand::class,
+                PhpCsSetupCommand::class,
             ]);
         }
     }
