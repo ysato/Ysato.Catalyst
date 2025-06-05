@@ -24,7 +24,10 @@ class Generator
     {
         $this->mirrorToTemp();
 
-        $files = $this->finder->files()->in($this->tempPath);
+        $files = $this->finder
+            ->ignoreDotFiles(false)
+            ->files()
+            ->in($this->tempPath);
 
         foreach ($files as $file) {
             $search = ['__Vendor__', '__Package__'];
