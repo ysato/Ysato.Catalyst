@@ -1,7 +1,4 @@
-/stubs/.idea/codeStyles
+/.idea/*
 !/.idea/codeStyles
 !/.idea/fileTemplates
 !/.idea/inspectionProfiles
-
-/build
-.phpcs-cache

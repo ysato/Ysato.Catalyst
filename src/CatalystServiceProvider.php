@@ -60,7 +60,7 @@ class CatalystServiceProvider extends ServiceProvider
                     ->create();
                 $tempPath = $temp->path();
 
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/standards/phpcs', $tempPath);
+                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/phpcs', $tempPath);
             });
 
         $this->app->when(PhpMdSetupCommand::class)
@@ -73,7 +73,7 @@ class CatalystServiceProvider extends ServiceProvider
                     ->create();
                 $tempPath = $temp->path();
 
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/standards/phpmd', $tempPath);
+                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/phpmd', $tempPath);
             });
 
         $this->app->when(SpectralSetupCommand::class)
@@ -86,7 +86,7 @@ class CatalystServiceProvider extends ServiceProvider
                     ->create();
                 $tempPath = $temp->path();
 
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/standards/spectral', $tempPath);
+                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/spectral', $tempPath);
             });
     }
 
