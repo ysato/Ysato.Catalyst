@@ -40,8 +40,9 @@ class CatalystSetupCommand extends Command
                 'standards' => 'qa and style standards',
                 'phpcs' => 'PHP_CodeSniffer',
                 'phpmd' => 'PHP Mess Detector',
+                'spectral' => 'Spectral (OpenAPI linter)',
             ],
-            default: ['metadata', 'architecture-src', 'standards', 'phpcs', 'phpmd'],
+            default: ['metadata', 'architecture-src', 'standards', 'phpcs', 'phpmd', 'spectral'],
             hint: 'Press the space key to select. (default: all)',
             required: true,
         );

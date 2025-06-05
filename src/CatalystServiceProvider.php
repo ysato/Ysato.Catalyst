@@ -14,6 +14,7 @@ use Ysato\Catalyst\Console\CatalystSetupCommand;
 use Ysato\Catalyst\Console\MetadataSetupCommand;
 use Ysato\Catalyst\Console\PhpCsSetupCommand;
 use Ysato\Catalyst\Console\PhpMdSetupCommand;
+use Ysato\Catalyst\Console\SpectralSetupCommand;
 use Ysato\Catalyst\Console\StandardsSetupCommand;
 
 class CatalystServiceProvider extends ServiceProvider
@@ -74,6 +75,19 @@ class CatalystServiceProvider extends ServiceProvider
 
                 return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/standards/phpmd', $tempPath);
             });
+
+        $this->app->when(SpectralSetupCommand::class)
+            ->needs(Generator::class)
+            ->give(function (Application $app) {
+                $fs = $app->make(Filesystem::class);
+                $finder = $app->make(Finder::class);
+                $temp = (new TemporaryDirectory())
+                    ->deleteWhenDestroyed()
+                    ->create();
+                $tempPath = $temp->path();
+
+                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/standards/spectral', $tempPath);
+            });
     }
 
     /**
@@ -89,6 +103,7 @@ class CatalystServiceProvider extends ServiceProvider
                 StandardsSetupCommand::class,
                 PhpCsSetupCommand::class,
                 PhpMdSetupCommand::class,
+                SpectralSetupCommand::class,
             ]);
         }
     }
