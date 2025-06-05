@@ -19,19 +19,19 @@ After installation, you can start the setup using the following command:
 php artisan catalyst:setup
 ```
 
-During setup, you can choose the following options:
-- Configure metadata for composer.json
-- Set up the architecture for the src directory
-- Configure coding standards and QA tools
-
 ## Command List
 
-| Command Name                   | Description                                                          |
-|--------------------------------|----------------------------------------------------------------------|
-| `catalyst:setup`               | Executes the overall project setup.                                  |
-| `catalyst:metadata`            | Configures metadata for composer.json.                               |
-| `catalyst:architecture-src`    | Sets up the basic architecture for the src directory.                |
-| `catalyst:standards`           | Configures coding standards and QA tools.                            |
+| Command Name                | Description                                            |
+|-----------------------------|--------------------------------------------------------|
+| `catalyst:setup`            | Executes the overall project setup.                    |
+| `catalyst:metadata`         | Generates composer.json metadata.                      |
+| `catalyst:architecture-src` | Initializes recommended src architecture.              |
+| `catalyst:phpcs`            | Initializes PHP Code Sniffer configuration.            |
+| `catalyst:phpmd`            | Initializes PHP Mess Detector configuration.           |
+| `catalyst:spectral`         | Initializes Spectral (OpenAPI linter) configuration.   |
+| `catalyst:github`           | Sets up recommended GitHub workflows and rulesets.     |
+| `catalyst:ide`              | Initializes recommended IDE (e.g., PhpStorm) settings. |
+| `catalyst:act`              | Configures local execution for GitHub Actions.         |
 
 ## For Contributors
 

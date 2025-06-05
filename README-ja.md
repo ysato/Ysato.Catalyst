@@ -19,19 +19,25 @@ composer require --dev ysato/catalyst
 php artisan catalyst:setup
 ```
 
-セットアップ時に、以下のオプションを選択できます：
-- composer.jsonのメタデータ設定
-- srcディレクトリのアーキテクチャ設定
-- コーディングスタイルやQAツールの設定
+## コマンド一覧
+
+以下は、READMEで使用するためのコマンド名と説明の日本語訳です。
+
+---
 
 ## コマンド一覧
 
-| コマンド名                     | 説明                                                                 |
-|--------------------------------|----------------------------------------------------------------------|
-| `catalyst:setup`               | プロジェクト全体のセットアップを実行します。                          |
-| `catalyst:metadata`            | composer.jsonのメタデータを設定します。                              |
-| `catalyst:architecture-src`    | srcディレクトリの基本アーキテクチャを設定します。                     |
-| `catalyst:standards`           | コーディングスタイルやQAツールの設定を行います。                      |
+| コマンド名                       | 説明                                        |
+|:----------------------------|:------------------------------------------|
+| `catalyst:setup`            | プロジェクト全体のセットアップを実行します。                    |
+| `catalyst:metadata`         | `composer.json` のメタデータを生成します。             |
+| `catalyst:architecture-src` | 推奨される `src` ディレクトリの構成を初期化します。             |
+| `catalyst:phpcs`            | PHP Code Sniffer の設定を初期化します。              |
+| `catalyst:phpmd`            | PHP Mess Detector の設定を初期化します。             |
+| `catalyst:spectral`         | Spectral (OpenAPI リンター) の設定を初期化します。       |
+| `catalyst:github`           | 推奨される GitHub Actions ワークフローとルールセットを設定します。 |
+| `catalyst:ide`              | 推奨される IDE (例: PhpStorm) の設定を初期化します。       |
+| `catalyst:act`              | GitHub Actions のローカル実行を設定します。             |
 
 ## 貢献者向け
 
