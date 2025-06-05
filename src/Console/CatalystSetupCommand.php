@@ -65,7 +65,10 @@ class CatalystSetupCommand extends Command
 
         foreach ($permissions as $permission) {
             $this->components->task($permission, function () use ($permission, $vendor, $package) {
-                $this->callSilently("catalyst:$permission", compact('vendor', 'package'));
+                match ($permission) {
+                    'metadata', 'architecture-src', 'phpcs' => $this->callSilently("catalyst:$permission", compact('vendor', 'package')),
+                    default => $this->callSilently("catalyst:$permission"),
+                };
             });
         }
 
