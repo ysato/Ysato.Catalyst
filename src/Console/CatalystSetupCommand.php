@@ -42,6 +42,7 @@ class CatalystSetupCommand extends Command
                 'phpmd' => 'PHP Mess Detector',
                 'spectral' => 'Spectral (OpenAPI linter)',
                 'github' => '.github (workflows and rulesets)',
+                'idea' => '.idea (PhpStorm settings)',
             ],
             default: [
                 'metadata',
@@ -51,6 +52,7 @@ class CatalystSetupCommand extends Command
                 'phpmd',
                 'spectral',
                 'github',
+                'idea',
             ],
             hint: 'Press the space key to select. (default: all)',
             required: true,
