@@ -41,8 +41,17 @@ class CatalystSetupCommand extends Command
                 'phpcs' => 'PHP_CodeSniffer',
                 'phpmd' => 'PHP Mess Detector',
                 'spectral' => 'Spectral (OpenAPI linter)',
+                'github' => '.github (workflows and rulesets)',
             ],
-            default: ['metadata', 'architecture-src', 'standards', 'phpcs', 'phpmd', 'spectral'],
+            default: [
+                'metadata',
+                'architecture-src',
+                'standards',
+                'phpcs',
+                'phpmd',
+                'spectral',
+                'github',
+            ],
             hint: 'Press the space key to select. (default: all)',
             required: true,
         );
