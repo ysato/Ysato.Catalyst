@@ -39,8 +39,9 @@ class CatalystSetupCommand extends Command
                 'architecture-src' => 'src architecture',
                 'standards' => 'qa and style standards',
                 'phpcs' => 'PHP_CodeSniffer',
+                'phpmd' => 'PHP Mess Detector',
             ],
-            default: ['metadata', 'architecture-src', 'standards', 'phpcs'],
+            default: ['metadata', 'architecture-src', 'standards', 'phpcs', 'phpmd'],
             hint: 'Press the space key to select. (default: all)',
             required: true,
         );
