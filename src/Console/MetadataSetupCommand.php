@@ -63,6 +63,7 @@ class MetadataSetupCommand extends Command
         );
         $definition['name'] = sprintf('%s/%s', Str::kebab($vendor), Str::kebab($package));
         $definition['license'] = 'proprietary';
+        $definition['config']['platform']['php'] = '8.2';
 
         return $definition;
     }
