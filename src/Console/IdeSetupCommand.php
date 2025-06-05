@@ -32,10 +32,11 @@ class IdeSetupCommand extends Command
 
         $this->components->task('ide', function () use ($generator) {
             $currentIgnore = $generator->fs->readFile($this->laravel->basePath('.gitignore'));
+            $washedIgnore = str_replace("/.idea\n", '', $currentIgnore);
 
             $generator
                 ->dumpFile('.gitignore', $this->ideaIgnore())
-                ->appendToFile('.gitignore', $currentIgnore)
+                ->appendToFile('.gitignore', $washedIgnore)
                 ->generate($this->laravel->basePath());
         });
 
