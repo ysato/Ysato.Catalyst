@@ -12,7 +12,7 @@ use Symfony\Component\Finder\Finder;
 use Ysato\Catalyst\Console\ArchitectureSrcSetupCommand;
 use Ysato\Catalyst\Console\CatalystSetupCommand;
 use Ysato\Catalyst\Console\GitHubSetupCommand;
-use Ysato\Catalyst\Console\IdeaSetupCommand;
+use Ysato\Catalyst\Console\IdeSetupCommand;
 use Ysato\Catalyst\Console\MetadataSetupCommand;
 use Ysato\Catalyst\Console\PhpCsSetupCommand;
 use Ysato\Catalyst\Console\PhpMdSetupCommand;
@@ -104,7 +104,7 @@ class CatalystServiceProvider extends ServiceProvider
                 return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/.github', $tempPath);
             });
 
-        $this->app->when(IdeaSetupCommand::class)
+        $this->app->when(IdeSetupCommand::class)
             ->needs(Generator::class)
             ->give(function (Application $app) {
                 $fs = $app->make(Filesystem::class);
@@ -114,7 +114,7 @@ class CatalystServiceProvider extends ServiceProvider
                     ->create();
                 $tempPath = $temp->path();
 
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/.idea', $tempPath);
+                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/ide', $tempPath);
             });
     }
 
@@ -133,7 +133,7 @@ class CatalystServiceProvider extends ServiceProvider
                 PhpMdSetupCommand::class,
                 SpectralSetupCommand::class,
                 GitHubSetupCommand::class,
-                IdeaSetupCommand::class,
+                IdeSetupCommand::class,
             ]);
         }
     }

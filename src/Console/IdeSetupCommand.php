@@ -7,21 +7,21 @@ namespace Ysato\Catalyst\Console;
 use Illuminate\Console\Command;
 use Ysato\Catalyst\Generator;
 
-class IdeaSetupCommand extends Command
+class IdeSetupCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'catalyst:idea';
+    protected $signature = 'catalyst:ide';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Initializes recommended PhpStorm settings within the .idea directory.';
+    protected $description = 'Initializes recommended IDE and code style settings for the project.';
 
     /**
      * Execute the console command.
@@ -30,7 +30,7 @@ class IdeaSetupCommand extends Command
     {
         $this->components->info('Setting up...');
 
-        $this->components->task('.idea', function () use ($generator) {
+        $this->components->task('ide', function () use ($generator) {
             $currentIgnore = $generator->fs->readFile($this->laravel->basePath('.gitignore'));
 
             $generator
