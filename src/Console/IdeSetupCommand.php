@@ -50,6 +50,7 @@ class IdeSetupCommand extends Command
 !/.idea/fileTemplates
 !/.idea/inspectionProfiles
 
+
 EOF;
     }
 }
