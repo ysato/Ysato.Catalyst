@@ -9,6 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use Ysato\Catalyst\Console\ActSetupCommand;
 use Ysato\Catalyst\Console\ArchitectureSrcSetupCommand;
 use Ysato\Catalyst\Console\CatalystSetupCommand;
 use Ysato\Catalyst\Console\GitHubSetupCommand;
@@ -17,7 +18,6 @@ use Ysato\Catalyst\Console\MetadataSetupCommand;
 use Ysato\Catalyst\Console\PhpCsSetupCommand;
 use Ysato\Catalyst\Console\PhpMdSetupCommand;
 use Ysato\Catalyst\Console\SpectralSetupCommand;
-use Ysato\Catalyst\Console\StandardsSetupCommand;
 
 class CatalystServiceProvider extends ServiceProvider
 {
@@ -37,19 +37,6 @@ class CatalystServiceProvider extends ServiceProvider
                 $tempPath = $temp->path();
 
                 return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/architecture-src', $tempPath);
-            });
-
-        $this->app->when(StandardsSetupCommand::class)
-            ->needs(Generator::class)
-            ->give(function (Application $app) {
-                $fs = $app->make(Filesystem::class);
-                $finder = $app->make(Finder::class);
-                $temp = (new TemporaryDirectory())
-                    ->deleteWhenDestroyed()
-                    ->create();
-                $tempPath = $temp->path();
-
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/standards', $tempPath);
             });
 
         $this->app->when(PhpCsSetupCommand::class)
@@ -116,6 +103,19 @@ class CatalystServiceProvider extends ServiceProvider
 
                 return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/ide', $tempPath);
             });
+
+        $this->app->when(ActSetupCommand::class)
+            ->needs(Generator::class)
+            ->give(function (Application $app) {
+                $fs = $app->make(Filesystem::class);
+                $finder = $app->make(Finder::class);
+                $temp = (new TemporaryDirectory())
+                    ->deleteWhenDestroyed()
+                    ->create();
+                $tempPath = $temp->path();
+
+                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/act', $tempPath);
+            });
     }
 
     /**
@@ -128,12 +128,12 @@ class CatalystServiceProvider extends ServiceProvider
                 CatalystSetupCommand::class,
                 MetadataSetupCommand::class,
                 ArchitectureSrcSetupCommand::class,
-                StandardsSetupCommand::class,
                 PhpCsSetupCommand::class,
                 PhpMdSetupCommand::class,
                 SpectralSetupCommand::class,
                 GitHubSetupCommand::class,
                 IdeSetupCommand::class,
+                ActSetupCommand::class,
             ]);
         }
     }
