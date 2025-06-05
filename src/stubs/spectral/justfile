@@ -1,0 +1,18 @@
+OPENAPI_IMAGE := "stoplight/spectral"
+
+@help:
+    echo "Usage:"
+    echo "  just lint         - Run all linting tasks."
+    echo "  just clean        - Clean up Docker images."
+    echo "  just help         - Show this help message."
+
+lint:
+    @if {{ path_exists("openapi.yaml") }}; then \
+        docker run --rm -it -v $(pwd):/tmp -w /tmp \
+        {{ OPENAPI_IMAGE }} lint openapi.yaml; \
+    else \
+        echo "\033[33mwarn\033[0m: No openapi.yaml found, skipping OpenAPI linting."; \
+    fi
+
+clean:
+    docker rmi {{ OPENAPI_IMAGE }} || true

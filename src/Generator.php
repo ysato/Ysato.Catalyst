@@ -11,7 +11,7 @@ use Symfony\Component\Finder\Finder;
 class Generator
 {
     public function __construct(
-        private readonly FileSystem $fs,
+        public readonly FileSystem $fs,
         private readonly Finder $finder,
         private TemporaryDirectory $temporaryDirectory,
         private readonly string $stubsPath,
@@ -44,6 +44,13 @@ class Generator
         return $this;
     }
 
+    public function dumpFile(string $filename, string $contents): self
+    {
+        $this->fs->dumpFile($this->temporaryDirectory->path($filename), $contents);
+
+        return $this;
+    }
+
     public function appendToFile(string $filename, string $contents, bool $lock = false): self
     {
         $this->mirrorToTemp();
@@ -60,11 +67,6 @@ class Generator
         $this->fs->mirror($this->tempPath, $path, options: ['override' => true]);
 
         $this->temporaryDirectory->delete();
-    }
-
-    public function getFilesystem(): FileSystem
-    {
-        return $this->fs;
     }
 
     private function mirrorToTemp()

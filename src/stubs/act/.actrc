@@ -1,0 +1,15 @@
+# You are using Apple M-series chip and you have not specified container architecture,
+# you might encounter issues while running act. If so, try running it with '--container-architecture linux/amd64'. ⚠
+#--container-architecture=linux/amd64
+
+# https://github.com/nektos/act/issues/197
+--platform=ubuntu-latest=shivammathur/node:latest
+
+# act doesn't persist environment variables, so generate your APP_KEY beforehand.
+--env-file=.env.act
+
+# The --action-offline-mode flag runs actions using locally cached content and Docker images only.
+# If an action's content or its required Docker image is not already present locally,
+# running with this flag will result in an error, as it avoids all network access.
+# To ensure offline mode works, first run act without this flag to cache necessary resources.
+#--action-offline-mode

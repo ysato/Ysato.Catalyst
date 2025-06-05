@@ -35,11 +35,25 @@ class CatalystSetupCommand extends Command
         $permissions = multiselect(
             label: 'What needs to be set up?',
             options: [
-                'metadata' => 'composer.json metadata',
-                'architecture-src' => 'src architecture',
-                'standards' => 'qa and style standards',
+                'metadata' => 'Generates composer.json metadata.',
+                'architecture-src' => 'Initializes recommended src architecture.',
+                'phpcs' => 'Initializes PHP Code Sniffer configuration.',
+                'phpmd' => 'Initializes PHP Mess Detector configuration.',
+                'spectral' => 'Initializes Spectral (OpenAPI linter) configuration.',
+                'github' => 'Sets up recommended GitHub workflows and rulesets.',
+                'ide' => 'Initializes recommended IDE (e.g., PhpStorm) settings.',
+                'act' => 'Configures local execution for GitHub Actions.',
             ],
-            default: ['metadata', 'architecture-src', 'standards'],
+            default: [
+                'metadata',
+                'architecture-src',
+                'phpcs',
+                'phpmd',
+                'spectral',
+                'github',
+                'ide',
+                'act',
+            ],
             hint: 'Press the space key to select. (default: all)',
             required: true,
         );
@@ -51,7 +65,10 @@ class CatalystSetupCommand extends Command
 
         foreach ($permissions as $permission) {
             $this->components->task($permission, function () use ($permission, $vendor, $package) {
-                $this->callSilently("catalyst:$permission", compact('vendor', 'package'));
+                match ($permission) {
+                    'metadata', 'architecture-src', 'phpcs' => $this->callSilently("catalyst:$permission", compact('vendor', 'package')),
+                    default => $this->callSilently("catalyst:$permission"),
+                };
             });
         }
 
