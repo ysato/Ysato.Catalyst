@@ -69,6 +69,12 @@ class PhpCsSetupCommand extends Command
         $definition['scripts']['cs-fix'] = 'phpcbf';
 
         $tests = Arr::get($definition, 'scripts.tests', []);
+
+        $hasTest = Arr::has($definition, 'scripts.test');
+        if ($hasTest && ! in_array('@test', $tests, true)) {
+            $definition['scripts']['tests'][] = '@test';
+        }
+
         if (! in_array('@cs', $tests, true)) {
             $definition['scripts']['tests'][] = '@cs';
         }
