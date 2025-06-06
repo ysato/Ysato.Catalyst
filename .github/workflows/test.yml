@@ -1,0 +1,68 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  stub-tests:
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [ 8.2, 8.3, 8.4' ]
+        laravel: [ '11.x', '12.x' ]
+        dependency-version: [ 'lowest', 'stable', 'highest' ]
+
+    name: Test Stubs - PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - ${{ matrix.dependency-version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pdo_sqlite
+          ini-values: error_reporting=E_ALL
+          coverage: none
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: |
+            dependencies-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-
+            ${{ matrix.dependency-version }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            dependencies-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-
+            ${{ matrix.dependency-version }}-composer-
+
+      - name: Create Laravel
+        run: |
+          composer create-project laravel/laravel:${{ matrix.laravel }} TestProject --no-interaction
+
+      - name: Install package
+        working-directory: ./TestProject
+        run: |
+          composer config repositories.catalyst '{"type": "path", "url": "${{ github.workspace }}"}' --file composer.json
+          composer require ysato/catalyst:@dev --dev --no-interaction --no-update
+          composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+
+      - name: Install Catalyst
+        working-directory: ./TestProject
+        run: |
+          composer update --prefer-${{ matrix.dependency-version }} --no-interaction --no-progress
+          php artisan catalyst:setup Acme Blog -n
+
+      - name: Execute tests
+        working-directory: ./TestProject
+        run: php artisan test
