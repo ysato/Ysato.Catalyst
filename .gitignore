@@ -1,8 +1,13 @@
 # IntelliJ project files
-/.idea
+/.idea/*
+!/.idea/codeStyles
+!/.idea/fileTemplates
+!/.idea/inspectionProfiles
 *.iml
 out
 gen
 
 /vendor
 composer.lock
+.php_cs.cache
+.actrc
