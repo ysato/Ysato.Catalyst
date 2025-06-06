@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ysato\Catalyst\Console;
 
 use Illuminate\Console\Command;
+
 use function Laravel\Prompts\multiselect;
 
 class CatalystSetupCommand extends Command
