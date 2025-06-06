@@ -43,7 +43,7 @@ php artisan catalyst:setup
 
 このプロジェクトには、あらかじめ定義されたGitHubブランチ保護ルールセットがJSONファイルとして含まれています。これらをGitHubリポジトリにインポートすることで、一貫したブランチ保護ルールを迅速に適用できます。
 
-`.github/` ディレクトリには以下のルールセットファイルがあります：
+`.github/rulesets` ディレクトリには以下のルールセットファイルがあります：
 
 * `branch-all-users-rules.json`: 一般的にすべてのユーザーに適用されるルールが含まれています。
 * `branch-exclude-core-contributors-rule.json`: コアコントリビューターを特定の制限から除外したり、彼らに特有のルールを適用したりするルールが含まれています。
@@ -61,9 +61,9 @@ GitHubでは、ルールセット設定を直接インポートできます。
 3.  左側のサイドバーの「Code and automation (コードと自動化)」セクションにある **Rules (ルール)** をクリックし、次に **Rulesets (ルールセット)** をクリックします。
 4.  **"Import ruleset" (ルールセットをインポート)** ボタンをクリックします。(このオプションは、UIの更新によって「...」メニューの下にあるか、直接表示されている場合があります。)
 5.  JSONファイルのアップロードを求められます。
-6.  `.github/branch-all-users-rules.json` をアップロードします。
+6.  `.github/rulesets/branch-all-users-rules.json` をアップロードします。
 7.  インポートされた設定を確認し、**"Create" (作成)** をクリックします。
-8.  `.github/branch-exclude-core-contributors-rule.json` についても、手順4～7を繰り返します。
+8.  `.github/rulesets/branch-exclude-core-contributors-rule.json` についても、手順4～7を繰り返します。
 
     **注意点：** インポート後、各ルールセットの「Target branches (対象ブランチ)」セクションを注意深く確認し、意図したブランチ（例： `main`, `develop`, `feature/*`）に適用されていることを確認してください。リポジトリのブランチ戦略に基づいて、これらを調整する必要がある場合があります。
 

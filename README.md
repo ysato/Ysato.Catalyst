@@ -37,7 +37,7 @@ php artisan catalyst:setup
 
 This project contains predefined GitHub branch protection rulesets stored as JSON files. You can import these into your GitHub repository to quickly apply consistent branch protection rules.
 
-The following ruleset files are available in the `.github/` directory:
+The following ruleset files are available in the `.github/rulesets` directory:
 
 * `branch-all-users-rules.json`: Contains rules generally applicable to all users.
 * `branch-exclude-core-contributors-rule.json`: Contains rules that might exclude core contributors from certain restrictions, or apply specific rules to them.
@@ -55,9 +55,9 @@ GitHub allows you to import ruleset configurations directly.
 3.  In the left sidebar, under the "Code and automation" section, click on **Rules**, then **Rulesets**.
 4.  Click the **"Import ruleset"** button (this option might be under a "..." menu or directly visible depending on UI updates).
 5.  You will be prompted to upload a JSON file.
-6.  Upload ` .github/branch-all-users-rules.json`.
+6.  Upload ` .github/rulesets/branch-all-users-rules.json`.
 7.  Review the imported settings and click **"Create"**.
-8.  Repeat steps 4-7 for `.github/branch-exclude-core-contributors-rule.json`.
+8.  Repeat steps 4-7 for `.github/rulesets/branch-exclude-core-contributors-rule.json`.
 
     **Note:** Carefully review the "Target branches" section for each ruleset after import to ensure they apply to the intended branches (e.g., `main`, `develop`, `feature/*`). You might need to adjust these based on your repository's branching strategy.
 
