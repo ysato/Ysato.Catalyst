@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ruleset
-    name="__Vendor__.__Package__"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    name="__Vendor__.__Package__"
     xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd"
 >
     <description>__Vendor__.__Package__ Coding Standard</description>
