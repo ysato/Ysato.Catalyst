@@ -5,6 +5,38 @@ on:
   pull_request:
 
 jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [ 8.2, 8.3, 8.4 ]
+        laravel: [ 11.x, 12.x ]
+        dependency-version: [ lowest, stable ]
+
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - ${{ matrix.dependency-version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: curl
+          ini-values: error_reporting=E_ALL
+          coverage: none
+
+      - name: Install dependencies
+        run: |
+          composer require illuminate/contracts:${{ matrix.laravel }} --dev --no-update
+          composer update --prefer-${{ matrix.dependency-version }} --no-interaction --no-progress
+
+      - name: Execute tests
+        run: vendor/bin/phpunit --no-coverage --display-deprecations --fail-on-deprecation
+
   stub-tests:
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
 
@@ -14,8 +46,8 @@ jobs:
       fail-fast: true
       matrix:
         php: [ 8.2, 8.3, 8.4 ]
-        laravel: [ '11.x', '12.x' ]
-        dependency-version: [ 'lowest', 'stable' ]
+        laravel: [ 11.x, 12.x ]
+        dependency-version: [ lowest, stable ]
 
     name: Test Stubs - PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 
