@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ysato\Catalyst\Console;
 
 use Illuminate\Console\Command;
+use Ysato\Catalyst\Console\Concerns\VendorPackageAskableTrait;
 
 use function Laravel\Prompts\multiselect;
 

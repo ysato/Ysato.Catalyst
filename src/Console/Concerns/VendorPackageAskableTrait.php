@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ysato\Catalyst\Console;
+namespace Ysato\Catalyst\Console\Concerns;
 
 trait VendorPackageAskableTrait
 {
