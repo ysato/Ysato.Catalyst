@@ -37,15 +37,15 @@ class GeneratorTest extends TestCase
             $this->filesystem,
             $this->finder,
             $this->temporaryDirectory,
-            __DIR__ . '/Fake/stubs/phpmd',
+            __DIR__ . '/Fake/stubs/ide',
             $this->temporaryDirectory->path()
         );
 
         $SUT->generate($this->laravelDir->path());
 
         $this->assertFileEquals(
-            __DIR__ . '/Fake/expected/phpmd.xml',
-            $this->laravelDir->path('phpmd.xml')
+            __DIR__ . '/Fake/expected/.editorconfig',
+            $this->laravelDir->path('.editorconfig')
         );
     }
 }
