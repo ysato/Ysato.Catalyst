@@ -87,4 +87,31 @@ EOT;
 
         $this->assertStringEqualsFile($this->temporaryDirectory->path('.gitignore'), $contents);
     }
+
+    public function test_appendFile()
+    {
+        $SUT = new Generator(
+            $this->filesystem,
+            $this->finder,
+            $this->temporaryDirectory,
+            __DIR__ . '/Fake/stubs',
+            $this->temporaryDirectory->path()
+        );
+
+        $contents = <<<EOT
+/idea/*
+!/.idea/inspectionProfiles
+
+EOT;
+
+        $newContents = <<<EOT
+.phpcs_cache.php
+
+EOT;
+
+        $SUT->dumpFile('.gitignore', $contents);
+        $SUT->appendToFile('.gitignore', $newContents);
+
+        $this->assertFileEquals(__DIR__ . '/Fake/expected/.gitignore', $this->temporaryDirectory->path('.gitignore'));
+    }
 }
