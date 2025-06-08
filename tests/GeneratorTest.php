@@ -48,4 +48,22 @@ class GeneratorTest extends TestCase
             $this->laravelDir->path('.editorconfig')
         );
     }
+
+    public function test_generate_file_in_dot_dir()
+    {
+        $SUT = new Generator(
+            $this->filesystem,
+            $this->finder,
+            $this->temporaryDirectory,
+            __DIR__ . '/Fake/stubs/.github',
+            $this->temporaryDirectory->path()
+        );
+
+        $SUT->generate($this->laravelDir->path());
+
+        $this->assertFileEquals(
+            __DIR__ . '/Fake/expected/.github/rulesets/main-branch-rules.json',
+            $this->laravelDir->path('.github/rulesets/main-branch-rules.json')
+        );
+    }
 }
