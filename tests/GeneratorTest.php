@@ -38,14 +38,14 @@ class GeneratorTest extends TestCase
             $this->filesystem,
             $this->finder,
             $this->temporaryDirectory,
-            __DIR__ . '/Fake/stubs/ide',
+            __DIR__ . '/artificial/stubs/ide',
             $this->temporaryDirectory->path()
         );
 
         $SUT->generate($this->laravelDir->path());
 
         $this->assertFileEquals(
-            __DIR__ . '/Fake/expected/.editorconfig',
+            __DIR__ . '/artificial/expected/.editorconfig',
             $this->laravelDir->path('.editorconfig')
         );
     }
@@ -56,7 +56,7 @@ class GeneratorTest extends TestCase
             $this->filesystem,
             $this->finder,
             $this->temporaryDirectory,
-            __DIR__ . '/Fake/stubs/ide',
+            __DIR__ . '/artificial/stubs/ide',
             $this->temporaryDirectory->path()
         );
 
@@ -66,7 +66,10 @@ class GeneratorTest extends TestCase
 
         $SUT->generate($this->laravelDir->path());
 
-        $this->assertFileEquals(__DIR__ . '/Fake/expected/.editorconfig', $this->laravelDir->path('.editorconfig'));
+        $this->assertFileEquals(
+            __DIR__ . '/artificial/expected/.editorconfig',
+            $this->laravelDir->path('.editorconfig')
+        );
 
         $this->expectException(IOException::class);
         $SUT->generate($newLaravelDir->path());
@@ -78,7 +81,7 @@ class GeneratorTest extends TestCase
             $this->filesystem,
             $this->finder,
             $this->temporaryDirectory,
-            __DIR__ . '/Fake/stubs',
+            __DIR__ . '/artificial/stubs',
             $this->temporaryDirectory->path()
         );
 
@@ -99,7 +102,7 @@ EOT;
             $this->filesystem,
             $this->finder,
             $this->temporaryDirectory,
-            __DIR__ . '/Fake/stubs',
+            __DIR__ . '/artificial/stubs',
             $this->temporaryDirectory->path()
         );
 
@@ -117,7 +120,10 @@ EOT;
         $SUT->dumpFile('.gitignore', $contents);
         $SUT->appendToFile('.gitignore', $newContents);
 
-        $this->assertFileEquals(__DIR__ . '/Fake/expected/.gitignore', $this->temporaryDirectory->path('.gitignore'));
+        $this->assertFileEquals(
+            __DIR__ . '/artificial/expected/.gitignore',
+            $this->temporaryDirectory->path('.gitignore')
+        );
     }
 
     public function test_replacePlaceHolder()
@@ -126,14 +132,14 @@ EOT;
             $this->filesystem,
             $this->finder,
             $this->temporaryDirectory,
-            __DIR__ . '/Fake/stubs/architecture-src',
+            __DIR__ . '/artificial/stubs/architecture-src',
             $this->temporaryDirectory->path()
         );
 
         $SUT->replacePlaceHolder('Ysato', 'Catalyst');
 
         $this->assertFileEquals(
-            __DIR__ . '/Fake/expected/src/Catalyst.php',
+            __DIR__ . '/artificial/expected/src/Catalyst.php',
             $this->temporaryDirectory->path('src/Catalyst.php')
         );
     }
@@ -148,14 +154,14 @@ EOT;
             $this->filesystem,
             $this->finder,
             $this->temporaryDirectory,
-            __DIR__ . '/Fake/stubs/.github',
+            __DIR__ . '/artificial/stubs/.github',
             $this->temporaryDirectory->path()
         );
 
         $SUT->replacePlaceHolder('Ysato', 'Catalyst');
 
         $this->assertFileEquals(
-            __DIR__ . '/Fake/expected/.github/.gitkeep',
+            __DIR__ . '/artificial/expected/.github/.gitkeep',
             $this->temporaryDirectory->path('.github/.gitkeep')
         );
     }
