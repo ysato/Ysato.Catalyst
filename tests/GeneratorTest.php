@@ -6,6 +6,7 @@ namespace Ysato\Catalyst;
 
 use PHPUnit\Framework\TestCase;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
@@ -47,6 +48,28 @@ class GeneratorTest extends TestCase
             __DIR__ . '/Fake/expected/.editorconfig',
             $this->laravelDir->path('.editorconfig')
         );
+    }
+
+    public function test_generate_after_generate()
+    {
+        $SUT = new Generator(
+            $this->filesystem,
+            $this->finder,
+            $this->temporaryDirectory,
+            __DIR__ . '/Fake/stubs/ide',
+            $this->temporaryDirectory->path()
+        );
+
+        $newLaravelDir = (new TemporaryDirectory())
+            ->deleteWhenDestroyed()
+            ->create();
+
+        $SUT->generate($this->laravelDir->path());
+
+        $this->assertFileEquals(__DIR__ . '/Fake/expected/.editorconfig', $this->laravelDir->path('.editorconfig'));
+
+        $this->expectException(IOException::class);
+        $SUT->generate($newLaravelDir->path());
     }
 
     public function test_dumpFile()
