@@ -207,4 +207,22 @@ EOT;
 
         $this->assertFileEquals(__DIR__ . '/Fake/expected/.gitignore', $this->temporaryDirectory->path('.gitignore'));
     }
+
+    public function test_replacePlaceHolder()
+    {
+        $SUT = new Generator(
+            $this->filesystem,
+            $this->finder,
+            $this->temporaryDirectory,
+            __DIR__ . '/Fake/stubs/architecture-src',
+            $this->temporaryDirectory->path()
+        );
+
+        $SUT->replacePlaceHolder('Ysato', 'Catalyst');
+
+        $this->assertFileEquals(
+            __DIR__ . '/Fake/expected/src/Catalyst.php',
+            $this->temporaryDirectory->path('src/Catalyst.php')
+        );
+    }
 }
