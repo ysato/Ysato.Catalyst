@@ -1,6 +1,7 @@
 # Common variables
 
 PHP_IMAGE := "php-composer-8.2:local"
+ACT_IMAGE := "act:local"
 
 @help:
     echo "Usage:"
@@ -11,8 +12,13 @@ PHP_IMAGE := "php-composer-8.2:local"
     echo "  just clean        - Clean up Docker images."
     echo "  just help         - Show this help message."
 
-build:
-    docker build -t {{ PHP_IMAGE }} .
+build: build-php build-act
+
+build-php:
+    docker build -t {{ PHP_IMAGE }} -f docker/php/Dockerfile .
+
+build-act:
+    docker build -t {{ ACT_IMAGE }} -f docker/act/Dockerfile .
 
 install:
     docker run --rm -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer install
@@ -29,5 +35,10 @@ pcov:
 lint:
     docker run --rm -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer tests
 
-clean:
+clean: clean-php clean-act
+
+clean-php:
     docker rmi {{ PHP_IMAGE }} || true
+
+clean-act:
+    docker rmi {{ ACT_IMAGE }} || true
