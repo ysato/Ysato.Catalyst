@@ -49,24 +49,6 @@ class GeneratorTest extends TestCase
         );
     }
 
-    public function test_generate_file_in_dot_dir()
-    {
-        $SUT = new Generator(
-            $this->filesystem,
-            $this->finder,
-            $this->temporaryDirectory,
-            __DIR__ . '/Fake/stubs/.github',
-            $this->temporaryDirectory->path()
-        );
-
-        $SUT->generate($this->laravelDir->path());
-
-        $this->assertFileEquals(
-            __DIR__ . '/Fake/expected/.github/rulesets/main-branch-rules.json',
-            $this->laravelDir->path('.github/rulesets/main-branch-rules.json')
-        );
-    }
-
     public function test_dumpFile()
     {
         $SUT = new Generator(
@@ -130,6 +112,28 @@ EOT;
         $this->assertFileEquals(
             __DIR__ . '/Fake/expected/src/Catalyst.php',
             $this->temporaryDirectory->path('src/Catalyst.php')
+        );
+    }
+
+    /**
+     * @test
+     * @link https://github.com/ysato/Ysato.Catalyst/commit/4e5c1538e946c074725ebe80ab13da777dd7c8b4
+     */
+    public function ドットファイルのプレースホルダーも置き換えられるか()
+    {
+        $SUT = new Generator(
+            $this->filesystem,
+            $this->finder,
+            $this->temporaryDirectory,
+            __DIR__ . '/Fake/stubs/.github',
+            $this->temporaryDirectory->path()
+        );
+
+        $SUT->replacePlaceHolder('Ysato', 'Catalyst');
+
+        $this->assertFileEquals(
+            __DIR__ . '/Fake/expected/.github/.gitkeep',
+            $this->temporaryDirectory->path('.github/.gitkeep')
         );
     }
 }
