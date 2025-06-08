@@ -1,6 +1,6 @@
 {
-  "id": 5825056,
-  "name": "main-branch-rules",
+  "id": 5825456,
+  "name": "numbering-branch-rules",
   "target": "branch",
   "source_type": "Repository",
   "source": "ysato/Ysato.Catalyst",
@@ -9,11 +9,20 @@
     "ref_name": {
       "exclude": [],
       "include": [
-        "refs/heads/main"
+        "refs/heads/*.x"
       ]
     }
   },
   "rules": [
+    {
+      "type": "update"
+    },
+    {
+      "type": "creation"
+    },
+    {
+      "type": "deletion"
+    },
     {
       "type": "pull_request",
       "parameters": {
@@ -29,19 +38,13 @@
       }
     },
     {
-      "type": "deletion"
-    },
-    {
-      "type": "creation"
-    },
-    {
-      "type": "update"
+      "type": "non_fast_forward"
     },
     {
       "type": "required_status_checks",
       "parameters": {
         "strict_required_status_checks_policy": true,
-        "do_not_enforce_on_create": false,
+        "do_not_enforce_on_create": true,
         "required_status_checks": [
           {
             "context": "Test Stubs - PHP 8.2 - Laravel 11.x - lowest",
@@ -68,19 +71,19 @@
             "integration_id": 15368
           },
           {
-            "context": "Test Stubs - PHP 8.4' - Laravel 11.x - lowest",
-            "integration_id": 15368
-          },
-          {
-            "context": "Test Stubs - PHP 8.4' - Laravel 11.x - stable",
-            "integration_id": 15368
-          },
-          {
             "context": "Test Stubs - PHP 8.3 - Laravel 12.x - lowest",
             "integration_id": 15368
           },
           {
             "context": "Test Stubs - PHP 8.3 - Laravel 12.x - stable",
+            "integration_id": 15368
+          },
+          {
+            "context": "Test Stubs - PHP 8.4' - Laravel 11.x - lowest",
+            "integration_id": 15368
+          },
+          {
+            "context": "Test Stubs - PHP 8.4' - Laravel 11.x - stable",
             "integration_id": 15368
           },
           {
@@ -93,12 +96,14 @@
           }
         ]
       }
-    },
-    {
-      "type": "non_fast_forward"
     }
   ],
   "bypass_actors": [
+    {
+      "actor_id": 2,
+      "actor_type": "RepositoryRole",
+      "bypass_mode": "pull_request"
+    },
     {
       "actor_id": 5,
       "actor_type": "RepositoryRole",
