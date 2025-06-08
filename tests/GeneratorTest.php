@@ -159,4 +159,25 @@ EOT;
             $this->temporaryDirectory->path('.github/.gitkeep')
         );
     }
+
+    public function test_dumpFile()
+    {
+        $SUT = new Generator(
+            $this->filesystem,
+            $this->finder,
+            $this->temporaryDirectory,
+            __DIR__ . '/Fake/stubs',
+            $this->temporaryDirectory->path()
+        );
+
+        $contents = <<<EOT
+/idea/*
+!/.idea/inspectionProfiles
+
+EOT;
+
+        $SUT->dumpFile('.gitignore', $contents);
+
+        $this->assertStringEqualsFile($this->temporaryDirectory->path('.gitignore'), $contents);
+    }
 }
