@@ -9,6 +9,7 @@ use Composer\Json\JsonFile;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Seld\JsonLint\ParsingException;
+use Ysato\Catalyst\Console\Concerns\VendorPackageAskableTrait;
 
 class MetadataSetupCommand extends Command
 {

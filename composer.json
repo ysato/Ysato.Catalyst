@@ -20,10 +20,45 @@
         "symfony/filesystem": "^7.1",
         "symfony/finder": "^7.1"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5|^11.0|^12.0.1"
+    },
     "autoload": {
         "psr-4": {
             "Ysato\\Catalyst\\": "src/"
-        }
+        },
+        "exclude-from-classmap": [
+            "src/stubs"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ysato\\Catalyst\\": [
+                "tests/",
+                "tests/Fake"
+            ]
+        },
+        "exclude-from-classmap": [
+            "src/stubs"
+        ]
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit --no-coverage",
+        "tests": [
+            "@test"
+        ],
+        "coverage": "php -dzend_extension=xdebug.so -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage",
+        "pcov": "php -dextension=pcov.so -d pcov.enabled=1 ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage --coverage-clover=build/coverage.xml"
+    },
+    "scripts-descriptions": {
+        "test": "Run unit tests",
+        "tests": "Run tests and quality checks",
+        "coverage": "Generate test coverage report",
+        "pcov": "Generate test coverage report (pcov)",
+        "cs": "Checks the coding standard",
+        "cs-fix": "Fix the coding standard",
+        "qa": "Run quality checks",
+        "metrics": "Build metrics report"
     },
     "config": {
         "optimize-autoloader": true,

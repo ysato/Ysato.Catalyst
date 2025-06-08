@@ -8,6 +8,7 @@ use Composer\Factory;
 use Composer\Json\JsonFile;
 use Illuminate\Console\Command;
 use Seld\JsonLint\ParsingException;
+use Ysato\Catalyst\Console\Concerns\VendorPackageAskableTrait;
 use Ysato\Catalyst\Generator;
 
 class ArchitectureSrcSetupCommand extends Command

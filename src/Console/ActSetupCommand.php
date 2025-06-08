@@ -6,6 +6,7 @@ namespace Ysato\Catalyst\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Ysato\Catalyst\Console\Concerns\VendorPackageAskableTrait;
 use Ysato\Catalyst\Generator;
 
 class ActSetupCommand extends Command
