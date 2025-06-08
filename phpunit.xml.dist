@@ -14,7 +14,7 @@
     </php>
     <source>
         <include>
-            <directory>src</directory>
+            <file>src/Generator.php</file>
         </include>
     </source>
 </phpunit>
