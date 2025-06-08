@@ -11,32 +11,41 @@ use Symfony\Component\Finder\Finder;
 
 class GeneratorTest extends TestCase
 {
-    private Generator $SUT;
-
     private Filesystem $filesystem;
 
     private Finder $finder;
 
     private TemporaryDirectory $temporaryDirectory;
 
+    private TemporaryDirectory $laravelDir;
+
     protected function setUp(): void
     {
-        $this->filesystem = $this->createMock(Filesystem::class);
-        $this->finder = $this->createMock(Finder::class);
-        $this->temporaryDirectory = $this->createMock(TemporaryDirectory::class);
+        $this->filesystem = new Filesystem();
+        $this->finder = new Finder();
+        $this->temporaryDirectory = (new TemporaryDirectory())
+            ->deleteWhenDestroyed()
+            ->create();
+        $this->laravelDir = (new TemporaryDirectory())
+            ->deleteWhenDestroyed()
+            ->create();
+    }
 
-        $this->SUT = new Generator(
+    public function test_generate()
+    {
+        $SUT = new Generator(
             $this->filesystem,
             $this->finder,
             $this->temporaryDirectory,
-            '',
-            ''
+            __DIR__ . '/Fake/stubs/phpmd',
+            $this->temporaryDirectory->path()
         );
-    }
 
-    public function testIsInstanceOfGenerator(): void
-    {
-        $actual = $this->SUT;
-        $this->assertInstanceOf(Generator::class, $actual);
+        $SUT->generate($this->laravelDir->path());
+
+        $this->assertFileEquals(
+            __DIR__ . '/Fake/expected/phpmd.xml',
+            $this->laravelDir->path('phpmd.xml')
+        );
     }
 }
