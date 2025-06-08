@@ -66,4 +66,25 @@ class GeneratorTest extends TestCase
             $this->laravelDir->path('.github/rulesets/main-branch-rules.json')
         );
     }
+
+    public function test_dumpFile()
+    {
+        $SUT = new Generator(
+            $this->filesystem,
+            $this->finder,
+            $this->temporaryDirectory,
+            __DIR__ . '/Fake/stubs',
+            $this->temporaryDirectory->path()
+        );
+
+        $contents = <<<EOT
+/idea/*
+!/.idea/inspectionProfiles
+
+EOT;
+
+        $SUT->dumpFile('.gitignore', $contents);
+
+        $this->assertStringEqualsFile($this->temporaryDirectory->path('.gitignore'), $contents);
+    }
 }
