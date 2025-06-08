@@ -9,6 +9,7 @@ use Composer\Json\JsonFile;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Seld\JsonLint\ParsingException;
+use Ysato\Catalyst\Console\Concerns\VendorPackageAskableTrait;
 use Ysato\Catalyst\Generator;
 
 class PhpCsSetupCommand extends Command
