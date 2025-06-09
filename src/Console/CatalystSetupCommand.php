@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ysato\Catalyst\Console;
 
 use Illuminate\Console\Command;
+use Ysato\Catalyst\Console\Concerns\PhpVersionAskable;
 use Ysato\Catalyst\Console\Concerns\VendorPackageAskableTrait;
 
 use function Laravel\Prompts\multiselect;
@@ -12,6 +13,7 @@ use function Laravel\Prompts\multiselect;
 class CatalystSetupCommand extends Command
 {
     use VendorPackageAskableTrait;
+    use PhpVersionAskable;
 
     /**
      * The name and signature of the console command.
@@ -20,7 +22,8 @@ class CatalystSetupCommand extends Command
      */
     protected $signature = 'catalyst:setup
                             {vendor? : The vendor name (e.g.Acme) in camel case.}
-                            {package? : The package name (e.g.Blog) in camel case.}';
+                            {package? : The package name (e.g.Blog) in camel case.}
+                            {php? : Specify the PHP version for the project (e.g., 8.2).}';
 
     /**
      * The console command description.
@@ -62,15 +65,17 @@ class CatalystSetupCommand extends Command
 
         $vendor = $this->getVendorNameOrAsk();
         $package = $this->getPackageNameOrAsk();
+        $php = $this->getPhpVersionOrAsk();
 
         $this->components->info('Setting up...');
 
         foreach ($permissions as $permission) {
-            $this->components->task($permission, function () use ($permission, $vendor, $package) {
+            $this->components->task($permission, function () use ($permission, $vendor, $package, $php) {
                 match ($permission) {
                     'metadata' => $this->callSilently("catalyst:$permission", compact('vendor', 'package')),
                     'architecture-src' => $this->callSilently("catalyst:$permission", compact('vendor', 'package')),
                     'phpcs' => $this->callSilently("catalyst:$permission", compact('vendor', 'package')),
+                    'github' => $this->callSilently("catalyst:$permission", compact('php')),
                     'act' => $this->callSilently("catalyst:$permission", compact('vendor', 'package')),
                     default => $this->callSilently("catalyst:$permission"),
                 };
