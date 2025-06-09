@@ -8,37 +8,45 @@ use Composer\Factory;
 use Composer\Json\JsonFile;
 use Illuminate\Console\Command;
 use Seld\JsonLint\ParsingException;
+use Ysato\Catalyst\Console\Concerns\PhpVersionAskable;
 use Ysato\Catalyst\Generator;
 
-class PhpMdSetupCommand extends Command
+class ComposerSetupCommand extends Command
 {
+    use PhpVersionAskable;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'catalyst:phpmd';
+    protected $signature = 'catalyst:composer
+                            {php? : Specify the PHP version for the project (e.g., 8.2).}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Initializes PHP Mess Detector by setting up configuration files and recommended rule sets for the project.';
+    protected $description = 'Generates the Dockerfile and justfile for the Composer project.';
 
     /**
      * Execute the console command.
      */
     public function handle(Generator $generator)
     {
+        $php = $this->getPhpVersionOrAsk();
+
         $this->components->info('Setting up...');
 
-        $this->components->task('phpmd', function () use ($generator) {
+        $this->components->task('composer', function () use ($php, $generator) {
             $json = new JsonFile(Factory::getComposerFile());
             $definition = $this->getNewDefinition($json);
             $json->write($definition);
 
-            $generator->generate($this->laravel->basePath());
+            $generator
+                ->replacePlaceHolder('__Php__', $php)
+                ->generate($this->laravel->basePath());
         });
 
         return 0;
@@ -56,20 +64,18 @@ class PhpMdSetupCommand extends Command
             $definition['scripts'] = [];
         }
 
-        if (! array_key_exists('qa', $definition['scripts'])) {
-            $definition['scripts']['qa'] = [];
+        if (! array_key_exists('test', $definition['scripts'])) {
+            $definition['scripts']['test'] = [
+                "@php artisan config:clear --ansi",
+                "@php artisan test",
+            ];
         }
 
-        $washed = preg_grep('/^@?phpmd/', $definition['scripts']['qa'], PREG_GREP_INVERT);
-        $washed[] = 'phpmd src text ./phpmd.xml';
-        $definition['scripts']['qa'] = $washed;
-
-        if (! array_key_exists('tests', $definition['scripts'])) {
-            $definition['scripts']['tests'] = [];
-        }
-
-        if (! in_array('@qa', $definition['scripts']['tests'], true)) {
-            $definition['scripts']['tests'][] = '@qa';
+        if (! array_key_exists('coverage', $definition['scripts'])) {
+            $definition['scripts']['coverage'] = [
+                "@php artisan config:clear --ansi",
+                "@php -dextension=pcov.so -d pcov.enabled=1 artisan test --coverage",
+            ];
         }
 
         return $definition;
