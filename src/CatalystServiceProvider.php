@@ -9,7 +9,6 @@ use Illuminate\Support\ServiceProvider;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use Ysato\Catalyst\Console\ComposerSetupCommand;
 use Ysato\Catalyst\Console\ConfigureStaticAnalysis;
 use Ysato\Catalyst\Console\NewProjectScaffoldingCommand;
 use Ysato\Catalyst\Console\ScaffoldCoreStructure;
@@ -23,19 +22,6 @@ class CatalystServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->when(ComposerSetupCommand::class)
-            ->needs(Generator::class)
-            ->give(function (Application $app) {
-                $fs = $app->make(Filesystem::class);
-                $finder = $app->make(Finder::class);
-                $temp = (new TemporaryDirectory())
-                    ->deleteWhenDestroyed()
-                    ->create();
-                $tempPath = $temp->path();
-
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/composer', $tempPath);
-            });
-
         $this->app->when(ScaffoldCoreStructure\InitializeDirectoryArchitectureCommand::class)
             ->needs(Generator::class)
             ->give(function (Application $app) {
@@ -206,8 +192,6 @@ class CatalystServiceProvider extends ServiceProvider
                 SetupCiCdAndRepositoryRules\SetupRepositoryRulesetsCommand::class,
                 SetupCiCdAndRepositoryRules\ConfigureLocalActionRunnerCommand::class,
                 SetupLocalDevelopmentEnvironment\InitializeIdeSettingsCommand::class,
-
-                ComposerSetupCommand::class,
             ]);
         }
     }
