@@ -47,6 +47,7 @@ class NewProjectScaffoldingCommand extends Command
             'catalyst:configure-static-analysis:setup-php-mess-detector',
             'catalyst:configure-static-analysis:setup-openapi-linter',
             'catalyst:setup-ci-cd-and-repository-rules:generate-github-actions-workflows',
+            'catalyst:setup-ci-cd-and-repository-rules:setup-repository-rulesets',
         ];
 
         foreach ($workflow as $command) {
@@ -101,6 +102,7 @@ class NewProjectScaffoldingCommand extends Command
 
         match ($step) {
             'generate-github-actions-workflows' => $this->call($command, compact('php')),
+            'setup-repository-rulesets' => $this->call($command, compact('php')),
         };
     }
 }

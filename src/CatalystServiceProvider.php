@@ -173,6 +173,25 @@ class CatalystServiceProvider extends ServiceProvider
                     $tempPath
                 );
             });
+
+        $this->app->when(SetupCiCdAndRepositoryRules\SetupRepositoryRulesetsCommand::class)
+            ->needs(Generator::class)
+            ->give(function (Application $app) {
+                $fs = $app->make(Filesystem::class);
+                $finder = $app->make(Finder::class);
+                $temp = (new TemporaryDirectory())
+                    ->deleteWhenDestroyed()
+                    ->create();
+                $tempPath = $temp->path();
+
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/setup-ci-cd-and-repository-rules/setup-repository-rulesets',
+                    $tempPath
+                );
+            });
     }
 
     /**
@@ -189,6 +208,7 @@ class CatalystServiceProvider extends ServiceProvider
                 ConfigureStaticAnalysis\SetupPHPMessDetectorCommand::class,
                 ConfigureStaticAnalysis\SetupOpenAPILinterCommand::class,
                 SetupCiCdAndRepositoryRules\GenerateGitHubActionsWorkflowsCommand::class,
+                SetupCiCdAndRepositoryRules\SetupRepositoryRulesetsCommand::class,
 
                 CatalystSetupCommand::class,
                 MetadataSetupCommand::class,
