@@ -83,6 +83,10 @@ class GenerateComposerMetadataCommand extends Command
                 ],
                 'coverage' => [
                     "@php artisan config:clear --ansi",
+                    "@php -d zend_extension=xdebug.so -d xdebug.mode=coverage artisan test --coverage",
+                ],
+                'pcov' => [
+                    "@php artisan config:clear --ansi",
                     "@php -d extension=pcov.so -d pcov.enabled=1 artisan test --coverage",
                 ],
                 'cs' => ['phpcs'],

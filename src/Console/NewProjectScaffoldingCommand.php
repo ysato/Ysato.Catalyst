@@ -52,6 +52,7 @@ class NewProjectScaffoldingCommand extends Command
             'catalyst:setup-ci-cd-and-repository-rules:setup-repository-rulesets',
             'catalyst:setup-ci-cd-and-repository-rules:configure-local-action-runner',
             'catalyst:setup-local-development-environment:initialize-ide-settings',
+            'catalyst:generate-developer-shortcuts:generate-justfile',
         ];
 
         foreach ($workflow as $command) {
@@ -60,6 +61,7 @@ class NewProjectScaffoldingCommand extends Command
                 'configure-static-analysis' => $this->runConfigureStaticAnalysis($command, $vendor, $package),
                 'setup-ci-cd-and-repository-rules' => $this->runSetupCiCdAndRepositoryRules($command, $vendor, $package, $php),
                 'setup-local-development-environment' => $this->runSetupLocalDevelopmentEnvironment($command, $php),
+                'generate-developer-shortcuts' => $this->runGenerateDeveloperShortcuts($command, $php),
             };
         }
 
@@ -106,6 +108,15 @@ class NewProjectScaffoldingCommand extends Command
 
         match ($step) {
             'initialize-ide-settings' => $this->call($command, compact('php')),
+        };
+    }
+
+    private function runGenerateDeveloperShortcuts(string $command, string $php): void
+    {
+        $step = Str::afterLast($command, ':');
+
+        match ($step) {
+            'generate-justfile' => $this->call($command, compact('php')),
         };
     }
 }

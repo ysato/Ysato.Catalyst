@@ -10,6 +10,7 @@ use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Ysato\Catalyst\Console\ConfigureStaticAnalysis;
+use Ysato\Catalyst\Console\GenerateDeveloperShortcuts;
 use Ysato\Catalyst\Console\NewProjectScaffoldingCommand;
 use Ysato\Catalyst\Console\ScaffoldCoreStructure;
 use Ysato\Catalyst\Console\SetupCiCdAndRepositoryRules;
@@ -211,6 +212,25 @@ class CatalystServiceProvider extends ServiceProvider
                     $tempPath
                 );
             });
+
+        $this->app->when(GenerateDeveloperShortcuts\GenerateJustfileCommand::class)
+            ->needs(Generator::class)
+            ->give(function (Application $app) {
+                $fs = $app->make(Filesystem::class);
+                $finder = $app->make(Finder::class);
+                $temp = (new TemporaryDirectory())
+                    ->deleteWhenDestroyed()
+                    ->create();
+                $tempPath = $temp->path();
+
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/generate-developer-shortcuts/generate-justfile',
+                    $tempPath
+                );
+            });
     }
 
     /**
@@ -231,6 +251,7 @@ class CatalystServiceProvider extends ServiceProvider
                 SetupCiCdAndRepositoryRules\SetupRepositoryRulesetsCommand::class,
                 SetupCiCdAndRepositoryRules\ConfigureLocalActionRunnerCommand::class,
                 SetupLocalDevelopmentEnvironment\InitializeIdeSettingsCommand::class,
+                GenerateDeveloperShortcuts\GenerateJustfileCommand::class,
             ]);
         }
     }
