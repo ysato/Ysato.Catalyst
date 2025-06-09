@@ -78,6 +78,7 @@ class NewProjectScaffoldingCommand extends Command
 
         match ($step) {
             'generate-composer-metadata' => $this->call($command, compact('vendor', 'package')),
+            'initialize-directory-architecture' => $this->call($command, compact('vendor', 'package')),
         };
     }
 
