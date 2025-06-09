@@ -42,7 +42,7 @@ class NewProjectScaffoldingCommand extends Command
         $php = $this->getPhpVersion() ?? $this->ask('What PHP version does this package require?', '8.2');
 
         if (in_array($php, ['8.2', '8.3', '8.4'], true)) {
-            throw new InvalidArgumentException('Invalid PHP version specified. Please use 8.2, 8.3, or 8.4.');
+            throw new InvalidArgumentException("Invalid PHP version specified. Please use 8.2, 8.3, or 8.4.: [$php]");
         }
 
         $workflow = [
