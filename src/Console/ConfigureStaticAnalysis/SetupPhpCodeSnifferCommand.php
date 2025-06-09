@@ -13,7 +13,7 @@ use Ysato\Catalyst\Console\Concerns\VendorPackageAskable;
 use Ysato\Catalyst\Console\Concerns\Washable;
 use Ysato\Catalyst\Generator;
 
-class SetupPHPCodeSnifferCommand extends Command
+class SetupPhpCodeSnifferCommand extends Command
 {
     use VendorPackageAskable;
     use Washable;

@@ -41,7 +41,7 @@ class CatalystServiceProvider extends ServiceProvider
                 );
             });
 
-        $this->app->when(ConfigureStaticAnalysis\SetupPHPCodeSnifferCommand::class)
+        $this->app->when(ConfigureStaticAnalysis\SetupPhpCodeSnifferCommand::class)
             ->needs(Generator::class)
             ->give(function (Application $app) {
                 $fs = $app->make(Filesystem::class);
@@ -60,7 +60,7 @@ class CatalystServiceProvider extends ServiceProvider
                 );
             });
 
-        $this->app->when(ConfigureStaticAnalysis\SetupPHPMessDetectorCommand::class)
+        $this->app->when(ConfigureStaticAnalysis\SetupPhpMessDetectorCommand::class)
             ->needs(Generator::class)
             ->give(function (Application $app) {
                 $fs = $app->make(Filesystem::class);
@@ -79,7 +79,7 @@ class CatalystServiceProvider extends ServiceProvider
                 );
             });
 
-        $this->app->when(ConfigureStaticAnalysis\SetupOpenAPILinterCommand::class)
+        $this->app->when(ConfigureStaticAnalysis\SetupOpenApiLinterCommand::class)
             ->needs(Generator::class)
             ->give(function (Application $app) {
                 $fs = $app->make(Filesystem::class);
@@ -185,9 +185,9 @@ class CatalystServiceProvider extends ServiceProvider
                 NewProjectScaffoldingCommand::class,
                 ScaffoldCoreStructure\GenerateComposerMetadataCommand::class,
                 ScaffoldCoreStructure\InitializeDirectoryArchitectureCommand::class,
-                ConfigureStaticAnalysis\SetupPHPCodeSnifferCommand::class,
-                ConfigureStaticAnalysis\SetupPHPMessDetectorCommand::class,
-                ConfigureStaticAnalysis\SetupOpenAPILinterCommand::class,
+                ConfigureStaticAnalysis\SetupPhpCodeSnifferCommand::class,
+                ConfigureStaticAnalysis\SetupPhpMessDetectorCommand::class,
+                ConfigureStaticAnalysis\SetupOpenApiLinterCommand::class,
                 SetupCiCdAndRepositoryRules\GenerateGitHubActionsWorkflowsCommand::class,
                 SetupCiCdAndRepositoryRules\SetupRepositoryRulesetsCommand::class,
                 SetupCiCdAndRepositoryRules\ConfigureLocalActionRunnerCommand::class,

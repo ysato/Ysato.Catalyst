@@ -11,7 +11,7 @@ use Seld\JsonLint\ParsingException;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
 use Ysato\Catalyst\Generator;
 
-class SetupPHPMessDetectorCommand extends Command
+class SetupPhpMessDetectorCommand extends Command
 {
     use TaskRenderable;
 

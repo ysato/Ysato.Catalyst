@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
 use Ysato\Catalyst\Generator;
 
-class SetupOpenAPILinterCommand extends Command
+class SetupOpenApiLinterCommand extends Command
 {
     use TaskRenderable;
 
