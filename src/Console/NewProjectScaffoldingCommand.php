@@ -43,6 +43,7 @@ class NewProjectScaffoldingCommand extends Command
         $workflow = [
             'catalyst:scaffold-core-structure:generate-composer-metadata',
             'catalyst:scaffold-core-structure:initialize-directory-architecture',
+            'catalyst:scaffold-core-structure:define-containerized-environment',
             'catalyst:configure-static-analysis:setup-php-code-sniffer',
             'catalyst:configure-static-analysis:setup-php-mess-detector',
             'catalyst:configure-static-analysis:setup-openapi-linter',
@@ -54,7 +55,7 @@ class NewProjectScaffoldingCommand extends Command
 
         foreach ($workflow as $command) {
             match (Str::between($command, ':', ':')) {
-                'scaffold-core-structure' => $this->runScaffoldCoreStructure($command, $vendor, $package),
+                'scaffold-core-structure' => $this->runScaffoldCoreStructure($command, $vendor, $package, $php),
                 'configure-static-analysis' => $this->runConfigureStaticAnalysis($command, $vendor, $package),
                 'setup-ci-cd-and-repository-rules' => $this->runSetupCiCdAndRepositoryRules($command, $vendor, $package, $php),
                 'setup-local-development-environment' => $this->runSetupLocalDevelopmentEnvironment($command, $php),
@@ -64,13 +65,14 @@ class NewProjectScaffoldingCommand extends Command
         return 0;
     }
 
-    private function runScaffoldCoreStructure(string $command, string $vendor, string $package): void
+    private function runScaffoldCoreStructure(string $command, string $vendor, string $package, string $php): void
     {
         $step = Str::afterLast($command, ':');
 
         match ($step) {
             'generate-composer-metadata' => $this->call($command, compact('vendor', 'package')),
             'initialize-directory-architecture' => $this->call($command, compact('vendor', 'package')),
+            'define-containerized-environment' => $this->call($command, compact('php')),
         };
     }
 

@@ -41,6 +41,25 @@ class CatalystServiceProvider extends ServiceProvider
                 );
             });
 
+        $this->app->when(ScaffoldCoreStructure\DefineContainerizedEnvironmentCommand::class)
+            ->needs(Generator::class)
+            ->give(function (Application $app) {
+                $fs = $app->make(Filesystem::class);
+                $finder = $app->make(Finder::class);
+                $temp = (new TemporaryDirectory())
+                    ->deleteWhenDestroyed()
+                    ->create();
+                $tempPath = $temp->path();
+
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/scaffold-core-structure/define-containerized-environment',
+                    $tempPath
+                );
+            });
+
         $this->app->when(ConfigureStaticAnalysis\SetupPhpCodeSnifferCommand::class)
             ->needs(Generator::class)
             ->give(function (Application $app) {
