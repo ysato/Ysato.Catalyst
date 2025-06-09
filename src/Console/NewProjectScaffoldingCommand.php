@@ -43,7 +43,7 @@ class NewProjectScaffoldingCommand extends Command
         $workflow = [
             'catalyst:scaffold-core-structure:generate-gitignore',
             'catalyst:scaffold-core-structure:generate-composer-metadata',
-            'catalyst:scaffold-core-structure:initialize-directory-architecture',
+            'catalyst:scaffold-core-structure:scaffold-architecture-layers',
             'catalyst:scaffold-core-structure:define-containerized-environment',
             'catalyst:configure-static-analysis:setup-php-code-sniffer',
             'catalyst:configure-static-analysis:setup-php-mess-detector',
@@ -75,7 +75,7 @@ class NewProjectScaffoldingCommand extends Command
         match ($step) {
             'generate-gitignore' => $this->call($command),
             'generate-composer-metadata' => $this->call($command, compact('vendor', 'package', 'php')),
-            'initialize-directory-architecture' => $this->call($command, compact('vendor', 'package')),
+            'scaffold-architecture-layers' => $this->call($command, compact('vendor', 'package')),
             'define-containerized-environment' => $this->call($command, compact('php')),
         };
     }

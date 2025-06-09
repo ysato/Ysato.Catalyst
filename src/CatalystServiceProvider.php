@@ -42,7 +42,7 @@ class CatalystServiceProvider extends ServiceProvider
                 );
             });
 
-        $this->app->when(ScaffoldCoreStructure\InitializeDirectoryArchitectureCommand::class)
+        $this->app->when(ScaffoldCoreStructure\ScaffoldArchitecturalLayersCommand::class)
             ->needs(Generator::class)
             ->give(function (Application $app) {
                 $fs = $app->make(Filesystem::class);
@@ -56,7 +56,7 @@ class CatalystServiceProvider extends ServiceProvider
                     $fs,
                     $finder,
                     $temp,
-                    __DIR__ . '/stubs/scaffold-core-structure/initialize-directory-architecture',
+                    __DIR__ . '/stubs/scaffold-core-structure/scaffold-architecture-layers',
                     $tempPath
                 );
             });
@@ -243,7 +243,7 @@ class CatalystServiceProvider extends ServiceProvider
                 NewProjectScaffoldingCommand::class,
                 ScaffoldCoreStructure\GenerateGitignoreCommand::class,
                 ScaffoldCoreStructure\GenerateComposerMetadataCommand::class,
-                ScaffoldCoreStructure\InitializeDirectoryArchitectureCommand::class,
+                ScaffoldCoreStructure\ScaffoldArchitecturalLayersCommand::class,
                 ConfigureStaticAnalysis\SetupPhpCodeSnifferCommand::class,
                 ConfigureStaticAnalysis\SetupPhpMessDetectorCommand::class,
                 ConfigureStaticAnalysis\SetupOpenApiLinterCommand::class,

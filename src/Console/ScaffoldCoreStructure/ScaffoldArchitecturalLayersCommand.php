@@ -9,7 +9,7 @@ use Ysato\Catalyst\Console\Concerns\TaskRenderable;
 use Ysato\Catalyst\Console\Concerns\VendorPackageAskable;
 use Ysato\Catalyst\Generator;
 
-class InitializeDirectoryArchitectureCommand extends Command
+class ScaffoldArchitecturalLayersCommand extends Command
 {
     use VendorPackageAskable;
     use TaskRenderable;
@@ -19,7 +19,7 @@ class InitializeDirectoryArchitectureCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'catalyst:scaffold-core-structure:initialize-directory-architecture
+    protected $signature = 'catalyst:scaffold-core-structure:scaffold-architecture-layers
                             {vendor : The vendor name (e.g.Acme) in camel case.}
                             {package : The package name (e.g.Blog) in camel case.}';
 
@@ -28,7 +28,7 @@ class InitializeDirectoryArchitectureCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Initialize Directory Architecture';
+    protected $description = 'Scaffold Architectural Layers';
 
     protected $hidden = true;
 
