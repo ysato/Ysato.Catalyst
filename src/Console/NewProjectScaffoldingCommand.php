@@ -46,6 +46,7 @@ class NewProjectScaffoldingCommand extends Command
             'catalyst:scaffold-core-structure:generate-composer-metadata',
             'catalyst:scaffold-core-structure:initialize-directory-architecture',
             'catalyst:configure-static-analysis:setup-php-code-sniffer',
+            'catalyst:configure-static-analysis:setup-php-mess-detector',
         ];
 
         foreach ($workflow as $command) {
@@ -88,6 +89,7 @@ class NewProjectScaffoldingCommand extends Command
 
         match ($step) {
             'setup-php-code-sniffer' => $this->call($command, compact('vendor', 'package')),
+            'setup-php-mess-detector' => $this->call($command),
         };
     }
 }

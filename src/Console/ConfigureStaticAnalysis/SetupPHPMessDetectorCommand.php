@@ -2,38 +2,39 @@
 
 declare(strict_types=1);
 
-namespace Ysato\Catalyst\Console;
+namespace Ysato\Catalyst\Console\ConfigureStaticAnalysis;
 
 use Composer\Factory;
 use Composer\Json\JsonFile;
 use Illuminate\Console\Command;
 use Seld\JsonLint\ParsingException;
+use Ysato\Catalyst\Console\Concerns\TaskRenderable;
 use Ysato\Catalyst\Generator;
 
-class PhpMdSetupCommand extends Command
+class SetupPHPMessDetectorCommand extends Command
 {
+    use TaskRenderable;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'catalyst:phpmd';
+    protected $signature = 'catalyst:configure-static-analysis:setup-php-mess-detector';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Initializes PHP Mess Detector by setting up configuration files and recommended rule sets for the project.';
+    protected $description = 'Setup PHPMD';
 
     /**
      * Execute the console command.
      */
     public function handle(Generator $generator)
     {
-        $this->components->info('Setting up...');
-
-        $this->components->task('phpmd', function () use ($generator) {
+        $this->task(function () use ($generator) {
             $json = new JsonFile(Factory::getComposerFile());
             $definition = $this->getNewDefinition($json);
             $json->write($definition);
