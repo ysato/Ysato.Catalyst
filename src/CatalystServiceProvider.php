@@ -22,6 +22,25 @@ class CatalystServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->when(ScaffoldCoreStructure\GenerateGitignoreCommand::class)
+            ->needs(Generator::class)
+            ->give(function (Application $app) {
+                $fs = $app->make(Filesystem::class);
+                $finder = $app->make(Finder::class);
+                $temp = (new TemporaryDirectory())
+                    ->deleteWhenDestroyed()
+                    ->create();
+                $tempPath = $temp->path();
+
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/scaffold-core-structure/generate-gitignore',
+                    $tempPath
+                );
+            });
+
         $this->app->when(ScaffoldCoreStructure\InitializeDirectoryArchitectureCommand::class)
             ->needs(Generator::class)
             ->give(function (Application $app) {
@@ -202,6 +221,7 @@ class CatalystServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 NewProjectScaffoldingCommand::class,
+                ScaffoldCoreStructure\GenerateGitignoreCommand::class,
                 ScaffoldCoreStructure\GenerateComposerMetadataCommand::class,
                 ScaffoldCoreStructure\InitializeDirectoryArchitectureCommand::class,
                 ConfigureStaticAnalysis\SetupPhpCodeSnifferCommand::class,

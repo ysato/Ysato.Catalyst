@@ -8,13 +8,11 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
 use Ysato\Catalyst\Console\Concerns\VendorPackageAskable;
-use Ysato\Catalyst\Console\Concerns\Washable;
 use Ysato\Catalyst\Generator;
 
 class ConfigureLocalActionRunnerCommand extends Command
 {
     use VendorPackageAskable;
-    use Washable;
     use TaskRenderable;
 
     /**
@@ -51,21 +49,11 @@ class ConfigureLocalActionRunnerCommand extends Command
             $search = ['__Vendor__', '__Package__'];
             $replace = [Str::snake($vendor), Str::snake($package)];
 
-            $ignore = $generator->fs->readFile($this->laravel->basePath('.gitignore'));
-            $washed = $this->wash($ignore);
-
             $generator
                 ->replacePlaceHolder($search, $replace)
-                ->dumpFile('.gitignore', $washed)
-                ->appendToFile('.gitignore', "/.actrc\n")
                 ->generate($this->laravel->basePath());
         });
 
         return 0;
-    }
-
-    protected function wash(string $contents): string
-    {
-        return preg_replace('#^/?.actrc$\R?#m', '', $contents);
     }
 }

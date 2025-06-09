@@ -41,6 +41,7 @@ class NewProjectScaffoldingCommand extends Command
         $php = $this->getPhpVersion() ?? $this->ask('What PHP version does this package require?', '8.2');
 
         $workflow = [
+            'catalyst:scaffold-core-structure:generate-gitignore',
             'catalyst:scaffold-core-structure:generate-composer-metadata',
             'catalyst:scaffold-core-structure:initialize-directory-architecture',
             'catalyst:scaffold-core-structure:define-containerized-environment',
@@ -70,6 +71,7 @@ class NewProjectScaffoldingCommand extends Command
         $step = Str::afterLast($command, ':');
 
         match ($step) {
+            'generate-gitignore' => $this->call($command),
             'generate-composer-metadata' => $this->call($command, compact('vendor', 'package', 'php')),
             'initialize-directory-architecture' => $this->call($command, compact('vendor', 'package')),
             'define-containerized-environment' => $this->call($command, compact('php')),
