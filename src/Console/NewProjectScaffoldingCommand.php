@@ -70,7 +70,7 @@ class NewProjectScaffoldingCommand extends Command
         $step = Str::afterLast($command, ':');
 
         match ($step) {
-            'generate-composer-metadata' => $this->call($command, compact('vendor', 'package')),
+            'generate-composer-metadata' => $this->call($command, compact('vendor', 'package', 'php')),
             'initialize-directory-architecture' => $this->call($command, compact('vendor', 'package')),
             'define-containerized-environment' => $this->call($command, compact('php')),
         };

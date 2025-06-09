@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace Ysato\Catalyst\Console\ScaffoldCoreStructure;
 
-use Composer\Factory;
-use Composer\Json\JsonFile;
 use Illuminate\Console\Command;
-use Seld\JsonLint\ParsingException;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
 use Ysato\Catalyst\Console\Concerns\VendorPackageAskable;
 use Ysato\Catalyst\Generator;
@@ -40,15 +37,11 @@ class InitializeDirectoryArchitectureCommand extends Command
      */
     public function handle(Generator $generator): int
     {
-        $vendor = $this->argument('vendor');
-        $package = $this->argument('package');
+        $vendor = $this->getVendorName();
+        $package = $this->getPackageName();
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->task(function () use ($vendor, $package, $generator) {
-            $json = new JsonFile(Factory::getComposerFile());
-            $definition = $this->getNewDefinition($vendor, $package, $json);
-            $json->write($definition);
-
             $search = ['__Vendor__', '__Package__'];
             $replace = [$vendor, $package];
 
@@ -58,18 +51,5 @@ class InitializeDirectoryArchitectureCommand extends Command
         });
 
         return 0;
-    }
-
-    /**
-     * @return array<string, mixed>
-     * @throws ParsingException
-     */
-    private function getNewDefinition(string $vendor, string $package, JsonFile $json): array
-    {
-        $definition = $json->read();
-
-        $definition['autoload']['psr-4']["$vendor\\$package\\"] = 'src/';
-
-        return $definition;
     }
 }
