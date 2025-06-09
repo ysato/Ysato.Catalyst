@@ -6,22 +6,22 @@ namespace Ysato\Catalyst\Console\Concerns;
 
 trait VendorPackageAskableTrait
 {
-    public function getVendorName()
+    private function getVendorName()
     {
         return $this->argument('vendor');
     }
 
-    public function getPackageName(): ?string
+    private function getPackageName(): ?string
     {
         return $this->argument('package');
     }
 
-    public function getVendorNameOrAsk()
+    private function getVendorNameOrAsk()
     {
         return $this->getVendorName() ?? $this->ask('What is the vendor name ?', 'Acme');
     }
 
-    public function getPackageNameOrAsk()
+    private function getPackageNameOrAsk()
     {
         return $this->getPackageName() ?? $this->ask('What is the package name ?', 'Blog');
     }

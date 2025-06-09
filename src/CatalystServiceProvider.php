@@ -13,11 +13,11 @@ use Ysato\Catalyst\Console\ActSetupCommand;
 use Ysato\Catalyst\Console\ArchitectureSrcSetupCommand;
 use Ysato\Catalyst\Console\CatalystSetupCommand;
 use Ysato\Catalyst\Console\ComposerSetupCommand;
+use Ysato\Catalyst\Console\ConfigureStaticAnalysis;
 use Ysato\Catalyst\Console\GitHubSetupCommand;
 use Ysato\Catalyst\Console\IdeSetupCommand;
 use Ysato\Catalyst\Console\MetadataSetupCommand;
 use Ysato\Catalyst\Console\NewProjectScaffoldingCommand;
-use Ysato\Catalyst\Console\PhpCsSetupCommand;
 use Ysato\Catalyst\Console\PhpMdSetupCommand;
 use Ysato\Catalyst\Console\ScaffoldCoreStructure;
 use Ysato\Catalyst\Console\SpectralSetupCommand;
@@ -40,19 +40,6 @@ class CatalystServiceProvider extends ServiceProvider
                 $tempPath = $temp->path();
 
                 return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/architecture-src', $tempPath);
-            });
-
-        $this->app->when(PhpCsSetupCommand::class)
-            ->needs(Generator::class)
-            ->give(function (Application $app) {
-                $fs = $app->make(Filesystem::class);
-                $finder = $app->make(Finder::class);
-                $temp = (new TemporaryDirectory())
-                    ->deleteWhenDestroyed()
-                    ->create();
-                $tempPath = $temp->path();
-
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/phpcs', $tempPath);
             });
 
         $this->app->when(PhpMdSetupCommand::class)
@@ -151,6 +138,25 @@ class CatalystServiceProvider extends ServiceProvider
                     $tempPath
                 );
             });
+
+        $this->app->when(ConfigureStaticAnalysis\SetupPHPCodeSnifferCommand::class)
+            ->needs(Generator::class)
+            ->give(function (Application $app) {
+                $fs = $app->make(Filesystem::class);
+                $finder = $app->make(Finder::class);
+                $temp = (new TemporaryDirectory())
+                    ->deleteWhenDestroyed()
+                    ->create();
+                $tempPath = $temp->path();
+
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/configure-static-analysis/setup-php-code-sniffer',
+                    $tempPath
+                );
+            });
     }
 
     /**
@@ -163,11 +169,11 @@ class CatalystServiceProvider extends ServiceProvider
                 NewProjectScaffoldingCommand::class,
                 ScaffoldCoreStructure\GenerateComposerMetadataCommand::class,
                 ScaffoldCoreStructure\InitializeDirectoryArchitectureCommand::class,
+                ConfigureStaticAnalysis\SetupPHPCodeSnifferCommand::class,
 
                 CatalystSetupCommand::class,
                 MetadataSetupCommand::class,
                 ArchitectureSrcSetupCommand::class,
-                PhpCsSetupCommand::class,
                 PhpMdSetupCommand::class,
                 SpectralSetupCommand::class,
                 GitHubSetupCommand::class,

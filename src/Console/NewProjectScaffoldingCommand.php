@@ -36,20 +36,22 @@ class NewProjectScaffoldingCommand extends Command
      */
     public function handle()
     {
-        $vendor = $this->getVendorNameOrAsk();
-        $package = $this->getPackageNameOrAsk();
-        $php = $this->getPhpVersionOrAsk();
+        $vendor = $this->getVendorName() ?? $this->ask('What is the vendor name ?', 'Acme');
+        $package = $this->getPackageName() ?? $this->ask('What is the package name ?', 'Blog');
+        $php = $this->getPhpVersion() ?? $this->ask('What PHP version does this package require?', '8.2');
 
         unset($php);
 
         $workflow = [
             'catalyst:scaffold-core-structure:generate-composer-metadata',
             'catalyst:scaffold-core-structure:initialize-directory-architecture',
+            'catalyst:configure-static-analysis:setup-php-code-sniffer',
         ];
 
         foreach ($workflow as $command) {
             match (Str::between($command, ':', ':')) {
                 'scaffold-core-structure' => $this->runScaffoldCoreStructure($command, $vendor, $package),
+                'configure-static-analysis' => $this->runConfigureStaticAnalysis($command, $vendor, $package),
             };
         }
 
@@ -76,6 +78,15 @@ class NewProjectScaffoldingCommand extends Command
 
         match ($step) {
             'generate-composer-metadata' => $this->call($command, compact('vendor', 'package')),
+        };
+    }
+
+    private function runConfigureStaticAnalysis(string $command, string $vendor, string $package): void
+    {
+        $step = Str::afterLast($command, ':');
+
+        match ($step) {
+            'setup-php-code-sniffer' => $this->call($command, compact('vendor', 'package')),
         };
     }
 }
