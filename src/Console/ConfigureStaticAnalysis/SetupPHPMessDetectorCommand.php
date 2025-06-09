@@ -29,11 +29,14 @@ class SetupPHPMessDetectorCommand extends Command
      */
     protected $description = 'Setup PHPMD';
 
+    protected $hidden = true;
+
     /**
      * Execute the console command.
      */
     public function handle(Generator $generator)
     {
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->task(function () use ($generator) {
             $json = new JsonFile(Factory::getComposerFile());
             $definition = $this->getNewDefinition($json);

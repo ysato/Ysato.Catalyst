@@ -40,6 +40,7 @@ class GenerateComposerMetadataCommand extends Command
         $vendor = $this->argument('vendor');
         $package = $this->argument('package');
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->task(function () use ($vendor, $package) {
             $json = new JsonFile(Factory::getComposerFile());
             $definition = $this->getNewDefinition(Str::kebab($vendor), Str::kebab($package), $json);

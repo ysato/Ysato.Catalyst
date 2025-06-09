@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Ysato\Catalyst\Console\ConfigureStaticAnalysis;
 
 use Illuminate\Console\Command;
+use Ysato\Catalyst\Console\Concerns\TaskRenderable;
 use Ysato\Catalyst\Generator;
 
 class SetupOpenAPILinterCommand extends Command
 {
+    use TaskRenderable;
+
     /**
      * The name and signature of the console command.
      *
@@ -23,12 +26,15 @@ class SetupOpenAPILinterCommand extends Command
      */
     protected $description = 'Setup Spectral';
 
+    protected $hidden = true;
+
     /**
      * Execute the console command.
      */
     public function handle(Generator $generator)
     {
-        $this->task('spectral', function () use ($generator) {
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $this->task(function () use ($generator) {
             $generator->generate($this->laravel->basePath());
         });
 

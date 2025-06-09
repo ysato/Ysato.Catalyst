@@ -45,6 +45,7 @@ class SetupPHPCodeSnifferCommand extends Command
         $vendor = $this->getVendorName();
         $package = $this->getPackageName();
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->task(function () use ($vendor, $package, $generator) {
             $json = new JsonFile(Factory::getComposerFile());
             $definition = $this->getNewDefinition($json);

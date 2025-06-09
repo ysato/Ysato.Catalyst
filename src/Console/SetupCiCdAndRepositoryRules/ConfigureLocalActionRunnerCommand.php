@@ -46,6 +46,7 @@ class ConfigureLocalActionRunnerCommand extends Command
         $vendor = $this->getVendorName();
         $package = $this->getPackageName();
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->task(function () use ($generator, $vendor, $package) {
             $search = ['__Vendor__', '__Package__'];
             $replace = [Str::snake($vendor), Str::snake($package)];
@@ -53,17 +54,10 @@ class ConfigureLocalActionRunnerCommand extends Command
             $ignore = $generator->fs->readFile($this->laravel->basePath('.gitignore'));
             $washed = $this->wash($ignore);
 
-            $contents = <<< 'EOF'
-.actrc
-/certs/*
-!/certs/.gitkeep
-
-EOF;
-
             $generator
                 ->replacePlaceHolder($search, $replace)
                 ->dumpFile('.gitignore', $washed)
-                ->appendToFile('.gitignore', $contents)
+                ->appendToFile('.gitignore', "/.actrc\n")
                 ->generate($this->laravel->basePath());
         });
 
@@ -72,10 +66,6 @@ EOF;
 
     protected function wash(string $contents): string
     {
-        return preg_replace(
-            ['#^.actrc$\R?#m', '#^!?/certs(/?|/.*)$\R?#m'],
-            ['', ''],
-            $contents
-        );
+        return preg_replace('#^/?.actrc$\R?#m', '', $contents);
     }
 }

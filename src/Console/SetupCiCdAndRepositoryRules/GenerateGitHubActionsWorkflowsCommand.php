@@ -6,11 +6,13 @@ namespace Ysato\Catalyst\Console\SetupCiCdAndRepositoryRules;
 
 use Illuminate\Console\Command;
 use Ysato\Catalyst\Console\Concerns\PhpVersionAskable;
+use Ysato\Catalyst\Console\Concerns\TaskRenderable;
 use Ysato\Catalyst\Generator;
 
 class GenerateGitHubActionsWorkflowsCommand extends Command
 {
     use PhpVersionAskable;
+    use TaskRenderable;
 
     /**
      * The name and signature of the console command.
@@ -27,6 +29,8 @@ class GenerateGitHubActionsWorkflowsCommand extends Command
      */
     protected $description = 'Generate GitHub Workflows';
 
+    protected $hidden = true;
+
     /**
      * Execute the console command.
      */
@@ -34,6 +38,7 @@ class GenerateGitHubActionsWorkflowsCommand extends Command
     {
         $php = $this->getPhpVersion();
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->task(function () use ($php, $generator) {
             $generator
                 ->replacePlaceHolder('__Php__', $php)

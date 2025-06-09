@@ -35,6 +35,7 @@ class InitializeIdeSettingsCommand extends Command
      */
     public function handle(Generator $generator)
     {
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->task(function () use ($generator) {
             $ignore = $generator->fs->readFile($this->laravel->basePath('.gitignore'));
             $washed = $this->wash($ignore);
