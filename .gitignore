@@ -13,4 +13,6 @@ composer.lock
 .actrc
 .phpunit.result.cache
 /build
-/certs
+/certs/*
+!/certs/.gitkeep
+

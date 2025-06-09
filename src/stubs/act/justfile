@@ -1,0 +1,17 @@
+ACT_IMAGE := "act:local"
+
+@help:
+    echo "Usage:"
+    echo "  just build        - Builds the necessary Docker images."
+    echo "  just act          - Runs GitHub Actions locally."
+    echo "  just clean        - Removes the Docker images."
+    echo "  just help         - Displays this help message."
+
+build:
+    docker build -t {{ ACT_IMAGE }} -f docker/act/Dockerfile .
+
+act *options:
+    act {{ options }}
+
+clean:
+    docker rmi {{ ACT_IMAGE }} || true
