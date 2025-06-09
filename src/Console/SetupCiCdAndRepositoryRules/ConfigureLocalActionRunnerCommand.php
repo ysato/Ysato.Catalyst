@@ -7,13 +7,13 @@ namespace Ysato\Catalyst\Console\SetupCiCdAndRepositoryRules;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
-use Ysato\Catalyst\Console\Concerns\VendorPackageAskableTrait;
+use Ysato\Catalyst\Console\Concerns\VendorPackageAskable;
 use Ysato\Catalyst\Console\Concerns\Washable;
 use Ysato\Catalyst\Generator;
 
 class ConfigureLocalActionRunnerCommand extends Command
 {
-    use VendorPackageAskableTrait;
+    use VendorPackageAskable;
     use Washable;
     use TaskRenderable;
 

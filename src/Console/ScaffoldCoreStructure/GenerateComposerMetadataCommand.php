@@ -10,11 +10,11 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Seld\JsonLint\ParsingException;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
-use Ysato\Catalyst\Console\Concerns\VendorPackageAskableTrait;
+use Ysato\Catalyst\Console\Concerns\VendorPackageAskable;
 
 class GenerateComposerMetadataCommand extends Command
 {
-    use VendorPackageAskableTrait;
+    use VendorPackageAskable;
     use TaskRenderable;
 
     /**

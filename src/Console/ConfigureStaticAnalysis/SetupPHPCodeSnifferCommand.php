@@ -9,13 +9,13 @@ use Composer\Json\JsonFile;
 use Illuminate\Console\Command;
 use Seld\JsonLint\ParsingException;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
-use Ysato\Catalyst\Console\Concerns\VendorPackageAskableTrait;
+use Ysato\Catalyst\Console\Concerns\VendorPackageAskable;
 use Ysato\Catalyst\Console\Concerns\Washable;
 use Ysato\Catalyst\Generator;
 
 class SetupPHPCodeSnifferCommand extends Command
 {
-    use VendorPackageAskableTrait;
+    use VendorPackageAskable;
     use Washable;
     use TaskRenderable;
 

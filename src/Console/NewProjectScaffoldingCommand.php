@@ -7,11 +7,11 @@ namespace Ysato\Catalyst\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Ysato\Catalyst\Console\Concerns\PhpVersionAskable;
-use Ysato\Catalyst\Console\Concerns\VendorPackageAskableTrait;
+use Ysato\Catalyst\Console\Concerns\VendorPackageAskable;
 
 class NewProjectScaffoldingCommand extends Command
 {
-    use VendorPackageAskableTrait;
+    use VendorPackageAskable;
     use PhpVersionAskable;
 
     /**
