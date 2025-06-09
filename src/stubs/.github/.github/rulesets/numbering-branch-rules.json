@@ -1,6 +1,6 @@
 {
   "id": 5825456,
-  "name": "numbering-bransh-rule",
+  "name": "numbering-branch-rules",
   "target": "branch",
   "source_type": "Repository",
   "source": "ysato/Ysato.Catalyst",
