@@ -13,11 +13,11 @@ use Ysato\Catalyst\Console\ArchitectureSrcSetupCommand;
 use Ysato\Catalyst\Console\CatalystSetupCommand;
 use Ysato\Catalyst\Console\ComposerSetupCommand;
 use Ysato\Catalyst\Console\ConfigureStaticAnalysis;
-use Ysato\Catalyst\Console\IdeSetupCommand;
 use Ysato\Catalyst\Console\MetadataSetupCommand;
 use Ysato\Catalyst\Console\NewProjectScaffoldingCommand;
 use Ysato\Catalyst\Console\ScaffoldCoreStructure;
 use Ysato\Catalyst\Console\SetupCiCdAndRepositoryRules;
+use Ysato\Catalyst\Console\SetupLocalDevelopmentEnvironment;
 
 class CatalystServiceProvider extends ServiceProvider
 {
@@ -37,19 +37,6 @@ class CatalystServiceProvider extends ServiceProvider
                 $tempPath = $temp->path();
 
                 return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/architecture-src', $tempPath);
-            });
-
-        $this->app->when(IdeSetupCommand::class)
-            ->needs(Generator::class)
-            ->give(function (Application $app) {
-                $fs = $app->make(Filesystem::class);
-                $finder = $app->make(Finder::class);
-                $temp = (new TemporaryDirectory())
-                    ->deleteWhenDestroyed()
-                    ->create();
-                $tempPath = $temp->path();
-
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/ide', $tempPath);
             });
 
         $this->app->when(ComposerSetupCommand::class)
@@ -197,6 +184,25 @@ class CatalystServiceProvider extends ServiceProvider
                     $tempPath
                 );
             });
+
+        $this->app->when(SetupLocalDevelopmentEnvironment\InitializeIdeSettingsCommand::class)
+            ->needs(Generator::class)
+            ->give(function (Application $app) {
+                $fs = $app->make(Filesystem::class);
+                $finder = $app->make(Finder::class);
+                $temp = (new TemporaryDirectory())
+                    ->deleteWhenDestroyed()
+                    ->create();
+                $tempPath = $temp->path();
+
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/setup-local-development-environment/initialize-ide-setting',
+                    $tempPath
+                );
+            });
     }
 
     /**
@@ -215,11 +221,11 @@ class CatalystServiceProvider extends ServiceProvider
                 SetupCiCdAndRepositoryRules\GenerateGitHubActionsWorkflowsCommand::class,
                 SetupCiCdAndRepositoryRules\SetupRepositoryRulesetsCommand::class,
                 SetupCiCdAndRepositoryRules\ConfigureLocalActionRunnerCommand::class,
+                SetupLocalDevelopmentEnvironment\InitializeIdeSettingsCommand::class,
 
                 CatalystSetupCommand::class,
                 MetadataSetupCommand::class,
                 ArchitectureSrcSetupCommand::class,
-                IdeSetupCommand::class,
                 ComposerSetupCommand::class,
             ]);
         }

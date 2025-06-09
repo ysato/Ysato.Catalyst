@@ -49,6 +49,7 @@ class NewProjectScaffoldingCommand extends Command
             'catalyst:setup-ci-cd-and-repository-rules:generate-github-actions-workflows',
             'catalyst:setup-ci-cd-and-repository-rules:setup-repository-rulesets',
             'catalyst:setup-ci-cd-and-repository-rules:configure-local-action-runner',
+            'catalyst:setup-local-development-environment:initialize-ide-settings',
         ];
 
         foreach ($workflow as $command) {
@@ -56,22 +57,9 @@ class NewProjectScaffoldingCommand extends Command
                 'scaffold-core-structure' => $this->runScaffoldCoreStructure($command, $vendor, $package),
                 'configure-static-analysis' => $this->runConfigureStaticAnalysis($command, $vendor, $package),
                 'setup-ci-cd-and-repository-rules' => $this->runSetupCiCdAndRepositoryRules($command, $vendor, $package, $php),
+                'setup-local-development-environment' => $this->runSetupLocalDevelopmentEnvironment($command, $php),
             };
         }
-
-//        foreach ($permissions as $permission) {
-//            $this->components->task($permission, function () use ($permission, $vendor, $package, $php) {
-//                match ($permission) {
-//                    'metadata' => $this->callSilently("catalyst:$permission", compact('vendor', 'package')),
-//                    'architecture-src' => $this->callSilently("catalyst:$permission", compact('vendor', 'package')),
-//                    'phpcs' => $this->callSilently("catalyst:$permission", compact('vendor', 'package')),
-//                    'github' => $this->callSilently("catalyst:$permission", compact('php')),
-//                    'act' => $this->callSilently("catalyst:$permission", compact('vendor', 'package')),
-//                    'composer' => $this->callSilently("catalyst:$permission", compact('php')),
-//                    default => $this->callSilently("catalyst:$permission"),
-//                };
-//            });
-//        }
 
         return 0;
     }
@@ -105,6 +93,15 @@ class NewProjectScaffoldingCommand extends Command
             'generate-github-actions-workflows' => $this->call($command, compact('php')),
             'setup-repository-rulesets' => $this->call($command, compact('php')),
             'configure-local-action-runner' => $this->call($command, compact('vendor', 'package')),
+        };
+    }
+
+    private function runSetupLocalDevelopmentEnvironment(string $command, string $php): void
+    {
+        $step = Str::afterLast($command, ':');
+
+        match ($step) {
+            'initialize-ide-settings' => $this->call($command, compact('php')),
         };
     }
 }

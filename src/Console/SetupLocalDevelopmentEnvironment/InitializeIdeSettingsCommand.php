@@ -2,38 +2,40 @@
 
 declare(strict_types=1);
 
-namespace Ysato\Catalyst\Console;
+namespace Ysato\Catalyst\Console\SetupLocalDevelopmentEnvironment;
 
 use Illuminate\Console\Command;
+use Ysato\Catalyst\Console\Concerns\TaskRenderable;
 use Ysato\Catalyst\Console\Concerns\Washable;
 use Ysato\Catalyst\Generator;
 
-class IdeSetupCommand extends Command
+class InitializeIdeSettingsCommand extends Command
 {
     use Washable;
+    use TaskRenderable;
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'catalyst:ide';
+    protected $signature = 'catalyst:setup-local-development-environment:initialize-ide-settings';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Initializes recommended IDE and code style settings for the project.';
+    protected $description = 'Initialize IDE Settings';
+
+    protected $hidden = true;
 
     /**
      * Execute the console command.
      */
     public function handle(Generator $generator)
     {
-        $this->components->info('Setting up...');
-
-        $this->components->task('ide', function () use ($generator) {
+        $this->task(function () use ($generator) {
             $ignore = $generator->fs->readFile($this->laravel->basePath('.gitignore'));
             $washed = $this->wash($ignore);
 
