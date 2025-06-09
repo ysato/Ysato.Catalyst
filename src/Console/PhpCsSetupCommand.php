@@ -10,11 +10,13 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Seld\JsonLint\ParsingException;
 use Ysato\Catalyst\Console\Concerns\VendorPackageAskableTrait;
+use Ysato\Catalyst\Console\Concerns\Washable;
 use Ysato\Catalyst\Generator;
 
 class PhpCsSetupCommand extends Command
 {
     use VendorPackageAskableTrait;
+    use Washable;
 
     /**
      * The name and signature of the console command.
@@ -50,13 +52,13 @@ class PhpCsSetupCommand extends Command
             $search = ['__Vendor__', '__Package__'];
             $replace = [$vendor, $package];
 
-            $currentIgnore = $generator->fs->readFile($this->laravel->basePath('.gitignore'));
-            $washedIgnore = str_replace(".php_cs.cache\n", '', $currentIgnore);
+            $ignore = $generator->fs->readFile($this->laravel->basePath('.gitignore'));
+            $washed = $this->wash($ignore);
 
             $generator
                 ->replacePlaceHolder($search, $replace)
-                ->dumpFile('.gitignore', $washedIgnore)
-                ->appendToFile('.gitignore', ".php_cs.cache\n")
+                ->dumpFile('.gitignore', $washed)
+                ->appendToFile('.gitignore', "/.php_cs.cache\n")
                 ->generate($this->laravel->basePath());
         });
 
@@ -85,5 +87,10 @@ class PhpCsSetupCommand extends Command
         }
 
         return $definition;
+    }
+
+    protected function wash(string $contents): string
+    {
+        return preg_replace('#^/?.php_cs.cache$\R?#m', '', $contents);
     }
 }

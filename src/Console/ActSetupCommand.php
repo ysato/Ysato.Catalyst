@@ -50,8 +50,8 @@ class ActSetupCommand extends Command
             $search = ['__Vendor__', '__Package__'];
             $replace = [Str::snake($vendor), Str::snake($package)];
 
-            $current = $generator->fs->readFile($this->laravel->basePath('.gitignore'));
-            $washed = $this->wash($current);
+            $ignore = $generator->fs->readFile($this->laravel->basePath('.gitignore'));
+            $washed = $this->wash($ignore);
 
             $contents = <<< 'EOF'
 .actrc
