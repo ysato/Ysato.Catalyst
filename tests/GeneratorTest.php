@@ -136,7 +136,7 @@ EOT;
             $this->temporaryDirectory->path()
         );
 
-        $SUT->replacePlaceHolder('Ysato', 'Catalyst');
+        $SUT->replacePlaceHolder(['__Vendor__', '__Package__'], ['Ysato', 'Catalyst']);
 
         $this->assertFileEquals(
             __DIR__ . '/artificial/expected/src/Catalyst.php',
@@ -158,7 +158,7 @@ EOT;
             $this->temporaryDirectory->path()
         );
 
-        $SUT->replacePlaceHolder('Ysato', 'Catalyst');
+        $SUT->replacePlaceHolder(['__Vendor__', '__Package__'], ['Ysato', 'Catalyst']);
 
         $this->assertFileEquals(
             __DIR__ . '/artificial/expected/.github/.gitkeep',

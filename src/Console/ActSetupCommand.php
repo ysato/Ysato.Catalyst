@@ -47,6 +47,9 @@ class ActSetupCommand extends Command
         $this->components->info('Setting up...');
 
         $this->components->task('act', function () use ($generator, $vendor, $package) {
+            $search = ['__Vendor__', '__Package__'];
+            $replace = [Str::snake($vendor), Str::snake($package)];
+
             $current = $generator->fs->readFile($this->laravel->basePath('.gitignore'));
             $washed = $this->wash($current);
 
@@ -58,7 +61,7 @@ class ActSetupCommand extends Command
 EOF;
 
             $generator
-                ->replacePlaceHolder(Str::snake($vendor), Str::snake($package))
+                ->replacePlaceHolder($search, $replace)
                 ->dumpFile('.gitignore', $washed)
                 ->appendToFile('.gitignore', $contents)
                 ->generate($this->laravel->basePath());

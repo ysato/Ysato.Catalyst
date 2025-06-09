@@ -46,8 +46,11 @@ class ArchitectureSrcSetupCommand extends Command
             $definition = $this->getNewDefinition($vendor, $package, $json);
             $json->write($definition);
 
+            $search = ['__Vendor__', '__Package__'];
+            $replace = [$vendor, $package];
+
             $generator
-                ->replacePlaceHolder($vendor, $package)
+                ->replacePlaceHolder($search, $replace)
                 ->generate($this->laravel->basePath());
         });
 
