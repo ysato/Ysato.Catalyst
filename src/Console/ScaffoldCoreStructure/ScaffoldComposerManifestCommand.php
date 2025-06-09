@@ -13,7 +13,7 @@ use Ysato\Catalyst\Console\Concerns\PhpVersionAskable;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
 use Ysato\Catalyst\Console\Concerns\VendorPackageAskable;
 
-class GenerateComposerMetadataCommand extends Command
+class ScaffoldComposerManifestCommand extends Command
 {
     use VendorPackageAskable;
     use PhpVersionAskable;
@@ -24,7 +24,7 @@ class GenerateComposerMetadataCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'catalyst:scaffold-core-structure:generate-composer-metadata
+    protected $signature = 'catalyst:scaffold-core-structure:scaffold-composer-manifest
                             {vendor : The vendor name (e.g.Acme) in camel case.}
                             {package : The package name (e.g.Blog) in camel case.}
                             {php : Specify the PHP version for the project (e.g., 8.2).}';
@@ -34,7 +34,7 @@ class GenerateComposerMetadataCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Generate Composer Metadata';
+    protected $description = 'Scaffold Composer Manifest';
 
     protected $hidden = true;
 

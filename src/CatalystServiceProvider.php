@@ -242,7 +242,7 @@ class CatalystServiceProvider extends ServiceProvider
             $this->commands([
                 NewProjectScaffoldingCommand::class,
                 ScaffoldCoreStructure\GenerateGitignoreCommand::class,
-                ScaffoldCoreStructure\GenerateComposerMetadataCommand::class,
+                ScaffoldCoreStructure\ScaffoldComposerManifestCommand::class,
                 ScaffoldCoreStructure\ScaffoldArchitecturalLayersCommand::class,
                 ConfigureStaticAnalysis\SetupPhpCodeSnifferCommand::class,
                 ConfigureStaticAnalysis\SetupPhpMessDetectorCommand::class,
