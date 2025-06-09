@@ -48,6 +48,7 @@ class CatalystSetupCommand extends Command
                 'github' => 'Sets up recommended GitHub workflows and rulesets.',
                 'ide' => 'Initializes recommended IDE (e.g., PhpStorm) settings.',
                 'act' => 'Configures local execution for GitHub Actions.',
+                'composer' => 'Sets up a local development environment for Composer.',
             ],
             default: [
                 'metadata',
@@ -58,6 +59,7 @@ class CatalystSetupCommand extends Command
                 'github',
                 'ide',
                 'act',
+                'composer'
             ],
             hint: 'Press the space key to select. (default: all)',
             required: true,
@@ -77,6 +79,7 @@ class CatalystSetupCommand extends Command
                     'phpcs' => $this->callSilently("catalyst:$permission", compact('vendor', 'package')),
                     'github' => $this->callSilently("catalyst:$permission", compact('php')),
                     'act' => $this->callSilently("catalyst:$permission", compact('vendor', 'package')),
+                    'composer' => $this->callSilently("catalyst:$permission", compact('php')),
                     default => $this->callSilently("catalyst:$permission"),
                 };
             });

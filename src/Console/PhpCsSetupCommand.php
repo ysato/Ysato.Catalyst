@@ -7,7 +7,6 @@ namespace Ysato\Catalyst\Console;
 use Composer\Factory;
 use Composer\Json\JsonFile;
 use Illuminate\Console\Command;
-use Illuminate\Support\Arr;
 use Seld\JsonLint\ParsingException;
 use Ysato\Catalyst\Console\Concerns\VendorPackageAskableTrait;
 use Ysato\Catalyst\Console\Concerns\Washable;
@@ -72,17 +71,19 @@ class PhpCsSetupCommand extends Command
     private function getNewDefinition(JsonFile $json): array
     {
         $definition = $json->read();
+
+        if (! array_key_exists('scripts', $definition)) {
+            $definition['scripts'] = [];
+        }
+
         $definition['scripts']['cs'] = 'phpcs';
         $definition['scripts']['cs-fix'] = 'phpcbf';
 
-        $tests = Arr::get($definition, 'scripts.tests', []);
-
-        $hasTest = Arr::has($definition, 'scripts.test');
-        if ($hasTest && ! in_array('@test', $tests, true)) {
-            $definition['scripts']['tests'][] = '@test';
+        if (! array_key_exists('tests', $definition['scripts'])) {
+            $definition['scripts']['tests'] = [];
         }
 
-        if (! in_array('@cs', $tests, true)) {
+        if (! in_array('@cs', $definition['scripts']['tests'], true)) {
             $definition['scripts']['tests'][] = '@cs';
         }
 

@@ -12,6 +12,7 @@ use Symfony\Component\Finder\Finder;
 use Ysato\Catalyst\Console\ActSetupCommand;
 use Ysato\Catalyst\Console\ArchitectureSrcSetupCommand;
 use Ysato\Catalyst\Console\CatalystSetupCommand;
+use Ysato\Catalyst\Console\ComposerSetupCommand;
 use Ysato\Catalyst\Console\GitHubSetupCommand;
 use Ysato\Catalyst\Console\IdeSetupCommand;
 use Ysato\Catalyst\Console\MetadataSetupCommand;
@@ -116,6 +117,19 @@ class CatalystServiceProvider extends ServiceProvider
 
                 return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/act', $tempPath);
             });
+
+        $this->app->when(ComposerSetupCommand::class)
+            ->needs(Generator::class)
+            ->give(function (Application $app) {
+                $fs = $app->make(Filesystem::class);
+                $finder = $app->make(Finder::class);
+                $temp = (new TemporaryDirectory())
+                    ->deleteWhenDestroyed()
+                    ->create();
+                $tempPath = $temp->path();
+
+                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/composer', $tempPath);
+            });
     }
 
     /**
@@ -134,6 +148,7 @@ class CatalystServiceProvider extends ServiceProvider
                 GitHubSetupCommand::class,
                 IdeSetupCommand::class,
                 ActSetupCommand::class,
+                ComposerSetupCommand::class,
             ]);
         }
     }
