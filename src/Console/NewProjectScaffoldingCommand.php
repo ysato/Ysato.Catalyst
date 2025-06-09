@@ -40,20 +40,20 @@ class NewProjectScaffoldingCommand extends Command
         $package = $this->getPackageName() ?? $this->ask('What is the package name ?', 'Blog');
         $php = $this->getPhpVersion() ?? $this->ask('What PHP version does this package require?', '8.2');
 
-        unset($php);
-
         $workflow = [
             'catalyst:scaffold-core-structure:generate-composer-metadata',
             'catalyst:scaffold-core-structure:initialize-directory-architecture',
             'catalyst:configure-static-analysis:setup-php-code-sniffer',
             'catalyst:configure-static-analysis:setup-php-mess-detector',
             'catalyst:configure-static-analysis:setup-openapi-linter',
+            'catalyst:setup-ci-cd-and-repository-rules:generate-github-actions-workflows',
         ];
 
         foreach ($workflow as $command) {
             match (Str::between($command, ':', ':')) {
                 'scaffold-core-structure' => $this->runScaffoldCoreStructure($command, $vendor, $package),
                 'configure-static-analysis' => $this->runConfigureStaticAnalysis($command, $vendor, $package),
+                'setup-ci-cd-and-repository-rules' => $this->runSetupCiCdAndRepositoryRules($command, $php),
             };
         }
 
@@ -92,6 +92,15 @@ class NewProjectScaffoldingCommand extends Command
             'setup-php-code-sniffer' => $this->call($command, compact('vendor', 'package')),
             'setup-php-mess-detector' => $this->call($command),
             'setup-openapi-linter' => $this->call($command),
+        };
+    }
+
+    private function runSetupCiCdAndRepositoryRules(string $command, string $php): void
+    {
+        $step = Str::afterLast($command, ':');
+
+        match ($step) {
+            'generate-github-actions-workflows' => $this->call($command, compact('php')),
         };
     }
 }

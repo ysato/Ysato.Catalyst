@@ -14,11 +14,11 @@ use Ysato\Catalyst\Console\ArchitectureSrcSetupCommand;
 use Ysato\Catalyst\Console\CatalystSetupCommand;
 use Ysato\Catalyst\Console\ComposerSetupCommand;
 use Ysato\Catalyst\Console\ConfigureStaticAnalysis;
-use Ysato\Catalyst\Console\GitHubSetupCommand;
 use Ysato\Catalyst\Console\IdeSetupCommand;
 use Ysato\Catalyst\Console\MetadataSetupCommand;
 use Ysato\Catalyst\Console\NewProjectScaffoldingCommand;
 use Ysato\Catalyst\Console\ScaffoldCoreStructure;
+use Ysato\Catalyst\Console\SetupCiCdAndRepositoryRules;
 
 class CatalystServiceProvider extends ServiceProvider
 {
@@ -38,19 +38,6 @@ class CatalystServiceProvider extends ServiceProvider
                 $tempPath = $temp->path();
 
                 return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/architecture-src', $tempPath);
-            });
-
-        $this->app->when(GitHubSetupCommand::class)
-            ->needs(Generator::class)
-            ->give(function (Application $app) {
-                $fs = $app->make(Filesystem::class);
-                $finder = $app->make(Finder::class);
-                $temp = (new TemporaryDirectory())
-                    ->deleteWhenDestroyed()
-                    ->create();
-                $tempPath = $temp->path();
-
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/.github', $tempPath);
             });
 
         $this->app->when(IdeSetupCommand::class)
@@ -167,6 +154,25 @@ class CatalystServiceProvider extends ServiceProvider
                     $tempPath
                 );
             });
+
+        $this->app->when(SetupCiCdAndRepositoryRules\GenerateGitHubActionsWorkflowsCommand::class)
+            ->needs(Generator::class)
+            ->give(function (Application $app) {
+                $fs = $app->make(Filesystem::class);
+                $finder = $app->make(Finder::class);
+                $temp = (new TemporaryDirectory())
+                    ->deleteWhenDestroyed()
+                    ->create();
+                $tempPath = $temp->path();
+
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/setup-ci-cd-and-repository-rules/generate-github-actions-workflows',
+                    $tempPath
+                );
+            });
     }
 
     /**
@@ -182,11 +188,11 @@ class CatalystServiceProvider extends ServiceProvider
                 ConfigureStaticAnalysis\SetupPHPCodeSnifferCommand::class,
                 ConfigureStaticAnalysis\SetupPHPMessDetectorCommand::class,
                 ConfigureStaticAnalysis\SetupOpenAPILinterCommand::class,
+                SetupCiCdAndRepositoryRules\GenerateGitHubActionsWorkflowsCommand::class,
 
                 CatalystSetupCommand::class,
                 MetadataSetupCommand::class,
                 ArchitectureSrcSetupCommand::class,
-                GitHubSetupCommand::class,
                 IdeSetupCommand::class,
                 ActSetupCommand::class,
                 ComposerSetupCommand::class,

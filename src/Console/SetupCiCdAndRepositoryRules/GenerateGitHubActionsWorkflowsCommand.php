@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Ysato\Catalyst\Console;
+namespace Ysato\Catalyst\Console\SetupCiCdAndRepositoryRules;
 
 use Illuminate\Console\Command;
 use Ysato\Catalyst\Console\Concerns\PhpVersionAskable;
 use Ysato\Catalyst\Generator;
 
-class GitHubSetupCommand extends Command
+class GenerateGitHubActionsWorkflowsCommand extends Command
 {
     use PhpVersionAskable;
 
@@ -17,26 +17,24 @@ class GitHubSetupCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'catalyst:github
-                            {php? : Specify the PHP version for the project (e.g., 8.2).}';
+    protected $signature = 'catalyst:setup-ci-cd-and-repository-rules:generate-github-actions-workflows
+                            {php : Specify the PHP version for the project (e.g., 8.2).}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Initializes recommended GitHub workflows and rulesets for the project.';
+    protected $description = 'Generate GitHub Workflows';
 
     /**
      * Execute the console command.
      */
     public function handle(Generator $generator)
     {
-        $php = $this->getPhpVersionOrAsk();
+        $php = $this->getPhpVersion();
 
-        $this->components->info('Setting up...');
-
-        $this->components->task('.github', function () use ($php, $generator) {
+        $this->task(function () use ($php, $generator) {
             $generator
                 ->replacePlaceHolder('__Php__', $php)
                 ->generate($this->laravel->basePath());
