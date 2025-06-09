@@ -2,35 +2,33 @@
 
 declare(strict_types=1);
 
-namespace Ysato\Catalyst\Console;
+namespace Ysato\Catalyst\Console\ConfigureStaticAnalysis;
 
 use Illuminate\Console\Command;
 use Ysato\Catalyst\Generator;
 
-class SpectralSetupCommand extends Command
+class SetupOpenAPILinterCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'catalyst:spectral';
+    protected $signature = 'catalyst:configure-static-analysis:setup-openapi-linter';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Initializes Spectral by setting up its configuration file and recommended rulesets for API linting within the project.';
+    protected $description = 'Setup Spectral';
 
     /**
      * Execute the console command.
      */
     public function handle(Generator $generator)
     {
-        $this->components->info('Setting up...');
-
-        $this->components->task('spectral', function () use ($generator) {
+        $this->task('spectral', function () use ($generator) {
             $generator->generate($this->laravel->basePath());
         });
 

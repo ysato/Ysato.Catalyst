@@ -19,7 +19,6 @@ use Ysato\Catalyst\Console\IdeSetupCommand;
 use Ysato\Catalyst\Console\MetadataSetupCommand;
 use Ysato\Catalyst\Console\NewProjectScaffoldingCommand;
 use Ysato\Catalyst\Console\ScaffoldCoreStructure;
-use Ysato\Catalyst\Console\SpectralSetupCommand;
 
 class CatalystServiceProvider extends ServiceProvider
 {
@@ -39,19 +38,6 @@ class CatalystServiceProvider extends ServiceProvider
                 $tempPath = $temp->path();
 
                 return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/architecture-src', $tempPath);
-            });
-
-        $this->app->when(SpectralSetupCommand::class)
-            ->needs(Generator::class)
-            ->give(function (Application $app) {
-                $fs = $app->make(Filesystem::class);
-                $finder = $app->make(Finder::class);
-                $temp = (new TemporaryDirectory())
-                    ->deleteWhenDestroyed()
-                    ->create();
-                $tempPath = $temp->path();
-
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/spectral', $tempPath);
             });
 
         $this->app->when(GitHubSetupCommand::class)
@@ -162,6 +148,25 @@ class CatalystServiceProvider extends ServiceProvider
                     $tempPath
                 );
             });
+
+        $this->app->when(ConfigureStaticAnalysis\SetupOpenAPILinterCommand::class)
+            ->needs(Generator::class)
+            ->give(function (Application $app) {
+                $fs = $app->make(Filesystem::class);
+                $finder = $app->make(Finder::class);
+                $temp = (new TemporaryDirectory())
+                    ->deleteWhenDestroyed()
+                    ->create();
+                $tempPath = $temp->path();
+
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/configure-static-analysis/setup-openapi-linter',
+                    $tempPath
+                );
+            });
     }
 
     /**
@@ -176,11 +181,11 @@ class CatalystServiceProvider extends ServiceProvider
                 ScaffoldCoreStructure\InitializeDirectoryArchitectureCommand::class,
                 ConfigureStaticAnalysis\SetupPHPCodeSnifferCommand::class,
                 ConfigureStaticAnalysis\SetupPHPMessDetectorCommand::class,
+                ConfigureStaticAnalysis\SetupOpenAPILinterCommand::class,
 
                 CatalystSetupCommand::class,
                 MetadataSetupCommand::class,
                 ArchitectureSrcSetupCommand::class,
-                SpectralSetupCommand::class,
                 GitHubSetupCommand::class,
                 IdeSetupCommand::class,
                 ActSetupCommand::class,
