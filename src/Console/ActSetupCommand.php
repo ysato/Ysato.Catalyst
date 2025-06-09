@@ -7,11 +7,13 @@ namespace Ysato\Catalyst\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Ysato\Catalyst\Console\Concerns\VendorPackageAskableTrait;
+use Ysato\Catalyst\Console\Concerns\Washable;
 use Ysato\Catalyst\Generator;
 
 class ActSetupCommand extends Command
 {
     use VendorPackageAskableTrait;
+    use Washable;
 
     /**
      * The name and signature of the console command.
@@ -30,25 +32,47 @@ class ActSetupCommand extends Command
     protected $description = 'Configures local execution for GitHub Actions.';
 
     /**
+     * @var bool
+     */
+    protected $hidden = true;
+
+    /**
      * Execute the console command.
      */
     public function handle(Generator $generator)
     {
-        $vendor = Str::snake($this->getVendorNameOrAsk());
-        $package = Str::snake($this->getPackageNameOrAsk());
+        $vendor = $this->getVendorNameOrAsk();
+        $package = $this->getPackageNameOrAsk();
 
         $this->components->info('Setting up...');
 
         $this->components->task('act', function () use ($generator, $vendor, $package) {
-            $currentIgnore = $generator->fs->readFile($this->laravel->basePath('.gitignore'));
+            $current = $generator->fs->readFile($this->laravel->basePath('.gitignore'));
+            $washed = $this->wash($current);
+
+            $contents = <<< 'EOF'
+.actrc
+/certs/*
+!/certs/.gitkeep
+
+EOF;
 
             $generator
-                ->replacePlaceHolder($vendor, $package)
-                ->dumpFile('.gitignore', $currentIgnore)
-                ->appendToFile('.gitignore', ".actrc\n")
+                ->replacePlaceHolder(Str::snake($vendor), Str::snake($package))
+                ->dumpFile('.gitignore', $washed)
+                ->appendToFile('.gitignore', $contents)
                 ->generate($this->laravel->basePath());
         });
 
         return 0;
+    }
+
+    protected function wash(string $contents): string
+    {
+        return preg_replace(
+            ['#^.actrc$\R?#m', '#^!?/certs(/?|/.*)$\R?#m'],
+            ['', ''],
+            $contents
+        );
     }
 }

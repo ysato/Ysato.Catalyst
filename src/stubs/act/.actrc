@@ -3,7 +3,8 @@
 #--container-architecture=linux/amd64
 
 # https://github.com/nektos/act/issues/197
---platform=ubuntu-latest=shivammathur/node:latest
+--platform=ubuntu-latest=act:latest
+--pull=false
 
 # act doesn't persist environment variables, so generate your APP_KEY beforehand.
 --env-file=.env.act
@@ -13,3 +14,6 @@
 # running with this flag will result in an error, as it avoids all network access.
 # To ensure offline mode works, first run act without this flag to cache necessary resources.
 #--action-offline-mode
+
+# disable logging of output from steps
+#--quiet
