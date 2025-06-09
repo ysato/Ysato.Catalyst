@@ -20,7 +20,7 @@ class Generator
     ) {
     }
 
-    public function replacePlaceHolder(string $vendor, string $package): self
+    public function replacePlaceHolder(array|string $search, array|string $replace): self
     {
         $this->mirrorToTemp();
 
@@ -30,8 +30,6 @@ class Generator
             ->in($this->tempPath);
 
         foreach ($files as $file) {
-            $search = ['__Vendor__', '__Package__'];
-            $replace = [$vendor, $package];
             $filePath = (string) $file;
             $contents = $this->fs->readFile($filePath);
 

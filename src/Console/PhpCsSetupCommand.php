@@ -47,11 +47,15 @@ class PhpCsSetupCommand extends Command
             $definition = $this->getNewDefinition($json);
             $json->write($definition);
 
+            $search = ['__Vendor__', '__Package__'];
+            $replace = [$vendor, $package];
+
             $currentIgnore = $generator->fs->readFile($this->laravel->basePath('.gitignore'));
+            $washedIgnore = str_replace(".php_cs.cache\n", '', $currentIgnore);
 
             $generator
-                ->replacePlaceHolder($vendor, $package)
-                ->dumpFile('.gitignore', $currentIgnore)
+                ->replacePlaceHolder($search, $replace)
+                ->dumpFile('.gitignore', $washedIgnore)
                 ->appendToFile('.gitignore', ".php_cs.cache\n")
                 ->generate($this->laravel->basePath());
         });
