@@ -2,34 +2,36 @@
 
 declare(strict_types=1);
 
-namespace Ysato\Catalyst\Console;
+namespace Ysato\Catalyst\Console\SetupCiCdAndRepositoryRules;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Ysato\Catalyst\Console\Concerns\TaskRenderable;
 use Ysato\Catalyst\Console\Concerns\VendorPackageAskableTrait;
 use Ysato\Catalyst\Console\Concerns\Washable;
 use Ysato\Catalyst\Generator;
 
-class ActSetupCommand extends Command
+class ConfigureLocalActionRunnerCommand extends Command
 {
     use VendorPackageAskableTrait;
     use Washable;
+    use TaskRenderable;
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'catalyst:act
-                            {vendor? : The vendor name (e.g.Acme) in camel case.}
-                            {package? : The package name (e.g.Blog) in camel case.}';
+    protected $signature = 'catalyst:setup-ci-cd-and-repository-rules:configure-local-action-runner
+                            {vendor : The vendor name (e.g.Acme) in camel case.}
+                            {package : The package name (e.g.Blog) in camel case.}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Configures local execution for GitHub Actions.';
+    protected $description = 'Configure Local Action Runner';
 
     /**
      * @var bool
@@ -41,12 +43,10 @@ class ActSetupCommand extends Command
      */
     public function handle(Generator $generator)
     {
-        $vendor = $this->getVendorNameOrAsk();
-        $package = $this->getPackageNameOrAsk();
+        $vendor = $this->getVendorName();
+        $package = $this->getPackageName();
 
-        $this->components->info('Setting up...');
-
-        $this->components->task('act', function () use ($generator, $vendor, $package) {
+        $this->task(function () use ($generator, $vendor, $package) {
             $search = ['__Vendor__', '__Package__'];
             $replace = [Str::snake($vendor), Str::snake($package)];
 

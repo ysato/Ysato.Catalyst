@@ -1,6 +1,5 @@
 # https://github.com/nektos/act/issues/197
---platform=ubuntu-latest=act:latest
---pull=false
+--platform=ubuntu-latest=shivammathur/node:latest
 
 # act doesn't persist environment variables, so generate your APP_KEY beforehand.
 --env-file=.env.act

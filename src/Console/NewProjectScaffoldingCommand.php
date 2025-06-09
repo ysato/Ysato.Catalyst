@@ -48,13 +48,14 @@ class NewProjectScaffoldingCommand extends Command
             'catalyst:configure-static-analysis:setup-openapi-linter',
             'catalyst:setup-ci-cd-and-repository-rules:generate-github-actions-workflows',
             'catalyst:setup-ci-cd-and-repository-rules:setup-repository-rulesets',
+            'catalyst:setup-ci-cd-and-repository-rules:configure-local-action-runner',
         ];
 
         foreach ($workflow as $command) {
             match (Str::between($command, ':', ':')) {
                 'scaffold-core-structure' => $this->runScaffoldCoreStructure($command, $vendor, $package),
                 'configure-static-analysis' => $this->runConfigureStaticAnalysis($command, $vendor, $package),
-                'setup-ci-cd-and-repository-rules' => $this->runSetupCiCdAndRepositoryRules($command, $php),
+                'setup-ci-cd-and-repository-rules' => $this->runSetupCiCdAndRepositoryRules($command, $vendor, $package, $php),
             };
         }
 
@@ -96,13 +97,14 @@ class NewProjectScaffoldingCommand extends Command
         };
     }
 
-    private function runSetupCiCdAndRepositoryRules(string $command, string $php): void
+    private function runSetupCiCdAndRepositoryRules(string $command, string $vendor, string $package, string $php): void
     {
         $step = Str::afterLast($command, ':');
 
         match ($step) {
             'generate-github-actions-workflows' => $this->call($command, compact('php')),
             'setup-repository-rulesets' => $this->call($command, compact('php')),
+            'configure-local-action-runner' => $this->call($command, compact('vendor', 'package')),
         };
     }
 }
