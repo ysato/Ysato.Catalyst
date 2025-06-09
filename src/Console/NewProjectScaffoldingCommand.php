@@ -6,6 +6,7 @@ namespace Ysato\Catalyst\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Ysato\Catalyst\Console\Concerns\PhpVersionAskable;
 use Ysato\Catalyst\Console\Concerns\VendorPackageAskable;
 
@@ -39,6 +40,10 @@ class NewProjectScaffoldingCommand extends Command
         $vendor = $this->getVendorName() ?? $this->ask('What is the vendor name ?', 'Acme');
         $package = $this->getPackageName() ?? $this->ask('What is the package name ?', 'Blog');
         $php = $this->getPhpVersion() ?? $this->ask('What PHP version does this package require?', '8.2');
+
+        if (in_array($php, ['8.2', '8.3', '8.4'], true)) {
+            throw new InvalidArgumentException('Invalid PHP version specified. Please use 8.2, 8.3, or 8.4.');
+        }
 
         $workflow = [
             'catalyst:scaffold-core-structure:generate-gitignore',
