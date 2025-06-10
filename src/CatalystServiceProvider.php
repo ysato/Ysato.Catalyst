@@ -244,6 +244,7 @@ class CatalystServiceProvider extends ServiceProvider
                 ScaffoldCoreStructure\GenerateGitignoreCommand::class,
                 ScaffoldCoreStructure\ScaffoldComposerManifestCommand::class,
                 ScaffoldCoreStructure\ScaffoldArchitecturalLayersCommand::class,
+                ScaffoldCoreStructure\DefineContainerizedEnvironmentCommand::class,
                 ConfigureStaticAnalysis\SetupPhpCodeSnifferCommand::class,
                 ConfigureStaticAnalysis\SetupPhpMessDetectorCommand::class,
                 ConfigureStaticAnalysis\SetupOpenApiLinterCommand::class,

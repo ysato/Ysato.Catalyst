@@ -41,7 +41,7 @@ class NewProjectScaffoldingCommand extends Command
         $package = $this->getPackageName() ?? $this->ask('What is the package name ?', 'Blog');
         $php = $this->getPhpVersion() ?? $this->ask('What PHP version does this package require?', '8.2');
 
-        if (in_array($php, ['8.2', '8.3', '8.4'], true)) {
+        if (! in_array($php, ['8.2', '8.3', '8.4'], true)) {
             throw new InvalidArgumentException("Invalid PHP version specified. Please use 8.2, 8.3, or 8.4.: [$php]");
         }
 
@@ -65,7 +65,7 @@ class NewProjectScaffoldingCommand extends Command
                 'scaffold-core-structure' => $this->runScaffoldCoreStructure($command, $vendor, $package, $php),
                 'configure-static-analysis' => $this->runConfigureStaticAnalysis($command, $vendor, $package),
                 'setup-ci-cd-and-repository-rules' => $this->runSetupCiCdAndRepositoryRules($command, $vendor, $package, $php),
-                'setup-local-development-environment' => $this->runSetupLocalDevelopmentEnvironment($command, $php),
+                'setup-local-development-environment' => $this->runSetupLocalDevelopmentEnvironment($command),
                 'generate-developer-shortcuts' => $this->runGenerateDeveloperShortcuts($command, $php),
             };
         }
@@ -107,12 +107,12 @@ class NewProjectScaffoldingCommand extends Command
         };
     }
 
-    private function runSetupLocalDevelopmentEnvironment(string $command, string $php): void
+    private function runSetupLocalDevelopmentEnvironment(string $command): void
     {
         $step = Str::afterLast($command, ':');
 
         match ($step) {
-            'initialize-ide-settings' => $this->call($command, compact('php')),
+            'initialize-ide-settings' => $this->call($command),
         };
     }
 

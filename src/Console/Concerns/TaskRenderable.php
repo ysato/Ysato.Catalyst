@@ -10,7 +10,7 @@ trait TaskRenderable
 {
     protected function task(callable $task)
     {
-        $this->output->write("⭐ Run {$this->description}");
+        $this->output->writeln("⭐ Run {$this->description}");
 
         $result = false;
 
