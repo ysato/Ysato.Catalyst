@@ -75,6 +75,6 @@ EOF;
 
         $cleaned = preg_replace($patterns, $replacements, $contents);
 
-        return "$before\n$cleaned\n$after";
+        return $before.$cleaned.$after;
     }
 }
