@@ -6,8 +6,8 @@ namespace Ysato\Catalyst\Console\Concerns;
 
 trait PhpVersionAskable
 {
-    protected function getPhpVersionOrAsk(): string
+    protected function getPhpVersion(): ?string
     {
-        return $this->argument('php') ?? $this->ask('What PHP version does this package require?', '8.2');
+        return $this->argument('php');
     }
 }

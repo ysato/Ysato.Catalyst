@@ -93,7 +93,7 @@ jobs:
         working-directory: ./TestProject
         run: |
           composer update --prefer-${{ matrix.dependency-version }} --no-interaction --no-progress
-          php artisan catalyst:setup Acme Blog -n
+          php artisan catalyst:scaffold Acme Blog ${{ matrix.php }} -n
 
       - name: Execute tests
         working-directory: ./TestProject

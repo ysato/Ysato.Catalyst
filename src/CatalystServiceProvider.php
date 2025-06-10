@@ -9,16 +9,12 @@ use Illuminate\Support\ServiceProvider;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use Ysato\Catalyst\Console\ActSetupCommand;
-use Ysato\Catalyst\Console\ArchitectureSrcSetupCommand;
-use Ysato\Catalyst\Console\CatalystSetupCommand;
-use Ysato\Catalyst\Console\ComposerSetupCommand;
-use Ysato\Catalyst\Console\GitHubSetupCommand;
-use Ysato\Catalyst\Console\IdeSetupCommand;
-use Ysato\Catalyst\Console\MetadataSetupCommand;
-use Ysato\Catalyst\Console\PhpCsSetupCommand;
-use Ysato\Catalyst\Console\PhpMdSetupCommand;
-use Ysato\Catalyst\Console\SpectralSetupCommand;
+use Ysato\Catalyst\Console\ConfigureStaticAnalysis;
+use Ysato\Catalyst\Console\GenerateDeveloperShortcuts;
+use Ysato\Catalyst\Console\NewProjectScaffoldingCommand;
+use Ysato\Catalyst\Console\ScaffoldCoreStructure;
+use Ysato\Catalyst\Console\SetupCiCdAndRepositoryRules;
+use Ysato\Catalyst\Console\SetupLocalDevelopmentEnvironment;
 
 class CatalystServiceProvider extends ServiceProvider
 {
@@ -27,7 +23,7 @@ class CatalystServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->when(ArchitectureSrcSetupCommand::class)
+        $this->app->when(ScaffoldCoreStructure\GenerateGitignoreCommand::class)
             ->needs(Generator::class)
             ->give(function (Application $app) {
                 $fs = $app->make(Filesystem::class);
@@ -37,10 +33,16 @@ class CatalystServiceProvider extends ServiceProvider
                     ->create();
                 $tempPath = $temp->path();
 
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/architecture-src', $tempPath);
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/scaffold-core-structure/generate-gitignore',
+                    $tempPath
+                );
             });
 
-        $this->app->when(PhpCsSetupCommand::class)
+        $this->app->when(ScaffoldCoreStructure\ScaffoldArchitecturalLayersCommand::class)
             ->needs(Generator::class)
             ->give(function (Application $app) {
                 $fs = $app->make(Filesystem::class);
@@ -50,10 +52,16 @@ class CatalystServiceProvider extends ServiceProvider
                     ->create();
                 $tempPath = $temp->path();
 
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/phpcs', $tempPath);
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/scaffold-core-structure/scaffold-architecture-layers',
+                    $tempPath
+                );
             });
 
-        $this->app->when(PhpMdSetupCommand::class)
+        $this->app->when(ScaffoldCoreStructure\DefineContainerizedEnvironmentCommand::class)
             ->needs(Generator::class)
             ->give(function (Application $app) {
                 $fs = $app->make(Filesystem::class);
@@ -63,10 +71,16 @@ class CatalystServiceProvider extends ServiceProvider
                     ->create();
                 $tempPath = $temp->path();
 
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/phpmd', $tempPath);
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/scaffold-core-structure/define-containerized-environment',
+                    $tempPath
+                );
             });
 
-        $this->app->when(SpectralSetupCommand::class)
+        $this->app->when(ConfigureStaticAnalysis\SetupPhpCodeSnifferCommand::class)
             ->needs(Generator::class)
             ->give(function (Application $app) {
                 $fs = $app->make(Filesystem::class);
@@ -76,10 +90,16 @@ class CatalystServiceProvider extends ServiceProvider
                     ->create();
                 $tempPath = $temp->path();
 
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/spectral', $tempPath);
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/configure-static-analysis/setup-php-code-sniffer',
+                    $tempPath
+                );
             });
 
-        $this->app->when(GitHubSetupCommand::class)
+        $this->app->when(ConfigureStaticAnalysis\SetupPhpMessDetectorCommand::class)
             ->needs(Generator::class)
             ->give(function (Application $app) {
                 $fs = $app->make(Filesystem::class);
@@ -89,10 +109,16 @@ class CatalystServiceProvider extends ServiceProvider
                     ->create();
                 $tempPath = $temp->path();
 
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/.github', $tempPath);
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/configure-static-analysis/setup-php-mess-detector',
+                    $tempPath
+                );
             });
 
-        $this->app->when(IdeSetupCommand::class)
+        $this->app->when(ConfigureStaticAnalysis\SetupOpenApiLinterCommand::class)
             ->needs(Generator::class)
             ->give(function (Application $app) {
                 $fs = $app->make(Filesystem::class);
@@ -102,10 +128,16 @@ class CatalystServiceProvider extends ServiceProvider
                     ->create();
                 $tempPath = $temp->path();
 
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/ide', $tempPath);
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/configure-static-analysis/setup-openapi-linter',
+                    $tempPath
+                );
             });
 
-        $this->app->when(ActSetupCommand::class)
+        $this->app->when(SetupCiCdAndRepositoryRules\GenerateGitHubActionsWorkflowsCommand::class)
             ->needs(Generator::class)
             ->give(function (Application $app) {
                 $fs = $app->make(Filesystem::class);
@@ -115,10 +147,16 @@ class CatalystServiceProvider extends ServiceProvider
                     ->create();
                 $tempPath = $temp->path();
 
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/act', $tempPath);
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/setup-ci-cd-and-repository-rules/generate-github-actions-workflows',
+                    $tempPath
+                );
             });
 
-        $this->app->when(ComposerSetupCommand::class)
+        $this->app->when(SetupCiCdAndRepositoryRules\SetupRepositoryRulesetsCommand::class)
             ->needs(Generator::class)
             ->give(function (Application $app) {
                 $fs = $app->make(Filesystem::class);
@@ -128,7 +166,70 @@ class CatalystServiceProvider extends ServiceProvider
                     ->create();
                 $tempPath = $temp->path();
 
-                return new Generator($fs, $finder, $temp, __DIR__ . '/stubs/composer', $tempPath);
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/setup-ci-cd-and-repository-rules/setup-repository-rulesets',
+                    $tempPath
+                );
+            });
+
+        $this->app->when(SetupCiCdAndRepositoryRules\ConfigureLocalActionRunnerCommand::class)
+            ->needs(Generator::class)
+            ->give(function (Application $app) {
+                $fs = $app->make(Filesystem::class);
+                $finder = $app->make(Finder::class);
+                $temp = (new TemporaryDirectory())
+                    ->deleteWhenDestroyed()
+                    ->create();
+                $tempPath = $temp->path();
+
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/setup-ci-cd-and-repository-rules/configure-local-action-runner',
+                    $tempPath
+                );
+            });
+
+        $this->app->when(SetupLocalDevelopmentEnvironment\InitializeIdeSettingsCommand::class)
+            ->needs(Generator::class)
+            ->give(function (Application $app) {
+                $fs = $app->make(Filesystem::class);
+                $finder = $app->make(Finder::class);
+                $temp = (new TemporaryDirectory())
+                    ->deleteWhenDestroyed()
+                    ->create();
+                $tempPath = $temp->path();
+
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/setup-local-development-environment/initialize-ide-setting',
+                    $tempPath
+                );
+            });
+
+        $this->app->when(GenerateDeveloperShortcuts\GenerateJustfileCommand::class)
+            ->needs(Generator::class)
+            ->give(function (Application $app) {
+                $fs = $app->make(Filesystem::class);
+                $finder = $app->make(Finder::class);
+                $temp = (new TemporaryDirectory())
+                    ->deleteWhenDestroyed()
+                    ->create();
+                $tempPath = $temp->path();
+
+                return new Generator(
+                    $fs,
+                    $finder,
+                    $temp,
+                    __DIR__ . '/stubs/generate-developer-shortcuts/generate-justfile',
+                    $tempPath
+                );
             });
     }
 
@@ -139,16 +240,19 @@ class CatalystServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                CatalystSetupCommand::class,
-                MetadataSetupCommand::class,
-                ArchitectureSrcSetupCommand::class,
-                PhpCsSetupCommand::class,
-                PhpMdSetupCommand::class,
-                SpectralSetupCommand::class,
-                GitHubSetupCommand::class,
-                IdeSetupCommand::class,
-                ActSetupCommand::class,
-                ComposerSetupCommand::class,
+                NewProjectScaffoldingCommand::class,
+                ScaffoldCoreStructure\GenerateGitignoreCommand::class,
+                ScaffoldCoreStructure\ScaffoldComposerManifestCommand::class,
+                ScaffoldCoreStructure\ScaffoldArchitecturalLayersCommand::class,
+                ScaffoldCoreStructure\DefineContainerizedEnvironmentCommand::class,
+                ConfigureStaticAnalysis\SetupPhpCodeSnifferCommand::class,
+                ConfigureStaticAnalysis\SetupPhpMessDetectorCommand::class,
+                ConfigureStaticAnalysis\SetupOpenApiLinterCommand::class,
+                SetupCiCdAndRepositoryRules\GenerateGitHubActionsWorkflowsCommand::class,
+                SetupCiCdAndRepositoryRules\SetupRepositoryRulesetsCommand::class,
+                SetupCiCdAndRepositoryRules\ConfigureLocalActionRunnerCommand::class,
+                SetupLocalDevelopmentEnvironment\InitializeIdeSettingsCommand::class,
+                GenerateDeveloperShortcuts\GenerateJustfileCommand::class,
             ]);
         }
     }

@@ -72,6 +72,10 @@ class Generator
 
     private function mirrorToTemp()
     {
+        if (! $this->fs->exists($this->stubsPath)) {
+            return;
+        }
+
         if ($this->isMirrored) {
             return;
         }
