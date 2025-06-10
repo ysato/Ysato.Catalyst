@@ -7,7 +7,6 @@ namespace Ysato\Catalyst\Console\ScaffoldCoreStructure;
 use Composer\Factory;
 use Composer\Json\JsonFile;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 use Seld\JsonLint\ParsingException;
 use Ysato\Catalyst\Console\Concerns\PhpVersionAskable;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
@@ -68,39 +67,26 @@ class ScaffoldComposerManifestCommand extends Command
             $definition['description'],
         );
 
-        $newDefinition = [
-            'name' => sprintf('%s/%s', Str::kebab($vendor), Str::kebab($package)),
-            'license' => 'proprietary',
-            'autoload' => [
-                'psr-4' => [
-                    "$vendor\\$package\\" => 'src/',
-                ],
-            ],
-            'scripts' => [
-                'test' => [
-                    '@php artisan config:clear --ansi',
-                    '@php artisan test',
-                ],
-                'coverage' => [
-                    "@php artisan config:clear --ansi",
-                    "@php -d zend_extension=xdebug.so -d xdebug.mode=coverage artisan test --coverage",
-                ],
-                'pcov' => [
-                    "@php artisan config:clear --ansi",
-                    "@php -d extension=pcov.so -d pcov.enabled=1 artisan test --coverage",
-                ],
-                'cs' => ['phpcs'],
-                'cs-fix' => ['phpcbf'],
-                'qa' => ['phpmd src text ./phpmd.xml'],
-                'tests' => ['@cs', '@qa', '@test'],
-            ],
-            'config' => [
-                'platform' => [
-                    'php' => $php,
-                ],
-            ],
+        $definition['name'] = sprintf('%s/%s', $vendor, $package);
+        $definition['license'] = 'proprietary';
+        $definition['scripts']['test'] = [
+            '@php artisan config:clear --ansi',
+            '@php artisan test',
         ];
+        $definition['scripts']['coverage'] = [
+            '@php artisan config:clear --ansi',
+            '@php -d zend_extension=xdebug.so -d xdebug.mode=coverage artisan test --coverage',
+        ];
+        $definition['scripts']['pcov'] = [
+            '@php artisan config:clear --ansi',
+            '@php -d extension=pcov.so -d pcov.enabled=1 artisan test --coverage',
+        ];
+        $definition['scripts']['cs'] = 'phpcs';
+        $definition['scripts']['cs-fix'] = 'phpcbf';
+        $definition['scripts']['qa'] = ['phpmd src text ./phpmd.xml'];
+        $definition['scripts']['tests'] = ['@cs', '@qa', '@test'];
+        $definition['config']['platform']['php'] = $php;
 
-        return array_merge_recursive($definition, $newDefinition);
+        return $definition;
     }
 }
