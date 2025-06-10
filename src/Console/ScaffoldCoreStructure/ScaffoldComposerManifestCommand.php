@@ -7,6 +7,7 @@ namespace Ysato\Catalyst\Console\ScaffoldCoreStructure;
 use Composer\Factory;
 use Composer\Json\JsonFile;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Seld\JsonLint\ParsingException;
 use Ysato\Catalyst\Console\Concerns\PhpVersionAskable;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
@@ -46,7 +47,7 @@ class ScaffoldComposerManifestCommand extends Command
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->task(function () use ($vendor, $package, $php) {
             $json = new JsonFile(Factory::getComposerFile());
-            $definition = $this->getNewDefinition($json, $vendor, $package, $php);
+            $definition = $this->getNewDefinition($json, Str::kebab($vendor), Str::kebab($package), $php);
             $json->write($definition);
         });
 
