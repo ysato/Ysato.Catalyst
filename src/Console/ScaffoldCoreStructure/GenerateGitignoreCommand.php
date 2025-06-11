@@ -61,6 +61,7 @@ class GenerateGitignoreCommand extends Command
 EOF;
 
         $after = <<<'EOF'
+
 /.actrc
 /.php_cs.cache
 /.phpcs-cache
