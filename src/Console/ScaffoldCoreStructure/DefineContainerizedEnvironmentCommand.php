@@ -60,7 +60,7 @@ class DefineContainerizedEnvironmentCommand extends Command
     {
         return <<< EOF
 
-RUN apt-get update && apt-get install -y ca-certificates
+RUN apk add --no-cache ca-certificates
 COPY $caFilepath /usr/local/share/ca-certificates/certificate.crt
 RUN update-ca-certificates
 
@@ -71,7 +71,7 @@ EOF;
     {
         return <<< EOF
 
-RUN apk add --no-cache ca-certificates
+RUN apt-get update && apt-get install -y ca-certificates
 COPY $caFilepath /usr/local/share/ca-certificates/certificate.crt
 RUN update-ca-certificates
 
