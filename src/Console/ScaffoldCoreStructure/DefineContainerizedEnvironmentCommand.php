@@ -41,10 +41,10 @@ class DefineContainerizedEnvironmentCommand extends Command
         $caFilepath = $this->getValidatedCaFilePath($generator->fs);
 
         /** @noinspection PhpUnhandledExceptionInspection */
-        $this->task(function () use ($php, $generator, $caFilepath) {
+        $this->task(function () use ($generator, $php, $caFilepath) {
             $generator
-                ->dumpFile('docker/act/Dockerfile', $this->generateActDockerfileContent($caFilepath))
-                ->dumpFile('docker/composer/Dockerfile', $this->generateComposerDockerfileContent($php, $caFilepath))
+                ->appendToFile('docker/act/Dockerfile', $this->generateActDockerfileContent($caFilepath))
+                ->appendToFile('docker/composer/Dockerfile', $this->generateComposerDockerfileContent($php, $caFilepath))
                 ->generate($this->laravel->basePath());
         });
 
