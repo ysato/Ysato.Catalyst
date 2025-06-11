@@ -8,15 +8,13 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Symfony\Component\Filesystem\Filesystem;
-use Ysato\Catalyst\Console\Concerns\PhpVersionAskable;
+use Ysato\Catalyst\Console\Concerns\InputTrait;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
-use Ysato\Catalyst\Console\Concerns\VendorPackageAskable;
 
 class NewProjectScaffoldingCommand extends Command
 {
+    use InputTrait;
     use TaskRenderable;
-    use VendorPackageAskable;
-    use PhpVersionAskable;
 
     /**
      * The name and signature of the console command.
@@ -41,11 +39,12 @@ class NewProjectScaffoldingCommand extends Command
      */
     public function handle(Filesystem $fs)
     {
-        $caFilepath = $this->option('with-ca-file');
-        if ($caFilepath === null) {
+        if (! $this->hasOptionStrict('with-ca-file')) {
             throw new InvalidArgumentException('CA file path is required. (e.g., --with-ca-file=certs/certificate.pem).');
         }
-        if ($caFilepath && ! $fs->exists($caFilepath)) {
+
+        $caFilepath = $this->getCaFilePath();
+        if (! $fs->exists($caFilepath)) {
             throw new InvalidArgumentException("The specified CA file does not exist: [$caFilepath]");
         }
 
