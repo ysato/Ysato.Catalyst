@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Ysato\Catalyst\Console\ScaffoldCoreStructure;
 
 use Illuminate\Console\Command;
-use Ysato\Catalyst\Console\Concerns\PhpVersionAskable;
+use Ysato\Catalyst\Console\Concerns\InputTrait;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
 use Ysato\Catalyst\Generator;
 
 class DefineContainerizedEnvironmentCommand extends Command
 {
-    use PhpVersionAskable;
+    use InputTrait;
     use TaskRenderable;
 
     /**

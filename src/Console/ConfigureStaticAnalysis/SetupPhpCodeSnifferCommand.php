@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Ysato\Catalyst\Console\ConfigureStaticAnalysis;
 
 use Illuminate\Console\Command;
+use Ysato\Catalyst\Console\Concerns\InputTrait;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
-use Ysato\Catalyst\Console\Concerns\VendorPackageAskable;
 use Ysato\Catalyst\Generator;
 
 class SetupPhpCodeSnifferCommand extends Command
 {
-    use VendorPackageAskable;
+    use InputTrait;
     use TaskRenderable;
 
     /**

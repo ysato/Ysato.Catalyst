@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Ysato\Catalyst\Console\SetupCiCdAndRepositoryRules;
 
 use Illuminate\Console\Command;
-use Ysato\Catalyst\Console\Concerns\PhpVersionAskable;
+use Ysato\Catalyst\Console\Concerns\InputTrait;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
 use Ysato\Catalyst\Generator;
 
 class GenerateGitHubActionsWorkflowsCommand extends Command
 {
-    use PhpVersionAskable;
+    use InputTrait;
     use TaskRenderable;
 
     /**
