@@ -99,7 +99,7 @@ class NewProjectScaffoldingCommand extends Command
         match ($step) {
             'setup-php-code-sniffer' => $this->call($command, compact('vendor', 'package')),
             'setup-php-mess-detector' => $this->call($command),
-            'setup-openapi-linter' => $this->call($command),
+            'setup-openapi-linter' => $this->call($command, compact('vendor', 'package')),
         };
     }
 

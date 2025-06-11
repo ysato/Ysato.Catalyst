@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: _Vendor__/__Package__ API
+  title: __Vendor__/__Package__ API
   version: 1.0.0
 paths:
   /hello:

@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Ysato\Catalyst\Console\ConfigureStaticAnalysis;
 
 use Illuminate\Console\Command;
+use Ysato\Catalyst\Console\Concerns\InputTrait;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
 use Ysato\Catalyst\Generator;
 
 class SetupOpenApiLinterCommand extends Command
 {
+    use InputTrait;
     use TaskRenderable;
 
     /**
@@ -17,7 +19,9 @@ class SetupOpenApiLinterCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'catalyst:configure-static-analysis:setup-openapi-linter';
+    protected $signature = 'catalyst:configure-static-analysis:setup-openapi-linter
+                            {vendor : The vendor name (e.g.Acme) in camel case.}
+                            {package : The package name (e.g.Blog) in camel case.}';
 
     /**
      * The console command description.
@@ -33,9 +37,14 @@ class SetupOpenApiLinterCommand extends Command
      */
     public function handle(Generator $generator)
     {
+        $vendor = $this->getVendorName();
+        $package = $this->getPackageName();
+
         /** @noinspection PhpUnhandledExceptionInspection */
-        $this->task(function () use ($generator) {
-            $generator->generate($this->laravel->basePath());
+        $this->task(function () use ($generator, $vendor, $package) {
+            $generator
+                ->replacePlaceHolder(['__Vendor__', '__Package__'], [$vendor, $package])
+                ->generate($this->laravel->basePath());
         });
 
         return 0;
