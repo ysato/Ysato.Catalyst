@@ -42,39 +42,66 @@ class DefineContainerizedEnvironmentCommand extends Command
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->task(function () use ($php, $generator, $caFilepath) {
-            $caAlpineContent = $caFilepath ? $this->getCaAlpineContent($caFilepath) : '';
-            $caDebianContent = $caFilepath ? $this->getCaDebianContent($caFilepath) : '';
-
             $generator
-                ->replacePlaceHolder(
-                    ['__Php__', "__Ca_Alpine__", "__Ca_Debian__\n"],
-                    [$php, $caAlpineContent, $caDebianContent]
-                )
+                ->dumpFile('docker/act/Dockerfile', $this->generateActDockerfileContent($caFilepath))
+                ->dumpFile('docker/composer/Dockerfile', $this->generateComposerDockerfileContent($php, $caFilepath))
                 ->generate($this->laravel->basePath());
         });
 
         return 0;
     }
 
-    private function getCaAlpineContent(string $caFilepath)
+    private function generateActDockerfileContent(?string $caFilepath): string
     {
-        return <<< EOF
+        $content = <<< DOCKERFILE
+FROM shivammathur/node:latest
 
-RUN apk add --no-cache ca-certificates
-COPY $caFilepath /usr/local/share/ca-certificates/certificate.crt
-RUN update-ca-certificates
+DOCKERFILE;
 
-EOF;
-    }
+        if (! $caFilepath) {
+            return $content;
+        }
 
-    private function getCaDebianContent(string $caFilepath)
-    {
-        return <<< EOF
+        return $content . <<< DOCKERFILE
 
 RUN apt-get update && apt-get install -y ca-certificates
 COPY $caFilepath /usr/local/share/ca-certificates/certificate.crt
 RUN update-ca-certificates
 
-EOF;
+DOCKERFILE;
+    }
+
+    private function generateComposerDockerfileContent(string $php, ?string $caFilepath): string
+    {
+        $content = <<< DOCKERFILE
+FROM php:$php-fpm-alpine
+
+DOCKERFILE;
+
+        if ($caFilepath) {
+            $content .= <<< DOCKERFILE
+
+RUN apk add --no-cache ca-certificates
+COPY $caFilepath /usr/local/share/ca-certificates/certificate.crt
+RUN update-ca-certificates
+
+DOCKERFILE;
+        }
+
+        return $content . <<< 'DOCKERFILE'
+
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS autoconf
+RUN apk add --no-cache linux-headers
+
+RUN pecl install https://pecl.php.net/get/xdebug-3.4.3.tgz
+RUN pecl install pcov
+RUN docker-php-ext-enable xdebug pcov
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# 作業ディレクトリを設定
+WORKDIR /var/www/html
+
+DOCKERFILE;
     }
 }
