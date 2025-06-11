@@ -7,11 +7,14 @@ namespace Ysato\Catalyst\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use Symfony\Component\Filesystem\Filesystem;
 use Ysato\Catalyst\Console\Concerns\PhpVersionAskable;
+use Ysato\Catalyst\Console\Concerns\TaskRenderable;
 use Ysato\Catalyst\Console\Concerns\VendorPackageAskable;
 
 class NewProjectScaffoldingCommand extends Command
 {
+    use TaskRenderable;
     use VendorPackageAskable;
     use PhpVersionAskable;
 
@@ -21,9 +24,10 @@ class NewProjectScaffoldingCommand extends Command
      * @var string
      */
     protected $signature = 'catalyst:scaffold
-                            {vendor? : The vendor name (e.g.Acme) in camel case.}
-                            {package? : The package name (e.g.Blog) in camel case.}
-                            {php? : Specify the PHP version for the project (e.g., 8.2).}';
+                            {vendor? : The vendor name in pascal case (e.g.Acme).}
+                            {package? : The package name in pascal case (e.g.Blog).}
+                            {php? : Specify the PHP version for the project (e.g., 8.2).}
+                            {--with-ca-file= : Path to a custom CA certificate to trust within the container (e.g, certs/certificate.pem).}';
 
     /**
      * The console command description.
@@ -35,11 +39,23 @@ class NewProjectScaffoldingCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(Filesystem $fs)
     {
-        $vendor = $this->getVendorName() ?? $this->ask('What is the vendor name ?', 'Acme');
-        $package = $this->getPackageName() ?? $this->ask('What is the package name ?', 'Blog');
-        $php = $this->getPhpVersion() ?? $this->ask('What PHP version does this package require?', '8.2');
+        $caFilepath = $this->option('with-ca-file');
+        if ($caFilepath === null) {
+            throw new InvalidArgumentException('CA file path is required. (e.g., --with-ca-file=certs/certificate.pem).');
+        }
+        if ($caFilepath && ! $fs->exists($caFilepath)) {
+            throw new InvalidArgumentException("The specified CA file does not exist: [$caFilepath]");
+        }
+
+        $rawVendor = $this->getVendorName() ?? $this->ask('What is the vendor name ?', 'Acme');
+        $vendor = Str::studly($rawVendor);
+
+        $rawPackage = $this->getPackageName() ?? $this->ask('What is the package name ?', 'Blog');
+        $package = Str::studly($rawPackage);
+
+        $php = $this->getPhpVersion() ?? $this->ask('Enter the PHP version to use.', '8.2');
 
         if (! in_array($php, ['8.2', '8.3', '8.4'], true)) {
             throw new InvalidArgumentException("Invalid PHP version specified. Please use 8.2, 8.3, or 8.4.: [$php]");
@@ -62,7 +78,7 @@ class NewProjectScaffoldingCommand extends Command
 
         foreach ($workflow as $command) {
             match (Str::between($command, ':', ':')) {
-                'scaffold-core-structure' => $this->runScaffoldCoreStructure($command, $vendor, $package, $php),
+                'scaffold-core-structure' => $this->runScaffoldCoreStructure($command, $vendor, $package, $php, $caFilepath),
                 'configure-static-analysis' => $this->runConfigureStaticAnalysis($command, $vendor, $package),
                 'setup-ci-cd-and-repository-rules' => $this->runSetupCiCdAndRepositoryRules($command, $vendor, $package, $php),
                 'setup-local-development-environment' => $this->runSetupLocalDevelopmentEnvironment($command),
@@ -73,15 +89,23 @@ class NewProjectScaffoldingCommand extends Command
         return 0;
     }
 
-    private function runScaffoldCoreStructure(string $command, string $vendor, string $package, string $php): void
-    {
+    private function runScaffoldCoreStructure(
+        string $command,
+        string $vendor,
+        string $package,
+        string $php,
+        string $caFilepath
+    ): void {
         $step = Str::afterLast($command, ':');
 
         match ($step) {
             'generate-gitignore' => $this->call($command),
             'scaffold-composer-manifest' => $this->call($command, compact('vendor', 'package', 'php')),
             'scaffold-architecture-layers' => $this->call($command, compact('vendor', 'package')),
-            'define-containerized-environment' => $this->call($command, compact('php')),
+            'define-containerized-environment' => $this->call($command, [
+                'php' => $php,
+                '--with-ca-file' => $caFilepath,
+            ]),
         };
     }
 
