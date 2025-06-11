@@ -37,8 +37,8 @@ class DefineContainerizedEnvironmentCommand extends Command
      */
     public function handle(Generator $generator)
     {
-        $php = $this->getPhpVersion();
-        $caFilepath = $this->option('with-ca-file');
+        $php = $this->getValidatedPhpVersion();
+        $caFilepath = $this->getValidatedCaFilePath($generator->fs);
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->task(function () use ($php, $generator, $caFilepath) {

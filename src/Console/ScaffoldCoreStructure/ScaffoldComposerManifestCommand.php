@@ -40,7 +40,7 @@ class ScaffoldComposerManifestCommand extends Command
     {
         $vendor = $this->getVendorName();
         $package = $this->getPackageName();
-        $php = $this->getPhpVersion();
+        $php = $this->getValidatedPhpVersion();
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->task(function () use ($vendor, $package, $php) {

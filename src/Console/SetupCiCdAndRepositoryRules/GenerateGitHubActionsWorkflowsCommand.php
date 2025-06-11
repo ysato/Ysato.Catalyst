@@ -36,7 +36,7 @@ class GenerateGitHubActionsWorkflowsCommand extends Command
      */
     public function handle(Generator $generator)
     {
-        $php = $this->getPhpVersion();
+        $php = $this->getValidatedPhpVersion();
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->task(function () use ($php, $generator) {

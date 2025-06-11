@@ -6,7 +6,6 @@ namespace Ysato\Catalyst\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
-use InvalidArgumentException;
 use Symfony\Component\Filesystem\Filesystem;
 use Ysato\Catalyst\Console\Concerns\InputTrait;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
@@ -39,26 +38,11 @@ class NewProjectScaffoldingCommand extends Command
      */
     public function handle(Filesystem $fs)
     {
-        if (! $this->hasOptionStrict('with-ca-file')) {
-            throw new InvalidArgumentException('CA file path is required. (e.g., --with-ca-file=certs/certificate.pem).');
-        }
+        $caFilepath = $this->getValidatedCaFilePath($fs);
 
-        $caFilepath = $this->getCaFilePath();
-        if (! $fs->exists($caFilepath)) {
-            throw new InvalidArgumentException("The specified CA file does not exist: [$caFilepath]");
-        }
-
-        $rawVendor = $this->getVendorName() ?? $this->ask('What is the vendor name ?', 'Acme');
-        $vendor = Str::studly($rawVendor);
-
-        $rawPackage = $this->getPackageName() ?? $this->ask('What is the package name ?', 'Blog');
-        $package = Str::studly($rawPackage);
-
-        $php = $this->getPhpVersion() ?? $this->ask('Enter the PHP version to use.', '8.2');
-
-        if (! in_array($php, ['8.2', '8.3', '8.4'], true)) {
-            throw new InvalidArgumentException("Invalid PHP version specified. Please use 8.2, 8.3, or 8.4.: [$php]");
-        }
+        $vendor = $this->getVendorNameOrAsk('What is the vendor name ?', 'Acme');
+        $package = $this->getPackageNameOrAsk('What is the package name ?', 'Blog');
+        $php = $this->getValidatedPhpVersionOrAsk('What is the PHP version to use ?', '8.2');
 
         $workflow = [
             'catalyst:scaffold-core-structure:generate-gitignore',
