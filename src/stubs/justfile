@@ -1,0 +1,65 @@
+COMPOSER_IMAGE := "php-composer-__Php__:local"
+ACT_IMAGE := "act:local"
+SPECTRAL_IMAGE := "stoplight/spectral:latest"
+
+@help:
+    echo "Usage:"
+    echo "  just build        - Builds the necessary Docker images."
+    echo "  just install      - Installs project dependencies."
+    echo "  just test         - Runs the test suite."
+    echo "  just coverage     - Generates a code coverage report."
+    echo "  just pcov         - Generates a coverage report using PCOV."
+    echo "  just lint         - Runs all linting tasks."
+    echo "  just act          - Runs GitHub Actions locally."
+    echo "  just clean        - Removes the Docker images."
+    echo "  just help         - Displays this help message."
+
+build: build-composer build-act
+
+build-composer:
+    docker build -t {{ COMPOSER_IMAGE }} -f docker/composer/Dockerfile .
+
+build-act:
+    docker build -t {{ ACT_IMAGE }} -f docker/act/Dockerfile .
+
+build-spectral:
+    docker pull {{ SPECTRAL_IMAGE }}
+
+install:
+    docker run --rm -v "$(pwd):/var/www/html" {{ COMPOSER_IMAGE }} composer install
+
+test:
+    docker run --rm -v "$(pwd):/var/www/html" {{ COMPOSER_IMAGE }} composer test
+
+coverage:
+    docker run --rm -v "$(pwd):/var/www/html" {{ COMPOSER_IMAGE }} composer coverage
+
+pcov:
+    docker run --rm -v "$(pwd):/var/www/html" {{ COMPOSER_IMAGE }} composer pcov
+
+lint: lint-php lint-openapi
+
+lint-php:
+    docker run --rm -v "$(pwd):/var/www/html" {{ COMPOSER_IMAGE }} composer tests
+
+lint-openapi:
+    @if {{ path_exists("openapi.yaml") }}; then \
+        docker run --rm -it -v $(pwd):/tmp -w /tmp \
+        {{ SPECTRAL_IMAGE }} lint openapi.yaml; \
+    else \
+        echo "\033[33mwarn\033[0m: No openapi.yaml found, skipping OpenAPI linting."; \
+    fi
+
+act *options:
+    act {{ options }}
+
+clean: clean-composer clean-act clean-spectral
+
+clean-composer:
+    docker rmi {{ COMPOSER_IMAGE }} || true
+
+clean-act:
+    docker rmi {{ ACT_IMAGE }} || true
+
+clean-spectral:
+    docker rmi {{ SPECTRAL_IMAGE }} || true

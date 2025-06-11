@@ -5,16 +5,21 @@ declare(strict_types=1);
 namespace Ysato\Catalyst\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Symfony\Component\Filesystem\Filesystem;
-use Ysato\Catalyst\Console\Concerns\InputTrait;
-use Ysato\Catalyst\Console\Concerns\TaskRenderable;
+use Symfony\Component\Finder\Finder;
+use Ysato\Catalyst\Input;
+use Ysato\Catalyst\Steps\ScaffoldDocker;
+use Ysato\Catalyst\Steps\GenerateGitignore;
+use Ysato\Catalyst\Steps\PrepareSandboxFromStubs;
+use Ysato\Catalyst\Steps\ReplacePlaceholders;
+use Ysato\Catalyst\Steps\ScaffoldComposerManifest;
 
 class NewProjectScaffoldingCommand extends Command
 {
-    use InputTrait;
-    use TaskRenderable;
-
     /**
      * The name and signature of the console command.
      *
@@ -36,99 +41,66 @@ class NewProjectScaffoldingCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(Filesystem $fs)
+    public function handle(Filesystem $fs, TemporaryDirectory $sandbox, Finder $finder): int
     {
         $caFilepath = $this->getValidatedCaFilePath($fs);
 
-        $vendor = $this->getVendorNameOrAsk('What is the vendor name ?', 'Acme');
-        $package = $this->getPackageNameOrAsk('What is the package name ?', 'Blog');
-        $php = $this->getValidatedPhpVersionOrAsk('What is the PHP version to use ?', '8.2');
+        $rawVendor = $this->argument('vendor') ?? $this->ask('What is the vendor name ?', 'Acme');
+        $vendor = Str::studly($rawVendor);
 
-        $workflow = [
-            'catalyst:scaffold-core-structure:generate-gitignore',
-            'catalyst:scaffold-core-structure:scaffold-composer-manifest',
-            'catalyst:scaffold-core-structure:scaffold-architecture-layers',
-            'catalyst:scaffold-core-structure:define-containerized-environment',
-            'catalyst:configure-static-analysis:setup-php-code-sniffer',
-            'catalyst:configure-static-analysis:setup-php-mess-detector',
-            'catalyst:configure-static-analysis:setup-openapi-linter',
-            'catalyst:setup-ci-cd-and-repository-rules:generate-github-actions-workflows',
-            'catalyst:setup-ci-cd-and-repository-rules:setup-repository-rulesets',
-            'catalyst:setup-ci-cd-and-repository-rules:configure-local-action-runner',
-            'catalyst:setup-local-development-environment:initialize-ide-settings',
-            'catalyst:generate-developer-shortcuts:generate-justfile',
+        $rawPackage = $this->argument('package') ?? $this->ask('What is the package name ?', 'Blog');
+        $package = Str::studly($rawPackage);
+
+        $php = $this->argument('php') ?? $this->ask('What is the PHP version to use ?', '8.2');
+        if (! in_array($php, ['8.2', '8.3', '8.4'], true)) {
+            throw new InvalidArgumentException("Invalid PHP version specified. Please use 8.2, 8.3, or 8.4.: [$php]");
+        }
+
+        $input = new Input($vendor, $package, $php, $caFilepath);
+
+        $sandbox->deleteWhenDestroyed()->create();
+
+        $steps = [
+            new PrepareSandboxFromStubs($fs, $sandbox),
+            new GenerateGitignore($fs, $sandbox, $this->laravel),
+            new ScaffoldComposerManifest($fs, $sandbox, $input),
+            new ScaffoldDocker($fs, $sandbox, $input),
+            new ReplacePlaceholders($fs, $sandbox, $finder, $input),
         ];
 
-        foreach ($workflow as $command) {
-            match (Str::between($command, ':', ':')) {
-                'scaffold-core-structure' => $this->runScaffoldCoreStructure($command, $vendor, $package, $php, $caFilepath),
-                'configure-static-analysis' => $this->runConfigureStaticAnalysis($command, $vendor, $package),
-                'setup-ci-cd-and-repository-rules' => $this->runSetupCiCdAndRepositoryRules($command, $vendor, $package, $php),
-                'setup-local-development-environment' => $this->runSetupLocalDevelopmentEnvironment($command),
-                'generate-developer-shortcuts' => $this->runGenerateDeveloperShortcuts($command, $php),
-            };
-        }
+        $this->components->info('Running scaffolding steps');
+
+        (new Collection($steps))
+            ->each(fn($step) => $this->components->task($step::class, $step->execute()))
+            ->whenNotEmpty(fn() => $this->newLine());
+
+        $fs->mirror($sandbox->path(), $this->laravel->basePath(), options: ['override' => true]);
+
+        $sandbox->delete();
 
         return 0;
     }
 
-    private function runScaffoldCoreStructure(
-        string $command,
-        string $vendor,
-        string $package,
-        string $php,
-        ?string $caFilepath
-    ): void {
-        $step = Str::afterLast($command, ':');
-
-        match ($step) {
-            'generate-gitignore' => $this->call($command),
-            'scaffold-composer-manifest' => $this->call($command, compact('vendor', 'package', 'php')),
-            'scaffold-architecture-layers' => $this->call($command, compact('vendor', 'package')),
-            'define-containerized-environment' => $this->call($command, array_filter([
-                'php' => $php,
-                '--with-ca-file' => $caFilepath,
-            ], fn($value) => $value !== null)),
-        };
+    private function hasOptionStrict(string $key): bool
+    {
+        return $this->input->hasParameterOption("--$key") && $this->hasOption($key);
     }
 
-    private function runConfigureStaticAnalysis(string $command, string $vendor, string $package): void
+    private function getValidatedCaFilePath(Filesystem $fs): ?string
     {
-        $step = Str::afterLast($command, ':');
+        if (! $this->hasOptionStrict('with-ca-file')) {
+            return null;
+        }
 
-        match ($step) {
-            'setup-php-code-sniffer' => $this->call($command, compact('vendor', 'package')),
-            'setup-php-mess-detector' => $this->call($command),
-            'setup-openapi-linter' => $this->call($command, compact('vendor', 'package')),
-        };
-    }
+        $caFilepath = $this->option('with-ca-file');
+        if ($caFilepath === null || $caFilepath === '') {
+            throw new InvalidArgumentException('CA file path is required. (e.g., --with-ca-file=certs/certificate.pem).');
+        }
 
-    private function runSetupCiCdAndRepositoryRules(string $command, string $vendor, string $package, string $php): void
-    {
-        $step = Str::afterLast($command, ':');
+        if (! $fs->exists($caFilepath)) {
+            throw new InvalidArgumentException("The specified CA file does not exist: [$caFilepath]");
+        }
 
-        match ($step) {
-            'generate-github-actions-workflows' => $this->call($command, compact('php')),
-            'setup-repository-rulesets' => $this->call($command, compact('php')),
-            'configure-local-action-runner' => $this->call($command, compact('vendor', 'package')),
-        };
-    }
-
-    private function runSetupLocalDevelopmentEnvironment(string $command): void
-    {
-        $step = Str::afterLast($command, ':');
-
-        match ($step) {
-            'initialize-ide-settings' => $this->call($command),
-        };
-    }
-
-    private function runGenerateDeveloperShortcuts(string $command, string $php): void
-    {
-        $step = Str::afterLast($command, ':');
-
-        match ($step) {
-            'generate-justfile' => $this->call($command, compact('php')),
-        };
+        return $caFilepath;
     }
 }
