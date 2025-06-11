@@ -47,7 +47,7 @@ class DefineContainerizedEnvironmentCommand extends Command
 
             $generator
                 ->replacePlaceHolder(
-                    ['__Php__', "__Ca_Alpine__", "__Ca_Debian__"],
+                    ['__Php__', "__Ca_Alpine__", "__Ca_Debian__\n"],
                     [$php, $caAlpineContent, $caDebianContent]
                 )
                 ->generate($this->laravel->basePath());
