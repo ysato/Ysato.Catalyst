@@ -85,10 +85,10 @@ class NewProjectScaffoldingCommand extends Command
             'generate-gitignore' => $this->call($command),
             'scaffold-composer-manifest' => $this->call($command, compact('vendor', 'package', 'php')),
             'scaffold-architecture-layers' => $this->call($command, compact('vendor', 'package')),
-            'define-containerized-environment' => $this->call($command, [
+            'define-containerized-environment' => $this->call($command, array_filter([
                 'php' => $php,
                 '--with-ca-file' => $caFilepath,
-            ]),
+            ], fn($value) => $value !== null)),
         };
     }
 
