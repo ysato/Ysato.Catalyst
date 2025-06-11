@@ -42,8 +42,8 @@ class DefineContainerizedEnvironmentCommand extends Command
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->task(function () use ($php, $generator, $caFilepath) {
-            $caAlpineContent = $caFilepath ? $this->getCaAlpineContent($php) : '';
-            $caDebianContent = $caFilepath ? $this->getCaDebianContent($php) : '';
+            $caAlpineContent = $caFilepath ? $this->getCaAlpineContent($caFilepath) : '';
+            $caDebianContent = $caFilepath ? $this->getCaDebianContent($caFilepath) : '';
 
             $generator
                 ->replacePlaceHolder(
