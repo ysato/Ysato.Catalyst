@@ -1,7 +1,15 @@
 # Ysato.Catalyst
 
-A command package to streamline the setup of Laravel projects.  
-This package provides commands to easily configure project architecture, metadata, and development standards.
+A scaffolding tool to accelerate the setup of Laravel projects.
+
+## About This Package
+
+This package generates the necessary file structure for initializing a project.
+
+**Important Note: This command will always overwrite existing files.**
+To prevent unintended changes, you are expected to carefully review the output with a tool like `git diff` after running the command, and then selectively commit only the changes you want to adopt.
+
+The tool's role is to generate a diff based on the latest template; how that diff is handled is delegated to the user.
 
 ## Installation
 
@@ -13,73 +21,73 @@ composer require --dev ysato/catalyst
 
 ## Usage
 
-After installation, you can start the setup using the following command:
+This command will prompt you for necessary information interactively when run without arguments. For automation, you can pass the information as arguments to run it non-interactively.
+
+#### Interactive Execution
+
+If you run the command without any arguments, you will be prompted sequentially for the vendor name, package name, and PHP version.
 
 ```shell
-php artisan catalyst:setup
+php artisan catalyst:scaffold
 ```
 
-## Command List
+#### Execution with Arguments (for Automation)
 
-| Command Name                | Description                                            |
-|-----------------------------|--------------------------------------------------------|
-| `catalyst:setup`            | Executes the overall project setup.                    |
-| `catalyst:metadata`         | Generates composer.json metadata.                      |
-| `catalyst:architecture-src` | Initializes recommended src architecture.              |
-| `catalyst:phpcs`            | Initializes PHP Code Sniffer configuration.            |
-| `catalyst:phpmd`            | Initializes PHP Mess Detector configuration.           |
-| `catalyst:spectral`         | Initializes Spectral (OpenAPI linter) configuration.   |
-| `catalyst:github`           | Sets up recommended GitHub workflows and rulesets.     |
-| `catalyst:ide`              | Initializes recommended IDE (e.g., PhpStorm) settings. |
-| `catalyst:act`              | Configures local execution for GitHub Actions.         |
+For use in CI/CD scripts, you can run the command non-interactively by passing arguments in the following format.
 
-## Importing Branch Protection Rulesets
+**Format:**
+```shell
+php artisan catalyst:scaffold <vendor> <package> <php>
+```
 
-This project contains predefined GitHub branch protection rulesets stored as JSON files. You can import these into your GitHub repository to quickly apply consistent branch protection rules.
+| Argument | Description |
+| :--- | :--- |
+| **`<vendor>`** | `(Required)` The vendor name for namespacing (e.g., `Ysato`). |
+| **`<package>`** | `(Required)` The package name that follows the vendor (e.g., `Catalyst`). |
+| **`<php>`** | `(Required)` The PHP version to configure for the project (e.g., `8.3`). |
 
-The following ruleset files are available in the `.github/rulesets` directory:
+**Example:**
+```shell
+php artisan catalyst:scaffold MyVendor MyProject 8.3
+```
 
-* `branch-all-users-rules.json`: Contains rules generally applicable to all users.
-* `branch-exclude-core-contributors-rule.json`: Contains rules that might exclude core contributors from certain restrictions, or apply specific rules to them.
+#### Options
 
-### Prerequisites
+| Option | Description |
+| :--- | :--- |
+| **`--with-ca-file`** | `(Optional)` Path to a custom CA certificate file to trust within the container. Needed when behind a corporate proxy. |
 
+**Example with Arguments and Options:**
+```shell
+php artisan catalyst:scaffold MyCorp WebApp 8.3 --with-ca-file=./certs/certificate.pem
+```
+
+## Post-Setup Manual Steps
+
+### Importing Branch Protection Rulesets
+
+This project generates predefined GitHub branch protection rulesets as JSON files in the `.github/rulesets` directory. These must be manually applied to your repository.
+
+#### Prerequisites
 * You need **admin access** to the GitHub repository where you want to import these rulesets.
 
-### Importing via GitHub UI
-
-GitHub allows you to import ruleset configurations directly.
-
+#### Importing via GitHub UI
 1.  Navigate to your repository on GitHub.
 2.  Click on **Settings**.
 3.  In the left sidebar, under the "Code and automation" section, click on **Rules**, then **Rulesets**.
-4.  Click the **"Import ruleset"** button (this option might be under a "..." menu or directly visible depending on UI updates).
-5.  You will be prompted to upload a JSON file.
-6.  Upload ` .github/rulesets/branch-all-users-rules.json`.
-7.  Review the imported settings and click **"Create"**.
-8.  Repeat steps 4-7 for `.github/rulesets/branch-exclude-core-contributors-rule.json`.
+4.  Click the **"Import ruleset"** button.
+5.  When prompted to upload a JSON file, select a `.json` file from the `.github/rulesets/` directory.
+6.  Review the imported settings and click **"Create"**.
+7.  Repeat for other ruleset files as needed.
 
-    **Note:** Carefully review the "Target branches" section for each ruleset after import to ensure they apply to the intended branches (e.g., `main`, `develop`, `feature/*`). You might need to adjust these based on your repository's branching strategy.
-
-### Verifying the Import
-
-After importing, go to **Settings > Rules > Rulesets** in your GitHub repository to verify that the new rulesets appear and are configured as expected. Check their enforcement status and target branches.
+    **Note:** Carefully review the "Target branches" section for each ruleset after import to ensure they apply to the intended branches (e.g., `main`, `develop`).
 
 ## For Contributors
 
-The following command installs the oldest compatible versions of dependencies  
-to ensure this package works reliably in diverse environments:
-
+To install the oldest compatible versions of dependencies and ensure this package works reliably in diverse environments, run the following command:
 ```shell
 composer update --prefer-lowest
 ```
-
-## Contribution Guidelines
-
-1. Fork this repository.
-2. Create a new branch.
-3. Make the necessary changes and commit them.
-4. Submit a pull request.
 
 ## License
 
