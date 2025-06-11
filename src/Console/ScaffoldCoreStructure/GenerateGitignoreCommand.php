@@ -57,6 +57,7 @@ class GenerateGitignoreCommand extends Command
 !/.idea/fileTemplates
 !/.idea/inspectionProfiles
 
+
 EOF;
 
         $after = <<<'EOF'
@@ -73,7 +74,7 @@ EOF;
 
         $replacements = ['', '', ''];
 
-        $cleaned = preg_replace($patterns, $replacements, $contents);
+        $cleaned = trim(preg_replace($patterns, $replacements, $contents));
 
         return $before.$cleaned.$after;
     }
