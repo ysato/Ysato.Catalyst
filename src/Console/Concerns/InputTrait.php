@@ -12,7 +12,12 @@ trait InputTrait
 {
     protected function getVendorName(): ?string
     {
-        return Str::studly($this->argument('vendor'));
+        $vendor = $this->argument('vendor');
+        if ($vendor === null) {
+            return null;
+        }
+
+        return Str::studly($vendor);
     }
 
     protected function getVendorNameOrAsk(string $question, string $default): string
@@ -24,7 +29,12 @@ trait InputTrait
 
     protected function getPackageName(): ?string
     {
-        return Str::studly($this->argument('package'));
+        $package = $this->argument('package');
+        if ($package === null) {
+            return null;
+        }
+
+        return Str::studly($package);
     }
 
     protected function getPackageNameOrAsk(string $question, string $default): string

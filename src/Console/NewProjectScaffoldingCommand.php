@@ -77,7 +77,7 @@ class NewProjectScaffoldingCommand extends Command
         string $vendor,
         string $package,
         string $php,
-        string $caFilepath
+        ?string $caFilepath
     ): void {
         $step = Str::afterLast($command, ':');
 
