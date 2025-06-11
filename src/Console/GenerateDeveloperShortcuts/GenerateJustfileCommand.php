@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Ysato\Catalyst\Console\GenerateDeveloperShortcuts;
 
 use Illuminate\Console\Command;
-use Ysato\Catalyst\Console\Concerns\PhpVersionAskable;
+use Ysato\Catalyst\Console\Concerns\InputTrait;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
 use Ysato\Catalyst\Generator;
 
 class GenerateJustfileCommand extends Command
 {
+    use InputTrait;
     use TaskRenderable;
-    use PhpVersionAskable;
 
     /**
      * The name and signature of the console command.
@@ -39,7 +39,7 @@ class GenerateJustfileCommand extends Command
      */
     public function handle(Generator $generator)
     {
-        $php = $this->getPhpVersion();
+        $php = $this->getValidatedPhpVersion();
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->task(function () use ($generator, $php) {

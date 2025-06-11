@@ -9,14 +9,12 @@ use Composer\Json\JsonFile;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Seld\JsonLint\ParsingException;
-use Ysato\Catalyst\Console\Concerns\PhpVersionAskable;
+use Ysato\Catalyst\Console\Concerns\InputTrait;
 use Ysato\Catalyst\Console\Concerns\TaskRenderable;
-use Ysato\Catalyst\Console\Concerns\VendorPackageAskable;
 
 class ScaffoldComposerManifestCommand extends Command
 {
-    use VendorPackageAskable;
-    use PhpVersionAskable;
+    use InputTrait;
     use TaskRenderable;
 
     /**
@@ -42,7 +40,7 @@ class ScaffoldComposerManifestCommand extends Command
     {
         $vendor = $this->getVendorName();
         $package = $this->getPackageName();
-        $php = $this->getPhpVersion();
+        $php = $this->getValidatedPhpVersion();
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->task(function () use ($vendor, $package, $php) {
