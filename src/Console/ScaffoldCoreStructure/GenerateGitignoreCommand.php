@@ -63,6 +63,7 @@ EOF;
         $after = <<<'EOF'
 /.actrc
 /.php_cs.cache
+/.phpcs-cache
 
 EOF;
 
