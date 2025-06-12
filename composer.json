@@ -33,9 +33,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Ysato\\Catalyst\\": [
-                "tests/",
-                "tests/Fake"
+            "Tests\\": [
+                "tests/"
             ]
         },
         "exclude-from-classmap": [
