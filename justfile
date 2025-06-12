@@ -16,7 +16,7 @@ ACT_IMAGE := "act:local"
 build: build-php build-act
 
 build-php:
-    docker build -t {{ PHP_IMAGE }} -f docker/php/Dockerfile .
+    docker build -t {{ PHP_IMAGE }} -f docker/composer/Dockerfile .
 
 build-act:
     docker build -t {{ ACT_IMAGE }} -f docker/act/Dockerfile .

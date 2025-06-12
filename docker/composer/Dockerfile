@@ -1,7 +1,7 @@
 FROM php:8.2-fpm-alpine
 
 RUN apk add --no-cache ca-certificates
-COPY /certs/certificate.pem /usr/local/share/ca-certificates/certificate.crt
+COPY ./certs/certificate.pem /usr/local/share/ca-certificates/certificate.crt
 RUN update-ca-certificates
 
 RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS autoconf

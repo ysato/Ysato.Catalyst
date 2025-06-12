@@ -12,11 +12,11 @@ use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Ysato\Catalyst\Input;
-use Ysato\Catalyst\Steps\ScaffoldDocker;
 use Ysato\Catalyst\Steps\GenerateGitignore;
 use Ysato\Catalyst\Steps\PrepareSandboxFromStubs;
 use Ysato\Catalyst\Steps\ReplacePlaceholders;
 use Ysato\Catalyst\Steps\ScaffoldComposerManifest;
+use Ysato\Catalyst\Steps\ScaffoldDocker;
 
 class NewProjectScaffoldingCommand extends Command
 {
@@ -58,12 +58,14 @@ class NewProjectScaffoldingCommand extends Command
 
         $input = new Input($vendor, $package, $php, $caFilepath);
 
-        $sandbox->deleteWhenDestroyed()->create();
+        $sandbox
+            ->deleteWhenDestroyed()
+            ->create();
 
         $steps = [
-            new PrepareSandboxFromStubs($fs, $sandbox),
+            new PrepareSandboxFromStubs($fs, $sandbox, __DIR__ . '/../stubs'),
             new GenerateGitignore($fs, $sandbox, $this->laravel),
-            new ScaffoldComposerManifest($fs, $sandbox, $input),
+            new ScaffoldComposerManifest($fs, $sandbox),
             new ScaffoldDocker($fs, $sandbox, $input),
             new ReplacePlaceholders($fs, $sandbox, $finder, $input),
         ];

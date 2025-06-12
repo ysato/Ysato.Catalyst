@@ -9,12 +9,15 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class PrepareSandboxFromStubs implements StepInterface
 {
-    public function __construct(private readonly Filesystem $fs, private readonly TemporaryDirectory $sandbox)
-    {
+    public function __construct(
+        private readonly Filesystem $fs,
+        private readonly TemporaryDirectory $sandbox,
+        private readonly string $stubsPath
+    ) {
     }
 
     public function execute(): void
     {
-        $this->fs->mirror(__DIR__ . '/../stubs', $this->sandbox->path(), options: ['override' => true]);
+        $this->fs->mirror($this->stubsPath, $this->sandbox->path(), options: ['override' => true]);
     }
 }
