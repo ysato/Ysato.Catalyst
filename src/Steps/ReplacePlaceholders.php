@@ -44,8 +44,8 @@ class ReplacePlaceholders implements StepInterface
 
         $files = $this->finder
             ->ignoreDotFiles(false)
-            ->files()
-            ->in($this->sandbox->path());
+            ->in($this->sandbox->path())
+            ->files();
 
         foreach ($files as $file) {
             $filePath = (string) $file;

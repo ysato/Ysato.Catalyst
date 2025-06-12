@@ -28,6 +28,7 @@ class ScaffoldComposerManifest implements StepInterface
 
         $definition['name'] = '__Kebab_Vendor__/__Kebab_Package__';
         $definition['license'] = 'proprietary';
+        $definition['autoload']['psr-4']["__Vendor__\\__Package__\\"] = 'src/';
         $definition['scripts']['test'] = [
             '@php artisan config:clear --ansi',
             '@php artisan test',
