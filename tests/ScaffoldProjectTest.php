@@ -70,7 +70,38 @@ class ScaffoldProjectTest extends TestCase
 
         $expected = $this->finder
             ->ignoreDotFiles(false)
-            ->in(__DIR__ . '/expected')
+            ->in(__DIR__ . '/expected/with-ca')
+            ->files();
+
+        foreach ($expected as $file) {
+            $this->assertFileEquals((string) $file, $this->sandbox->path($file->getRelativePathname()));
+        }
+    }
+
+    public function testExecuteWithoutCa()
+    {
+        $this->app
+            ->expects($this->once())
+            ->method('basePath')
+            ->with('.gitignore')
+            ->willReturn(__DIR__ . '/project/.gitignore');
+
+        $input = new Input('Acme', 'Blog', '8.2', null);
+
+        $steps = [
+            new PrepareSandboxFromStubs($this->fs, $this->sandbox, __DIR__ . '/stubs'),
+            new GenerateGitignore($this->fs, $this->sandbox, $this->app),
+            new ScaffoldComposerManifest($this->fs, $this->sandbox),
+            new ScaffoldDocker($this->fs, $this->sandbox, $input),
+            new ReplacePlaceholders($this->fs, $this->sandbox, $this->finder, $input),
+        ];
+
+        (new Collection($steps))
+            ->each(fn($step) => $step->execute());
+
+        $expected = $this->finder
+            ->ignoreDotFiles(false)
+            ->in(__DIR__ . '/expected/without-ca')
             ->files();
 
         foreach ($expected as $file) {
