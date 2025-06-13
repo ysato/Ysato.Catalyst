@@ -15,4 +15,3 @@ composer.lock
 /build
 /certs/*
 !/certs/.gitkeep
-
