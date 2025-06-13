@@ -36,17 +36,7 @@ FROM shivammathur/node:latest
 
 DOCKERFILE;
 
-        if (! $caFilepath) {
-            return $content;
-        }
-
-        return $content . <<< DOCKERFILE
-
-RUN apt-get update && apt-get install -y ca-certificates
-COPY $caFilepath /usr/local/share/ca-certificates/certificate.crt
-RUN update-ca-certificates
-
-DOCKERFILE;
+        return $content . $this->generateDebianCaLines($caFilepath);
     }
 
     private function generateComposerDockerfileContent(?string $caFilepath): string
@@ -56,15 +46,7 @@ FROM php:__Php__-fpm-alpine
 
 DOCKERFILE;
 
-        if ($caFilepath) {
-            $content .= <<< DOCKERFILE
-
-RUN apk add --no-cache ca-certificates
-COPY $caFilepath /usr/local/share/ca-certificates/certificate.crt
-RUN update-ca-certificates
-
-DOCKERFILE;
-        }
+        $content .= $this->generateAlpineCaLines($caFilepath);
 
         return $content . <<< 'DOCKERFILE'
 
@@ -79,6 +61,36 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # 作業ディレクトリを設定
 WORKDIR /var/www/html
+
+DOCKERFILE;
+    }
+
+    private function generateAlpineCaLines(?string $caFilepath): string
+    {
+        if (! $caFilepath) {
+            return '';
+        }
+
+        return <<< DOCKERFILE
+
+RUN apk add --no-cache ca-certificates
+COPY $caFilepath /usr/local/share/ca-certificates/certificate.crt
+RUN update-ca-certificates
+
+DOCKERFILE;
+    }
+
+    private function generateDebianCaLines(?string $caFilepath): string
+    {
+        if (! $caFilepath) {
+            return '';
+        }
+
+        return <<< DOCKERFILE
+
+RUN apt-get update && apt-get install -y ca-certificates
+COPY $caFilepath /usr/local/share/ca-certificates/certificate.crt
+RUN update-ca-certificates
 
 DOCKERFILE;
     }
