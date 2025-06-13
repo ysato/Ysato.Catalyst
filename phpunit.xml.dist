@@ -14,7 +14,8 @@
     </php>
     <source>
         <include>
-            <file>src/Generator.php</file>
+            <directory>src/Steps</directory>
+            <file>src/Input.php</file>
         </include>
     </source>
 </phpunit>
