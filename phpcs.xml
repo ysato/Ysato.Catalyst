@@ -18,6 +18,7 @@
     <file>src</file>
     <file>tests</file>
     <exclude-pattern>**/__snapshots__/**</exclude-pattern>
+    <exclude-pattern>**/__sandbox__/**</exclude-pattern>
     <exclude-pattern>stubs/**</exclude-pattern>
 
     <!-- PSR12 Coding Standard -->
