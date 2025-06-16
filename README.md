@@ -4,7 +4,7 @@ A scaffolding tool to accelerate the setup of Laravel projects.
 
 ## About This Package
 
-This package generates the necessary file structure for initializing a project.
+This package generates the necessary file structure for initializing a Laravel project using a unified template system with enhanced extensibility.
 
 **Important Note: This command will always overwrite existing files.**
 To prevent unintended changes, you are expected to carefully review the output with a tool like `git diff` after running the command, and then selectively commit only the changes you want to adopt.
@@ -84,6 +84,35 @@ This project generates predefined GitHub branch protection rulesets as JSON file
 
 ## For Contributors
 
+### Development Setup
+This project uses Docker for development. Use the provided `justfile` commands:
+
+```shell
+# Build required Docker images
+just build
+
+# Install dependencies
+just install
+
+# Run tests and quality checks
+just tests
+
+# Generate coverage report
+just coverage
+```
+
+### Available Commands
+- `just build` - Builds the necessary Docker images
+- `just install` - Installs project dependencies
+- `just test` - Runs the test suite
+- `just tests` - Runs tests and quality checks (lint, QA, tests)
+- `just coverage` - Generates a code coverage report
+- `just pcov` - Generates a coverage report using PCOV
+- `just fix` - Auto-fixes code style issues
+- `just act` - Runs GitHub Actions locally
+- `just clean` - Removes the Docker images
+
+### Compatibility Testing
 To install the oldest compatible versions of dependencies and ensure this package works reliably in diverse environments, run the following command:
 ```shell
 composer update --prefer-lowest

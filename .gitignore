@@ -11,6 +11,7 @@ gen
 composer.lock
 /.php_cs.cache
 /.phpunit.result.cache
+/.phpcs-cache
 /build
 /certs/*
 !/certs/.gitkeep

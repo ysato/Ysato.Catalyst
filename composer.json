@@ -44,7 +44,12 @@
     },
     "scripts": {
         "test": "./vendor/bin/phpunit --no-coverage --display-deprecations --fail-on-deprecation",
+        "cs": "phpcs",
+        "cs-fix": "phpcbf",
+        "qa": "phpmd src text phpmd.xml",
         "tests": [
+            "@cs",
+            "@qa",
             "@test"
         ],
         "coverage": "php -dzend_extension=xdebug.so -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage",
