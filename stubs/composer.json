@@ -1,0 +1,38 @@
+{
+    "name": "{{ vendor|kebab }}/{{ package|kebab }}",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "{{ vendor|pascal }}\\{{ package|pascal }}\\": "src/"
+        }
+    },
+    "scripts": {
+        "test": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test"
+        ],
+        "coverage": [
+            "@php artisan config:clear --ansi",
+            "@php -d zend_extension=xdebug.so -d xdebug.mode=coverage artisan test --coverage"
+        ],
+        "pcov": [
+            "@php artisan config:clear --ansi",
+            "@php -d extension=pcov.so -d pcov.enabled=1 artisan test --coverage"
+        ],
+        "cs": "phpcs",
+        "cs-fix": "phpcbf",
+        "qa": [
+            "phpmd src text ./phpmd.xml"
+        ],
+        "tests": [
+            "@cs",
+            "@qa",
+            "@test"
+        ]
+    },
+    "config": {
+        "platform": {
+            "php": "{{ php }}"
+        }
+    }
+}

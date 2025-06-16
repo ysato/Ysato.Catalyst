@@ -17,7 +17,6 @@
     <!-- Directories to be checked -->
     <file>src</file>
     <file>tests</file>
-    <exclude-pattern>stubs/**</exclude-pattern>
 
     <!-- PSR12 Coding Standard -->
     <rule ref="PSR12"/>

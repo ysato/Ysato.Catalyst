@@ -18,6 +18,7 @@
         </include>
         <exclude>
             <directory>src/Console</directory>
+            <directory>stubs</directory>
             <file>src/CatalystServiceProvider.php</file>
         </exclude>
     </source>
