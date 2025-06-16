@@ -19,7 +19,8 @@
         "spatie/temporary-directory": "^2.2",
         "squizlabs/php_codesniffer": "*",
         "symfony/filesystem": "^7.1",
-        "symfony/finder": "^7.1"
+        "symfony/finder": "^7.1",
+        "twig/twig": "^3.12"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.5|^11.0|^12.0.1"
