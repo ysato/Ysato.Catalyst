@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ruleset
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    name="{{ vendor|pascal }}.{{ package|pascal }}"
+    name="Vendor.Package"
     xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd"
 >
-    <description>{{ vendor|pascal }}.{{ package|pascal }} Coding Standard</description>
+    <description>Vendor.Package Coding Standard</description>
     <arg name="basepath" value="."/>
     <arg name="extensions" value="php"/>
     <arg name="parallel" value="80"/>
@@ -17,8 +17,6 @@
     <!-- Directories to be checked -->
     <file>src</file>
     <file>tests</file>
-    <exclude-pattern>**/__snapshots__/**</exclude-pattern>
-    <exclude-pattern>stubs/**</exclude-pattern>
 
     <!-- PSR12 Coding Standard -->
     <rule ref="PSR12"/>
@@ -27,16 +25,14 @@
     <rule ref="./vendor/doctrine/coding-standard/lib/Doctrine/ruleset.xml">
         <exclude name="Generic.Formatting.MultipleStatementAlignment.NotSame"/>
         <exclude name="Squiz.Strings.DoubleQuoteUsage.ContainsVar"/>
-        <exclude name="Squiz.WhiteSpace.LanguageConstructSpacing"/>
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousAbstractClassNaming.SuperfluousPrefix"/>
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousExceptionNaming.SuperfluousSuffix"/>
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousInterfaceNaming.SuperfluousSuffix"/>
         <exclude name="SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable"/>
         <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint"/>
         <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint"/>
+        <exclude-pattern>*/tests/Fake/*</exclude-pattern>
     </rule>
-
-    <rule ref="Generic.WhiteSpace.LanguageConstructSpacing"/>
 
     <!-- Additional Rules -->
     <rule ref="SlevomatCodingStandard.Commenting.DocCommentSpacing">
