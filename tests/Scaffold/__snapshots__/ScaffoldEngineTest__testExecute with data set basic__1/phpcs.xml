@@ -25,14 +25,16 @@
     <rule ref="./vendor/doctrine/coding-standard/lib/Doctrine/ruleset.xml">
         <exclude name="Generic.Formatting.MultipleStatementAlignment.NotSame"/>
         <exclude name="Squiz.Strings.DoubleQuoteUsage.ContainsVar"/>
+        <exclude name="Squiz.WhiteSpace.LanguageConstructSpacing"/>
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousAbstractClassNaming.SuperfluousPrefix"/>
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousExceptionNaming.SuperfluousSuffix"/>
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousInterfaceNaming.SuperfluousSuffix"/>
         <exclude name="SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable"/>
         <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint"/>
         <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint"/>
-        <exclude-pattern>*/tests/Fake/*</exclude-pattern>
     </rule>
+
+    <rule ref="Generic.WhiteSpace.LanguageConstructSpacing"/>
 
     <!-- Additional Rules -->
     <rule ref="SlevomatCodingStandard.Commenting.DocCommentSpacing">

@@ -6,16 +6,13 @@ namespace Ysato\Catalyst\Scaffold\Processors;
 
 use Composer\Factory;
 use Composer\Json\JsonFile;
+use Exception;
 use Seld\JsonLint\ParsingException;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
+use UnexpectedValueException;
 use Ysato\Catalyst\Scaffold\PostProcessorInterface;
 
-use function file_put_contents;
 use function is_array;
-use function json_encode;
-
-use const JSON_PRETTY_PRINT;
-use const JSON_UNESCAPED_SLASHES;
 
 class ComposerManifestProcessor implements PostProcessorInterface
 {
@@ -24,31 +21,33 @@ class ComposerManifestProcessor implements PostProcessorInterface
      */
     public function process(TemporaryDirectory $sandbox): void
     {
-        $overridesPath = $sandbox->path('composer.json');
+        $composerJsonPath = $sandbox->path('composer.json');
 
-        $this->mergeWithOriginal($overridesPath);
+        $this->mergeWithOriginal($composerJsonPath);
     }
 
     /**
      * @throws ParsingException
+     * @throws UnexpectedValueException
+     * @throws Exception
      */
-    private function mergeWithOriginal(string $composerPath): void
+    private function mergeWithOriginal(string $composerJsonPath): void
     {
-        $original = $this->loadOriginalComposer();
+        $original = $this->loadOriginalComposerJson();
         $base = $this->removeUnwantedFields($original);
-        $overrides = (new JsonFile($composerPath))->read();
 
-        $merged = $this->mergeComposerManifests($base, $overrides);
+        $composerJson = new JsonFile($composerJsonPath);
 
-        file_put_contents($composerPath, json_encode($merged, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        $merged = $this->mergeComposerManifests($base, $composerJson->read());
+
+        $composerJson->write($merged);
     }
 
     /**
      * @return array<string, mixed>
-     *
      * @throws ParsingException
      */
-    private function loadOriginalComposer(): array
+    private function loadOriginalComposerJson(): array
     {
         return (new JsonFile(Factory::getComposerFile()))->read();
     }
