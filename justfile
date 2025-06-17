@@ -6,9 +6,10 @@ ACT_IMAGE := "act:local"
     echo "  just build        - Builds the necessary Docker images."
     echo "  just install      - Installs project dependencies."
     echo "  just test         - Runs the test suite."
+    echo "  just tests        - Runs tests and quality checks (lint, QA, tests)."
     echo "  just coverage     - Generates a code coverage report."
     echo "  just pcov         - Generates a coverage report using PCOV."
-    echo "  just lint         - Runs all linting tasks."
+    echo "  just fix          - Auto-fixes code style issues."
     echo "  just act          - Runs GitHub Actions locally."
     echo "  just clean        - Removes the Docker images."
     echo "  just help         - Displays this help message."
@@ -33,8 +34,11 @@ coverage:
 pcov:
     docker run --rm -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer pcov
 
-lint:
+tests:
     docker run --rm -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer tests
+
+fix:
+    docker run --rm -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer cs-fix
 
 act *options:
     act {{ options }}

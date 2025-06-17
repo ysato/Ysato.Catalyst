@@ -14,8 +14,12 @@
     </php>
     <source>
         <include>
-            <directory>src/Steps</directory>
-            <file>src/Input.php</file>
+            <directory>src</directory>
         </include>
+        <exclude>
+            <directory>src/Console</directory>
+            <directory>stubs</directory>
+            <file>src/CatalystServiceProvider.php</file>
+        </exclude>
     </source>
 </phpunit>

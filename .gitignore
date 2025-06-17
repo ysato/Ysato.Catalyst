@@ -10,8 +10,8 @@ gen
 /vendor
 composer.lock
 /.php_cs.cache
-/.actrc
 /.phpunit.result.cache
+/.phpcs-cache
 /build
 /certs/*
 !/certs/.gitkeep

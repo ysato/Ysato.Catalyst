@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Ysato\Catalyst;
 
 use Illuminate\Support\ServiceProvider;
-use Ysato\Catalyst\Console\NewProjectScaffoldingCommand;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
+use Ysato\Catalyst\Console\ScaffoldCommand;
 
 class CatalystServiceProvider extends ServiceProvider
 {
@@ -14,6 +15,14 @@ class CatalystServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app
+            ->when(ScaffoldCommand::class)
+            ->needs(TemporaryDirectory::class)
+            ->give(function () {
+                return (new TemporaryDirectory())
+                    ->deleteWhenDestroyed()
+                    ->create();
+            });
     }
 
     /**
@@ -21,9 +30,10 @@ class CatalystServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // phpcs:ignore SlevomatCodingStandard.ControlStructures.EarlyExit.EarlyExitNotUsed
         if ($this->app->runningInConsole()) {
             $this->commands([
-                NewProjectScaffoldingCommand::class,
+                ScaffoldCommand::class,
             ]);
         }
     }
