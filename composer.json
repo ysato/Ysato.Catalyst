@@ -31,7 +31,7 @@
             "Ysato\\Catalyst\\": "src/"
         },
         "exclude-from-classmap": [
-            "src/stubs"
+            "stubs"
         ]
     },
     "autoload-dev": {
@@ -39,7 +39,8 @@
             "Tests\\": "tests/"
         },
         "exclude-from-classmap": [
-            "src/stubs"
+            "stubs",
+            "tests/Scaffold/__snapshots__"
         ]
     },
     "scripts": {
