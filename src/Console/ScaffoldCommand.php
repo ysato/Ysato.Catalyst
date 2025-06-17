@@ -65,13 +65,13 @@ class ScaffoldCommand extends Command
         $engine = (new ScaffoldEngineFactory(dirname(__DIR__, 2) . '/stubs'))
             ->create($context, $sandbox);
 
-        $this->components->info('Running scaffolding steps');
-
         $engine->execute();
 
         $fs->mirror($sandbox->path(), $this->laravel->basePath(), options: ['override' => true]);
 
         $sandbox->delete();
+
+        $this->components->info("Project '{$vendor}/{$package}' scaffolded successfully");
 
         return 0;
     }
