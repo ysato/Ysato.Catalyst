@@ -45,6 +45,7 @@ class ComposerManifestProcessor implements PostProcessorInterface
 
     /**
      * @return array<string, mixed>
+     *
      * @throws ParsingException
      */
     private function loadOriginalComposerJson(): array

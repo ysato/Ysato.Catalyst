@@ -18,7 +18,7 @@ class CatalystServiceProvider extends ServiceProvider
         $this->app
             ->when(ScaffoldCommand::class)
             ->needs(TemporaryDirectory::class)
-            ->give(function () {
+            ->give(static function () {
                 return (new TemporaryDirectory())
                     ->deleteWhenDestroyed()
                     ->create();
