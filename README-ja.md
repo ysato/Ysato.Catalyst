@@ -64,6 +64,25 @@ php artisan catalyst:scaffold MyCorp WebApp 8.3 --with-ca-file=./certs/certifica
 
 ## セットアップ後の手動ステップ
 
+### 初回QAセットアップ
+
+新しくスキャフォールドされたプロジェクトで初回 `just lint-php` を実行する際、既存のコードパターンが原因でPHPStan、PHPMD、PHPCSからエラーが発生する場合があります。これを解決するため、各QAツール用のベースラインファイルを作成してください：
+
+#### PHPStanベースライン
+```shell
+vendor/bin/phpstan analyse --generate-baseline
+```
+
+#### PHPMDベースライン
+```shell
+vendor/bin/phpmd app,src text ./phpmd.xml --generate-baseline
+```
+
+#### PHPCSベースライン
+```shell
+vendor/bin/phpcs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --report-file=phpcs.baseline.xml --basepath=.
+```
+
 ### ブランチ保護ルールセットのインポート
 
 このプロジェクトは、`.github/rulesets`ディレクトリに、あらかじめ定義されたGitHubブランチ保護ルールセットをJSONファイルとして生成します。これらは手動でリポジトリに適用する必要があります。
@@ -85,32 +104,20 @@ php artisan catalyst:scaffold MyCorp WebApp 8.3 --with-ca-file=./certs/certifica
 ## コントリビューター向け
 
 ### 開発環境のセットアップ
-このプロジェクトは開発にDockerを使用します。用意された`justfile`コマンドを使用してください：
-
-```shell
-# 必要なDockerイメージをビルド
-just build
-
-# 依存関係をインストール
-just install
-
-# テストと品質チェックを実行
-just tests
-
-# カバレッジレポートを生成
-just coverage
-```
+このプロジェクトは開発にDockerを使用します。用意された`justfile`コマンドを使用してください。
 
 ### 利用可能なコマンド
 - `just build` - 必要なDockerイメージをビルド
 - `just install` - プロジェクトの依存関係をインストール
 - `just test` - テストスイートを実行
-- `just tests` - テストと品質チェックを実行（lint、QA、テスト）
+- `just tests` - テストと品質チェックを実行（lints、テスト）
+- `just lints` - コードスタイルと静的解析チェックを実行
 - `just coverage` - テストカバレッジレポートを生成
 - `just pcov` - PCOVでカバレッジレポートを生成
 - `just fix` - コードスタイルの問題を自動修正
 - `just act` - GitHub Actionsをローカルで実行
 - `just clean` - Dockerイメージを削除
+- `just help` - このヘルプメッセージを表示
 
 ### 互換性テスト
 依存関係の最も古い互換バージョンをインストールし、多様な環境での動作を保証するには、以下のコマンドを実行します。
