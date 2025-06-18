@@ -34,11 +34,13 @@ coverage:
 pcov:
     docker run --rm -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer pcov
 
-tests:
-    docker run --rm -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer tests
+lints:
+    docker run --rm -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer lints
 
 fix:
     docker run --rm -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer cs-fix
+
+tests: lints test
 
 act *options:
     act {{ options }}

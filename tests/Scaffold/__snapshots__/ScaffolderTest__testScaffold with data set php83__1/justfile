@@ -37,10 +37,10 @@ coverage:
 pcov:
     docker run --rm -v "$(pwd):/var/www/html" {{ COMPOSER_IMAGE }} composer pcov
 
-lint: lint-php lint-openapi
+lints: lint-php lint-openapi
 
 lint-php:
-    docker run --rm -v "$(pwd):/var/www/html" {{ COMPOSER_IMAGE }} composer tests
+    docker run --rm -v "$(pwd):/var/www/html" {{ COMPOSER_IMAGE }} composer lints
 
 lint-openapi:
     @if {{ path_exists("openapi.yaml") }}; then \
@@ -49,6 +49,8 @@ lint-openapi:
     else \
         echo "\033[33mwarn\033[0m: No openapi.yaml found, skipping OpenAPI linting."; \
     fi
+
+tests: lint-php test
 
 act *options:
     act {{ options }}

@@ -124,35 +124,12 @@ class Scaffolder
             $content['require'] = array_merge($require, ['php' => '^{{ php }}']);
 
             assert(array_key_exists('autoload', $content), 'autoload section must exist in composer.json');
-
             $content['autoload'] = $this->buildAutoloadSection($content['autoload']);
 
-            $scripts = array_key_exists('scripts', $content) ? $content['scripts'] : [];
-            $content['scripts'] = array_merge($scripts, [
-                'test' => [
-                    '@php artisan config:clear --ansi',
-                    '@php artisan test',
-                ],
-                'coverage' => [
-                    '@php artisan config:clear --ansi',
-                    '@php -d zend_extension=xdebug.so -d xdebug.mode=coverage artisan test --coverage',
-                ],
-                'pcov' => [
-                    '@php artisan config:clear --ansi',
-                    '@php -d extension=pcov.so -d pcov.enabled=1 artisan test --coverage',
-                ],
-                'cs' => 'phpcs',
-                'cs-fix' => 'phpcbf',
-                'qa' => ['phpmd src text ./phpmd.xml'],
-                'tests' => [
-                    '@cs',
-                    '@qa',
-                    '@test',
-                ],
-            ]);
+            assert(array_key_exists('scripts', $content), 'scripts section must exist in composer.json');
+            $content['scripts'] = $this->buildScriptsSection($content['scripts']);
 
             assert(array_key_exists('config', $content), 'config section must exist in composer.json');
-
             $content['config'] = $this->buildConfigSection($content['config']);
 
             $this->filesystem->dumpFile(
@@ -160,6 +137,33 @@ class Scaffolder
                 json_encode($content, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL,
             );
         };
+    }
+
+    /**
+     * @param array<string, string|string[]> $scripts
+     *
+     * @return non-empty-array<string, string|string[]>
+     */
+    private function buildScriptsSection(array $scripts): array
+    {
+        return array_merge($scripts, [
+            'test' => [
+                '@php artisan config:clear --ansi',
+                '@php artisan test',
+            ],
+            'coverage' => [
+                '@php artisan config:clear --ansi',
+                '@php -d zend_extension=xdebug.so -d xdebug.mode=coverage artisan test --coverage',
+            ],
+            'pcov' => [
+                '@php artisan config:clear --ansi',
+                '@php -d extension=pcov.so -d pcov.enabled=1 artisan test --coverage',
+            ],
+            'cs' => 'phpcs',
+            'cs-fix' => 'phpcbf',
+            'qa' => ['phpmd src text ./phpmd.xml', 'phpstan'],
+            'lints' => ['@cs', '@qa'],
+        ]);
     }
 
     /**
