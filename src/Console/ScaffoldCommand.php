@@ -6,15 +6,11 @@ namespace Ysato\Catalyst\Console;
 
 use Illuminate\Console\Command;
 use InvalidArgumentException;
-use Spatie\TemporaryDirectory\TemporaryDirectory;
-use Symfony\Component\Filesystem\Filesystem;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
-use Ysato\Catalyst\Scaffold\ContextFactory;
-use Ysato\Catalyst\Scaffold\ScaffoldEngineFactory;
+use Ysato\Catalyst\Scaffold\Input;
+use Ysato\Catalyst\Scaffold\Scaffolder;
 
 use function dirname;
+use function file_exists;
 use function in_array;
 
 class ScaffoldCommand extends Command
@@ -43,14 +39,10 @@ class ScaffoldCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
      */
-    public function handle(Filesystem $fs, TemporaryDirectory $sandbox): int
+    public function handle(): int
     {
-        $caFilepath = $this->getValidatedCaFilePath($fs);
+        $caFilepath = $this->getValidatedCaFilePath();
 
         $vendor = $this->argument('vendor') ?? $this->ask('What is the vendor name ?', 'Acme');
         $package = $this->argument('package') ?? $this->ask('What is the package name ?', 'Blog');
@@ -59,17 +51,11 @@ class ScaffoldCommand extends Command
             throw new InvalidArgumentException("Invalid PHP version specified. Please use 8.2, 8.3, or 8.4.: [$php]");
         }
 
-        $context = (new ContextFactory())
-            ->createFromProject($vendor, $package, $php, $caFilepath, $this->laravel->basePath('.gitignore'));
+        $input = new Input($vendor, $package, $php, $caFilepath);
 
-        $engine = (new ScaffoldEngineFactory(dirname(__DIR__, 2) . '/stubs'))
-            ->create($context, $sandbox);
+        $scaffolder = Scaffolder::create($this->laravel->basePath(), dirname(__DIR__, 2) . '/stubs');
 
-        $engine->execute();
-
-        $fs->mirror($sandbox->path(), $this->laravel->basePath(), options: ['override' => true]);
-
-        $sandbox->delete();
+        $scaffolder->scaffold($input);
 
         $this->components->info("Project '{$vendor}/{$package}' scaffolded successfully");
 
@@ -81,7 +67,7 @@ class ScaffoldCommand extends Command
         return $this->input->hasParameterOption("--$key") && $this->hasOption($key);
     }
 
-    private function getValidatedCaFilePath(Filesystem $fs): ?string
+    private function getValidatedCaFilePath(): string|null
     {
         if (! $this->hasOptionStrict('with-ca-file')) {
             return null;
@@ -89,10 +75,12 @@ class ScaffoldCommand extends Command
 
         $caFilepath = $this->option('with-ca-file');
         if ($caFilepath === null || $caFilepath === '') {
-            throw new InvalidArgumentException('CA file path is required. (e.g., --with-ca-file=certs/certificate.pem).');
+            throw new InvalidArgumentException(
+                'CA file path is required. (e.g., --with-ca-file=certs/certificate.pem).',
+            );
         }
 
-        if (! $fs->exists($caFilepath)) {
+        if (! file_exists($caFilepath)) {
             throw new InvalidArgumentException("The specified CA file does not exist: [$caFilepath]");
         }
 

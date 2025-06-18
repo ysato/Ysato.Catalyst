@@ -69,7 +69,7 @@ class FileTreeDriver implements DriverInterface
             ->diffUsing($expectedFiles, static function (SplFileInfo $a, SplFileInfo $b) {
                 return $a->getRelativePathname() <=> $b->getRelativePathname();
             })
-            ->map(static fn (SplFileInfo $file) => "Extra file: {$file->getRelativePathname()}");
+            ->map(static fn(SplFileInfo $file) => "Extra file: {$file->getRelativePathname()}");
     }
 
     private function discoverMissingFiles(Collection $expectedFiles, Collection $actualFiles): Collection
@@ -78,13 +78,13 @@ class FileTreeDriver implements DriverInterface
             ->diffUsing($actualFiles, static function (SplFileInfo $a, SplFileInfo $b) {
                 return $a->getRelativePathname() <=> $b->getRelativePathname();
             })
-            ->map(static fn (SplFileInfo $file) => "Missing file: {$file->getRelativePathname()}");
+            ->map(static fn(SplFileInfo $file) => "Missing file: {$file->getRelativePathname()}");
     }
 
     private function discoverContentDiffs(
         Collection $expectedFiles,
         Collection $actualFiles,
-        string $actual
+        string $actual,
     ): Collection {
         $commonFiles = $expectedFiles->intersectUsing($actualFiles, static function (SplFileInfo $a, SplFileInfo $b) {
             return $a->getRelativePathname() <=> $b->getRelativePathname();
@@ -109,9 +109,7 @@ DIFF;
         return new Collection($diffs);
     }
 
-    /**
-     * @param string[] $differences
-     */
+    /** @param string[] $differences */
     private function formatDifferences(array $differences, string $expected, string $actual): string
     {
         $line = str_repeat('=', 50);

@@ -44,34 +44,10 @@
       <option name="BLANK_LINES_AFTER_OPENING_TAG" value="1" />
       <option name="KEEP_BLANK_LINES_AFTER_LBRACE" value="0" />
       <option name="SPACE_AFTER_UNARY_NOT" value="true" />
-      <option name="SPACE_BEFORE_SHORT_CLOSURE_LEFT_PARENTHESIS" value="true" />
       <option name="FORCE_SHORT_DECLARATION_ARRAY_STYLE" value="true" />
+      <option name="NEW_LINE_AFTER_PHP_OPENING_TAG" value="true" />
       <option name="PLACE_PARENS_FOR_CONSTRUCTOR" value="1" />
     </PHPCodeStyleSettings>
-    <DBN-PSQL>
-      <case-options enabled="true">
-        <option name="KEYWORD_CASE" value="lower" />
-        <option name="FUNCTION_CASE" value="lower" />
-        <option name="PARAMETER_CASE" value="lower" />
-        <option name="DATATYPE_CASE" value="lower" />
-        <option name="OBJECT_CASE" value="preserve" />
-      </case-options>
-      <formatting-settings enabled="false" />
-    </DBN-PSQL>
-    <DBN-SQL>
-      <case-options enabled="true">
-        <option name="KEYWORD_CASE" value="upper" />
-        <option name="FUNCTION_CASE" value="lower" />
-        <option name="PARAMETER_CASE" value="lower" />
-        <option name="DATATYPE_CASE" value="lower" />
-        <option name="OBJECT_CASE" value="preserve" />
-      </case-options>
-      <formatting-settings enabled="false">
-        <option name="STATEMENT_SPACING" value="one_line" />
-        <option name="CLAUSE_CHOP_DOWN" value="chop_down" />
-        <option name="ITERATION_ELEMENTS_WRAPPING" value="no_wrapping" />
-      </formatting-settings>
-    </DBN-SQL>
     <codeStyleSettings language="JSON">
       <indentOptions>
         <option name="INDENT_SIZE" value="4" />
@@ -87,12 +63,18 @@
       <option name="SPECIAL_ELSE_IF_TREATMENT" value="true" />
       <option name="ALIGN_MULTILINE_PARAMETERS" value="false" />
       <option name="ALIGN_MULTILINE_FOR" value="false" />
-      <option name="SPACE_AFTER_TYPE_CAST" value="true" />
+      <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="true" />
+      <option name="CALL_PARAMETERS_WRAP" value="5" />
+      <option name="CALL_PARAMETERS_LPAREN_ON_NEXT_LINE" value="true" />
+      <option name="CALL_PARAMETERS_RPAREN_ON_NEXT_LINE" value="true" />
       <option name="METHOD_PARAMETERS_WRAP" value="5" />
       <option name="METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE" value="true" />
       <option name="METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE" value="true" />
+      <option name="EXTENDS_LIST_WRAP" value="5" />
       <option name="METHOD_CALL_CHAIN_WRAP" value="5" />
       <option name="TERNARY_OPERATION_WRAP" value="1" />
+      <option name="FOR_STATEMENT_LPAREN_ON_NEXT_LINE" value="true" />
+      <option name="FOR_STATEMENT_RPAREN_ON_NEXT_LINE" value="true" />
       <option name="ARRAY_INITIALIZER_WRAP" value="5" />
       <option name="ARRAY_INITIALIZER_LBRACE_ON_NEXT_LINE" value="true" />
       <option name="ARRAY_INITIALIZER_RBRACE_ON_NEXT_LINE" value="true" />

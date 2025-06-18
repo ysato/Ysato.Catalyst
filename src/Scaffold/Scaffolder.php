@@ -1,0 +1,168 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Ysato\Catalyst\Scaffold;
+
+use RuntimeException;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
+use Ysato\Catalyst\Scaffold\Template\CaseFilters;
+use Ysato\Catalyst\Scaffold\Template\Renderer;
+
+use function array_key_exists;
+use function array_merge;
+use function json_decode;
+use function json_encode;
+
+use const DIRECTORY_SEPARATOR;
+use const JSON_PRETTY_PRINT;
+use const JSON_THROW_ON_ERROR;
+use const JSON_UNESCAPED_SLASHES;
+use const PHP_EOL;
+
+class Scaffolder
+{
+    public function __construct(
+        private readonly SandboxInterface $sandbox,
+        private readonly Renderer $renderer,
+        private readonly string $stubPath,
+        private readonly string $basePath,
+        private readonly Filesystem $filesystem = new Filesystem(),
+    ) {
+    }
+
+    public static function create(string $basePath, string $stubPath): Scaffolder
+    {
+        $temporaryDirectory = new TemporaryDirectory();
+        $sandbox = new Sandbox($temporaryDirectory, $basePath);
+
+        $loader = new FilesystemLoader($stubPath);
+        $twig = new Environment($loader, ['strict_variables' => true]);
+        $twig->addExtension(new CaseFilters());
+
+        $renderer = new Renderer($twig);
+
+        return new Scaffolder($sandbox, $renderer, $stubPath, $basePath);
+    }
+
+    public function scaffold(Input $input): void
+    {
+        $context = Context::fromInputAndGitignorePath($input, $this->basePath . DIRECTORY_SEPARATOR . '.gitignore');
+
+        $this->sandbox->create();
+
+        try {
+            $this->sandbox->execute($this->copyStubsWithRenderedNames($context));
+
+            $this->sandbox->execute($this->generateComposerJson());
+
+            $this->sandbox->execute($this->renderVariablesInSandboxFiles($context));
+
+            $this->sandbox->commit();
+        } finally {
+            $this->sandbox->delete();
+        }
+    }
+
+    private function copyStubsWithRenderedNames(Context $context): callable
+    {
+        return function (string $path) use ($context) {
+            $files = (new Finder())
+                ->ignoreVCSIgnored(false)
+                ->ignoreDotFiles(false)
+                ->in($this->stubPath)
+                ->files();
+
+            foreach ($files as $file) {
+                $content = $this->filesystem->readFile($file->getRealPath());
+
+                $rendered = $this->renderer->render($file->getRelativePathname(), $context);
+
+                $this->filesystem->dumpFile($path . DIRECTORY_SEPARATOR . $rendered, $content);
+            }
+        };
+    }
+
+    private function generateComposerJson(): callable
+    {
+        return function (string $path) {
+            if (! $this->filesystem->exists($this->basePath . DIRECTORY_SEPARATOR . 'composer.json')) {
+                throw new RuntimeException('composer.json file not found in the project root');
+            }
+
+            $content = json_decode(
+                $this->filesystem->readFile($this->basePath . DIRECTORY_SEPARATOR . 'composer.json'),
+                true,
+                flags: JSON_THROW_ON_ERROR,
+            );
+
+            unset($content['keywords'], $content['homepage'], $content['description']);
+
+            $content['name'] = '{{ vendor|kebab }}/{{ package|kebab }}';
+            $content['license'] = 'proprietary';
+
+            $require = array_key_exists('require', $content) ? $content['require'] : [];
+            $content['require'] = array_merge($require, ['php' => '^{{ php }}']);
+
+            $autoload = array_key_exists('autoload', $content) ? $content['autoload'] : [];
+            $psr4 = array_key_exists('psr-4', $autoload) ? $autoload['psr-4'] : [];
+            $content['autoload']['psr-4'] = array_merge(
+                $psr4,
+                ['{{ vendor|pascal }}\\{{ package|pascal }}\\' => 'src/'],
+            );
+
+            $scripts = array_key_exists('scripts', $content) ? $content['scripts'] : [];
+            $content['scripts'] = array_merge($scripts, [
+                'test' => [
+                    '@php artisan config:clear --ansi',
+                    '@php artisan test',
+                ],
+                'coverage' => [
+                    '@php artisan config:clear --ansi',
+                    '@php -d zend_extension=xdebug.so -d xdebug.mode=coverage artisan test --coverage',
+                ],
+                'pcov' => [
+                    '@php artisan config:clear --ansi',
+                    '@php -d extension=pcov.so -d pcov.enabled=1 artisan test --coverage',
+                ],
+                'cs' => 'phpcs',
+                'cs-fix' => 'phpcbf',
+                'qa' => ['phpmd src text ./phpmd.xml'],
+                'tests' => [
+                    '@cs',
+                    '@qa',
+                    '@test',
+                ],
+            ]);
+
+            $config = array_key_exists('config', $content) ? $content['config'] : [];
+            $platform = array_key_exists('platform', $config) ? $config['platform'] : [];
+            $content['config']['platform'] = array_merge($platform, ['php' => '{{ php }}']);
+
+            $this->filesystem->dumpFile(
+                $path . DIRECTORY_SEPARATOR . 'composer.json',
+                json_encode($content, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL,
+            );
+        };
+    }
+
+    private function renderVariablesInSandboxFiles(Context $context): callable
+    {
+        return function (string $path) use ($context) {
+            $files = (new Finder())
+                ->ignoreVCSIgnored(false)
+                ->ignoreDotFiles(false)
+                ->in($path)
+                ->files();
+
+            foreach ($files as $file) {
+                $content = $this->filesystem->readFile($file->getRealPath());
+                $this->filesystem->dumpFile($file->getRealPath(), $this->renderer->render($content, $context));
+            }
+        };
+    }
+}

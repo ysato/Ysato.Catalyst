@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ysato\Catalyst;
 
 use Illuminate\Support\ServiceProvider;
-use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Ysato\Catalyst\Console\ScaffoldCommand;
 
 class CatalystServiceProvider extends ServiceProvider
@@ -15,14 +14,6 @@ class CatalystServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app
-            ->when(ScaffoldCommand::class)
-            ->needs(TemporaryDirectory::class)
-            ->give(function () {
-                return (new TemporaryDirectory())
-                    ->deleteWhenDestroyed()
-                    ->create();
-            });
     }
 
     /**
