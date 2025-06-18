@@ -75,10 +75,7 @@
     },
     "config": {
         "optimize-autoloader": true,
-        "sort-packages": true,
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        }
+        "sort-packages": true
     },
     "extra": {
         "laravel": {
