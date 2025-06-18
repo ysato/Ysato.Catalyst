@@ -24,17 +24,15 @@ class ScaffolderTest extends TestCase
 {
     use MatchesSnapshots;
 
-    private readonly TemporaryDirectory $temporaryDirectory;
+    private TemporaryDirectory $temporaryDirectory;
 
-    private readonly SandboxInterface $sandbox;
+    private SandboxInterface $sandbox;
 
-    private readonly Environment $twig;
+    private Renderer $renderer;
 
-    private readonly Renderer $renderer;
+    private string $stubPath;
 
-    private readonly string $stubPath;
-
-    private readonly string $basePath;
+    private string $basePath;
 
     public function setUp(): void
     {
@@ -47,10 +45,10 @@ class ScaffolderTest extends TestCase
         $this->sandbox = new FakeSandbox($this->temporaryDirectory, $this->basePath);
 
         $loader = new FilesystemLoader($this->stubPath);
-        $this->twig = new Environment($loader, ['strict_variables' => true]);
-        $this->twig->addExtension(new CaseFilters());
+        $twig = new Environment($loader, ['strict_variables' => true]);
+        $twig->addExtension(new CaseFilters());
 
-        $this->renderer = new Renderer($this->twig);
+        $this->renderer = new Renderer($twig);
     }
 
     protected function tearDown(): void

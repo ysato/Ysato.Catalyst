@@ -15,6 +15,8 @@ use Ysato\Catalyst\Scaffold\Template\Renderer;
 
 use function array_key_exists;
 use function array_merge;
+use function assert;
+use function is_array;
 use function json_decode;
 use function json_encode;
 
@@ -94,6 +96,19 @@ class Scaffolder
                 throw new RuntimeException('composer.json file not found in the project root');
             }
 
+            /**
+             * @phpstan-var  array{
+             *     keywords?: string[],
+             *     homepage?: string,
+             *     description?: string,
+             *     name?: string,
+             *     license?: string,
+             *     require?: array<string, string>,
+             *     autoload?: array{"psr-4?": array<string, string>},
+             *     scripts?: array<string, string|string[]>,
+             *     config?: array{platform?: array{php?: string}}
+             * }
+             */
             $content = json_decode(
                 $this->filesystem->readFile($this->basePath . DIRECTORY_SEPARATOR . 'composer.json'),
                 true,
@@ -108,12 +123,9 @@ class Scaffolder
             $require = array_key_exists('require', $content) ? $content['require'] : [];
             $content['require'] = array_merge($require, ['php' => '^{{ php }}']);
 
-            $autoload = array_key_exists('autoload', $content) ? $content['autoload'] : [];
-            $psr4 = array_key_exists('psr-4', $autoload) ? $autoload['psr-4'] : [];
-            $content['autoload']['psr-4'] = array_merge(
-                $psr4,
-                ['{{ vendor|pascal }}\\{{ package|pascal }}\\' => 'src/'],
-            );
+            assert(array_key_exists('autoload', $content), 'autoload section must exist in composer.json');
+
+            $content['autoload'] = $this->buildAutoloadSection($content['autoload']);
 
             $scripts = array_key_exists('scripts', $content) ? $content['scripts'] : [];
             $content['scripts'] = array_merge($scripts, [
@@ -139,15 +151,52 @@ class Scaffolder
                 ],
             ]);
 
-            $config = array_key_exists('config', $content) ? $content['config'] : [];
-            $platform = array_key_exists('platform', $config) ? $config['platform'] : [];
-            $content['config']['platform'] = array_merge($platform, ['php' => '{{ php }}']);
+            assert(array_key_exists('config', $content), 'config section must exist in composer.json');
+
+            $content['config'] = $this->buildConfigSection($content['config']);
 
             $this->filesystem->dumpFile(
                 $path . DIRECTORY_SEPARATOR . 'composer.json',
                 json_encode($content, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL,
             );
         };
+    }
+
+    /**
+     * @param array<string, mixed> $autoload
+     *
+     * @return non-empty-array<string, mixed>
+     */
+    private function buildAutoloadSection(array $autoload): array
+    {
+        $psr4 = [];
+        if (array_key_exists('psr-4', $autoload) && is_array($autoload['psr-4'])) {
+            $psr4 = $autoload['psr-4'];
+        }
+
+        $autoload['psr-4'] = array_merge(
+            $psr4,
+            ['{{ vendor|pascal }}\\{{ package|pascal }}\\' => 'src/'],
+        );
+
+        return $autoload;
+    }
+
+    /**
+     * @param array<string, mixed> $config
+     *
+     * @return non-empty-array<string, mixed>
+     */
+    private function buildConfigSection(array $config): array
+    {
+        $platform = [];
+        if (array_key_exists('platform', $config) && is_array($config['platform'])) {
+            $platform = $config['platform'];
+        }
+
+        $config['platform'] = array_merge($platform, ['php' => '{{ php }}']);
+
+        return $config;
     }
 
     private function renderVariablesInSandboxFiles(Context $context): callable

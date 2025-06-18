@@ -9,9 +9,11 @@ use InvalidArgumentException;
 use Ysato\Catalyst\Scaffold\Input;
 use Ysato\Catalyst\Scaffold\Scaffolder;
 
+use function assert;
 use function dirname;
 use function file_exists;
 use function in_array;
+use function is_string;
 
 class ScaffoldCommand extends Command
 {
@@ -45,8 +47,14 @@ class ScaffoldCommand extends Command
         $caFilepath = $this->getValidatedCaFilePath();
 
         $vendor = $this->argument('vendor') ?? $this->ask('What is the vendor name ?', 'Acme');
+        assert(is_string($vendor), 'Vendor must be string');
+
         $package = $this->argument('package') ?? $this->ask('What is the package name ?', 'Blog');
+        assert(is_string($package), 'Package must be string');
+
         $php = $this->argument('php') ?? $this->ask('What is the PHP version to use ?', '8.2');
+        assert(is_string($php), 'PHP version must be string');
+
         if (! in_array($php, ['8.2', '8.3', '8.4'], true)) {
             throw new InvalidArgumentException("Invalid PHP version specified. Please use 8.2, 8.3, or 8.4.: [$php]");
         }
@@ -74,6 +82,8 @@ class ScaffoldCommand extends Command
         }
 
         $caFilepath = $this->option('with-ca-file');
+        assert(is_string($caFilepath) || $caFilepath === null, 'CA filepath must be string or null');
+
         if ($caFilepath === null || $caFilepath === '') {
             throw new InvalidArgumentException(
                 'CA file path is required. (e.g., --with-ca-file=certs/certificate.pem).',
