@@ -66,12 +66,12 @@
     },
     "scripts-descriptions": {
         "test": "Run unit tests",
-        "cs": "Checks the coding standard",
-        "cs-fix": "Fix the coding standard",
-        "qa": "Run quality checks",
-        "lints": "Run quality checks",
-        "coverage": "Generate test coverage report",
-        "pcov": "Generate test coverage report (pcov)"
+        "cs": "Check coding standards",
+        "cs-fix": "Fix coding standard violations",
+        "qa": "Run static analysis (phpmd + phpstan)",
+        "lints": "Run code style and static analysis checks",
+        "coverage": "Generate test coverage report with Xdebug",
+        "pcov": "Generate test coverage report with PCOV"
     },
     "config": {
         "optimize-autoloader": true,
