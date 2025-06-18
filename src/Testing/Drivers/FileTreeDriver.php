@@ -12,8 +12,10 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Ysato\Catalyst\Testing\DriverInterface;
 
+use function assert;
 use function file_get_contents;
 use function implode;
+use function is_string;
 use function str_repeat;
 
 use const DIRECTORY_SEPARATOR;
@@ -35,9 +37,10 @@ class FileTreeDriver implements DriverInterface
             Assert::fail($message);
         }
 
-        Assert::assertTrue(true, 'File tree matches snapshot');
+        Assert::assertTrue($differences->isEmpty(), 'File tree matches snapshot');
     }
 
+    /** @return Collection<int, string> */
     private function discoverDifferences(string $expected, string $actual): Collection
     {
         $expectedFiles = $this->discoverFiles($expected);
@@ -52,6 +55,7 @@ class FileTreeDriver implements DriverInterface
             ->merge($contentDiffs);
     }
 
+    /** @return Collection<string, SplFileInfo> */
     private function discoverFiles(string $path): Collection
     {
         $files = (new Finder())
@@ -63,24 +67,44 @@ class FileTreeDriver implements DriverInterface
         return new Collection($files);
     }
 
+    /**
+     * @param Collection<string, SplFileInfo> $expectedFiles
+     * @param Collection<string, SplFileInfo> $actualFiles
+     *
+     * @return Collection<int, string>
+     */
     private function discoverExtraFiles(Collection $expectedFiles, Collection $actualFiles): Collection
     {
         return $actualFiles
             ->diffUsing($expectedFiles, static function (SplFileInfo $a, SplFileInfo $b) {
                 return $a->getRelativePathname() <=> $b->getRelativePathname();
             })
+            ->values()
             ->map(static fn(SplFileInfo $file) => "Extra file: {$file->getRelativePathname()}");
     }
 
+    /**
+     * @param Collection<string, SplFileInfo> $expectedFiles
+     * @param Collection<string, SplFileInfo> $actualFiles
+     *
+     * @return Collection<int, string>
+     */
     private function discoverMissingFiles(Collection $expectedFiles, Collection $actualFiles): Collection
     {
         return $expectedFiles
             ->diffUsing($actualFiles, static function (SplFileInfo $a, SplFileInfo $b) {
                 return $a->getRelativePathname() <=> $b->getRelativePathname();
             })
+            ->values()
             ->map(static fn(SplFileInfo $file) => "Missing file: {$file->getRelativePathname()}");
     }
 
+    /**
+     * @param Collection<string, SplFileInfo> $expectedFiles
+     * @param Collection<string, SplFileInfo> $actualFiles
+     *
+     * @return Collection<int, string>
+     */
     private function discoverContentDiffs(
         Collection $expectedFiles,
         Collection $actualFiles,
@@ -93,6 +117,7 @@ class FileTreeDriver implements DriverInterface
         $diffs = [];
         foreach ($commonFiles as $file) {
             $actualContent = file_get_contents($actual . DIRECTORY_SEPARATOR . $file->getRelativePathname());
+            assert(is_string($actualContent), 'Failed to read file content');
 
             if ($file->getContents() === $actualContent) {
                 continue;

@@ -1,0 +1,9 @@
+parameters:
+    level: max
+    paths:
+        - src
+        - tests
+    excludePaths:
+        - tests/project/*
+        - tests/*/__sandbox__/*
+        - tests/*/__snapshots__/*

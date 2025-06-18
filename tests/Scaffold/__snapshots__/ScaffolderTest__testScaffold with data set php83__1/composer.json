@@ -65,12 +65,12 @@
         "cs": "phpcs",
         "cs-fix": "phpcbf",
         "qa": [
-            "phpmd src text ./phpmd.xml"
+            "phpmd src text ./phpmd.xml",
+            "phpstan"
         ],
-        "tests": [
+        "lints": [
             "@cs",
-            "@qa",
-            "@test"
+            "@qa"
         ]
     },
     "extra": {

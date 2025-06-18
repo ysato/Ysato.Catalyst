@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Ysato\Catalyst\Scaffold;
 
 use function array_fill;
+use function assert;
 use function count;
 use function file_get_contents;
+use function is_string;
 use function preg_replace;
 use function trim;
 
@@ -24,6 +26,8 @@ class Context
     public static function fromInputAndGitignorePath(Input $input, string $gitignorePath): self
     {
         $content = file_get_contents($gitignorePath);
+        assert(is_string($content), 'Failed to read gitignore file');
+
         $originalGitignore = self::cleanGitignore($content);
 
         return new self($input->vendor, $input->package, $input->php, $input->caFilePath, $originalGitignore);
@@ -34,7 +38,7 @@ class Context
         return $this->caFilePath !== null;
     }
 
-    /** @return array<string, string|bool> */
+    /** @return array<string, string|bool|null> */
     public function toArray(): array
     {
         return [
@@ -42,7 +46,6 @@ class Context
             'package' => $this->package,
             'php' => $this->php,
             'with_ca' => $this->caFilePath,
-            'gitignore_content' => $this->originalGitignore,
             'original_gitignore' => $this->originalGitignore,
             'has_ca' => $this->hasCA(),
         ];
@@ -58,6 +61,9 @@ class Context
 
         $replacements = array_fill(0, count($patterns), '');
 
-        return trim(preg_replace($patterns, $replacements, $content));
+        $result = preg_replace($patterns, $replacements, $content);
+        assert(is_string($result), 'preg_replace failed');
+
+        return trim($result);
     }
 }

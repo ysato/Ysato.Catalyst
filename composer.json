@@ -11,8 +11,9 @@
         "php": "^8.2",
         "composer/composer": "^2.6",
         "doctrine/coding-standard": "*",
-        "illuminate/console": "^11.0|^12.0",
-        "illuminate/support": "^11.0|^12.0",
+        "illuminate/console": "^11.16|^12.0",
+        "illuminate/support": "^11.16|^12.0",
+        "larastan/larastan": "^3.0",
         "laravel/prompts": "^0.3.5",
         "phpmd/phpmd": "*",
         "spatie/temporary-directory": "^2.2",
@@ -22,7 +23,7 @@
         "twig/twig": "^3.12"
     },
     "require-dev": {
-        "laravel/framework": "^11.0|^12.0",
+        "laravel/framework": "^11.16|^12.0",
         "phpunit/phpunit": "^10.5|^11.0|^12.0.1",
         "sebastian/diff": "^5.1",
         "spatie/phpunit-snapshot-assertions": "^5.2"
@@ -52,24 +53,25 @@
         "test": "./vendor/bin/phpunit --no-coverage --display-deprecations --fail-on-deprecation",
         "cs": "phpcs",
         "cs-fix": "phpcbf",
-        "qa": "phpmd src text phpmd.xml",
-        "tests": [
-            "@cs",
-            "@qa",
-            "@test"
+        "qa": [
+            "phpmd src text phpmd.xml",
+            "phpstan"
         ],
-        "coverage": "php -dzend_extension=xdebug.so -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage",
-        "pcov": "php -dextension=pcov.so -d pcov.enabled=1 ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage --coverage-clover=build/coverage.xml"
+        "lints": [
+            "@cs",
+            "@qa"
+        ],
+        "coverage": "php -d zend_extension=xdebug.so -d xdebug.mode=coverage ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage",
+        "pcov": "php -d extension=pcov.so -d pcov.enabled=1 ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage --coverage-clover=build/coverage.xml"
     },
     "scripts-descriptions": {
         "test": "Run unit tests",
-        "tests": "Run tests and quality checks",
-        "coverage": "Generate test coverage report",
-        "pcov": "Generate test coverage report (pcov)",
-        "cs": "Checks the coding standard",
-        "cs-fix": "Fix the coding standard",
-        "qa": "Run quality checks",
-        "metrics": "Build metrics report"
+        "cs": "Check coding standards",
+        "cs-fix": "Fix coding standard violations",
+        "qa": "Run static analysis (phpmd + phpstan)",
+        "lints": "Run code style and static analysis checks",
+        "coverage": "Generate test coverage report with Xdebug",
+        "pcov": "Generate test coverage report with PCOV"
     },
     "config": {
         "optimize-autoloader": true,
