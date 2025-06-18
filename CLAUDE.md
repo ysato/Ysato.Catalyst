@@ -265,3 +265,8 @@ docker run --rm -v "$(pwd):/var/www/html" -e UPDATE_SNAPSHOTS=true php-composer-
 - 問題分析、解決方針、具体的な実装手順を明確にしてからユーザー承認を得る
 - ユーザーの明示的な承認なしに実装作業（ファイル作成・編集）を開始しない
 
+**README同期ルール:**
+- **片方のREADME（README.md または README-ja.md）を更新したら、必ずもう一方も対応する更新を行う**
+- 内容の一貫性を保つため、両方のREADMEは常に同期させる
+- 一方のみの更新は禁止
+
