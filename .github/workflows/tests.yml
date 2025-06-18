@@ -88,6 +88,7 @@ jobs:
           composer config repositories.catalyst '{"type": "path", "url": "${{ github.workspace }}"}' --file composer.json
           composer require ysato/catalyst:@dev --dev --no-interaction --no-update
           composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+          composer config --no-plugins allow-plugins.digitalrevolution/php-codesniffer-baseline true
 
       - name: Install Catalyst
         working-directory: ./TestProject
