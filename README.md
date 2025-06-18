@@ -64,6 +64,25 @@ php artisan catalyst:scaffold MyCorp WebApp 8.3 --with-ca-file=./certs/certifica
 
 ## Post-Setup Manual Steps
 
+### Initial QA Setup
+
+When running `just lint-php` for the first time on a newly scaffolded project, you may encounter errors from PHPStan, PHPMD, or PHPCS due to existing code patterns. To resolve these, create baseline files for each QA tool:
+
+#### PHPStan Baseline
+```shell
+vendor/bin/phpstan analyse --generate-baseline
+```
+
+#### PHPMD Baseline
+```shell
+vendor/bin/phpmd app,src text ./phpmd.xml --generate-baseline
+```
+
+#### PHPCS Baseline
+```shell
+vendor/bin/phpcs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --report-file=phpcs.baseline.xml --basepath=.
+```
+
 ### Importing Branch Protection Rulesets
 
 This project generates predefined GitHub branch protection rulesets as JSON files in the `.github/rulesets` directory. These must be manually applied to your repository.
@@ -85,32 +104,20 @@ This project generates predefined GitHub branch protection rulesets as JSON file
 ## For Contributors
 
 ### Development Setup
-This project uses Docker for development. Use the provided `justfile` commands:
-
-```shell
-# Build required Docker images
-just build
-
-# Install dependencies
-just install
-
-# Run tests and quality checks
-just tests
-
-# Generate coverage report
-just coverage
-```
+This project uses Docker for development. Use the provided `justfile` commands.
 
 ### Available Commands
 - `just build` - Builds the necessary Docker images
 - `just install` - Installs project dependencies
 - `just test` - Runs the test suite
-- `just tests` - Runs tests and quality checks (lint, QA, tests)
+- `just tests` - Runs tests and quality checks (lints, tests)
+- `just lints` - Runs code style and static analysis checks
 - `just coverage` - Generates a code coverage report
 - `just pcov` - Generates a coverage report using PCOV
 - `just fix` - Auto-fixes code style issues
 - `just act` - Runs GitHub Actions locally
 - `just clean` - Removes the Docker images
+- `just help` - Displays this help message
 
 ### Compatibility Testing
 To install the oldest compatible versions of dependencies and ensure this package works reliably in diverse environments, run the following command:

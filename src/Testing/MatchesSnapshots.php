@@ -37,7 +37,7 @@ trait MatchesSnapshots
         if ($this->shouldUpdateSnapshots()) {
             try {
                 $snapshot->create($actualPath);
-            } catch (ExpectationFailedException $e) {
+            } catch (ExpectationFailedException) {
                 $this->updateSnapshotAndMarkTestIncomplete($snapshot, $actualPath);
             }
 
