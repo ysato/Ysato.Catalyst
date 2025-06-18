@@ -13,7 +13,7 @@ trait MatchesSnapshots
 {
     use SpatieMatchesSnapshots;
 
-    protected function assertMatchesSnapshot(string $actualPath, ?DriverInterface $driver = null): void
+    protected function assertMatchesSnapshot(string $actualPath, DriverInterface|null $driver = null): void
     {
         if ($driver === null) {
             $driver = new FileTreeDriver();

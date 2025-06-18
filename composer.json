@@ -23,7 +23,6 @@
     },
     "require-dev": {
         "laravel/framework": "^11.0|^12.0",
-        "orchestra/testbench": "^9.0|^10.0",
         "phpunit/phpunit": "^10.5|^11.0|^12.0.1",
         "sebastian/diff": "^5.1",
         "spatie/phpunit-snapshot-assertions": "^5.2"
@@ -33,16 +32,20 @@
             "Ysato\\Catalyst\\": "src/"
         },
         "exclude-from-classmap": [
-            "stubs"
+            "stubs/",
+            "tests/"
         ]
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "Ysato\\Catalyst\\": "tests/Fake/"
         },
         "exclude-from-classmap": [
-            "stubs",
-            "tests/Scaffold/__snapshots__"
+            "stubs/",
+            "tests/project/",
+            "tests/*/__snapshots__/",
+            "tests/*/__sandbox__/"
         ]
     },
     "scripts": {
