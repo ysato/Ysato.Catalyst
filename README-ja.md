@@ -83,6 +83,11 @@ vendor/bin/phpmd app,src text ./phpmd.xml --generate-baseline
 vendor/bin/phpcs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --report-file=phpcs.baseline.xml --basepath=.
 ```
 
+#### Psalmベースライン
+```shell
+vendor/bin/psalm --set-baseline
+```
+
 ### ブランチ保護ルールセットのインポート
 
 このプロジェクトは、`.github/rulesets`ディレクトリに、あらかじめ定義されたGitHubブランチ保護ルールセットをJSONファイルとして生成します。これらは手動でリポジトリに適用する必要があります。

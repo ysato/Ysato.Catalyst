@@ -83,6 +83,11 @@ vendor/bin/phpmd app,src text ./phpmd.xml --generate-baseline
 vendor/bin/phpcs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --report-file=phpcs.baseline.xml --basepath=.
 ```
 
+#### Psalm Baseline
+```shell
+vendor/bin/psalm --set-baseline
+```
+
 ### Importing Branch Protection Rulesets
 
 This project generates predefined GitHub branch protection rulesets as JSON files in the `.github/rulesets` directory. These must be manually applied to your repository.
