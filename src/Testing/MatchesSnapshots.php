@@ -36,7 +36,7 @@ trait MatchesSnapshots
 
         if ($this->shouldUpdateSnapshots()) {
             try {
-                $snapshot->create($actualPath);
+                $snapshot->assertMatches($actualPath);
             } catch (ExpectationFailedException) {
                 $this->updateSnapshotAndMarkTestIncomplete($snapshot, $actualPath);
             }
@@ -60,7 +60,7 @@ trait MatchesSnapshots
 
     protected function updateSnapshotAndMarkTestIncomplete(Snapshot $snapshot, string $actualPath): void
     {
-        $snapshot->create($actualPath);
+        $snapshot->update($actualPath);
 
         $this->registerSnapshotChange("Snapshot updated for {$snapshot->id()}");
     }

@@ -33,13 +33,12 @@ class FileTreeDriver implements DriverInterface
     {
         $differences = $this->discoverDifferences($expected, $actual);
 
+        $message = 'File tree snapshot matches snapshot';
         if ($differences->isNotEmpty()) {
             $message = $this->formatDifferences($differences->all(), $expected, $actual);
-
-            Assert::fail($message);
         }
 
-        Assert::assertCount(0, $differences->all(), 'File tree matches snapshot');
+        Assert::assertCount(0, $differences->all(), $message);
     }
 
     /** @return Collection<int, string> */

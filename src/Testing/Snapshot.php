@@ -34,8 +34,19 @@ class Snapshot
         $this->fs->mirror($actualPath, $this->expectedPath);
     }
 
+    public function update(string $actualPath): void
+    {
+        $this->remove();
+        $this->create($actualPath);
+    }
+
     public function assertMatches(string $actualPath): void
     {
         $this->driver->match($this->expectedPath, $actualPath);
+    }
+
+    private function remove(): void
+    {
+        $this->fs->remove($this->expectedPath);
     }
 }
