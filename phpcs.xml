@@ -17,9 +17,9 @@
     <!-- Directories to be checked -->
     <file>src</file>
     <file>tests</file>
-    <exclude-pattern>**/__snapshots__/**</exclude-pattern>
-    <exclude-pattern>**/__sandbox__/**</exclude-pattern>
-    <exclude-pattern>stubs/**</exclude-pattern>
+    <exclude-pattern>tests/**/__snapshots__</exclude-pattern>
+    <exclude-pattern>tests/**/__sandbox__</exclude-pattern>
+    <exclude-pattern>stubs</exclude-pattern>
 
     <!-- PSR12 Coding Standard -->
     <rule ref="PSR12"/>

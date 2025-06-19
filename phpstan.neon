@@ -4,6 +4,6 @@ parameters:
         - src
         - tests
     excludePaths:
-        - tests/project/*
-        - tests/*/__sandbox__/*
-        - tests/*/__snapshots__/*
+        - tests/project
+        - tests/**/__sandbox__
+        - tests/**/__snapshots__
