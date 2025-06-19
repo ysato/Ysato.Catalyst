@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ysato\Catalyst;
 
 use Illuminate\Support\ServiceProvider;
+use Override;
 use Ysato\Catalyst\Console\ScaffoldCommand;
 
 class CatalystServiceProvider extends ServiceProvider
@@ -12,6 +13,7 @@ class CatalystServiceProvider extends ServiceProvider
     /**
      * Register services.
      */
+    #[Override]
     public function register(): void
     {
     }

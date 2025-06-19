@@ -33,7 +33,7 @@ class ScaffoldCommand extends Command
     /**
      * The console command description.
      *
-     * @var string
+     * @var string|null
      *
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
      */
@@ -41,6 +41,8 @@ class ScaffoldCommand extends Command
 
     /**
      * Execute the console command.
+     *
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function handle(): int
     {

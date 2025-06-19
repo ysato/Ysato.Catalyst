@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ysato\Catalyst\Testing\Drivers;
 
 use Illuminate\Support\Collection;
+use Override;
 use PHPUnit\Framework\Assert;
 use SebastianBergmann\Diff\Differ;
 use SebastianBergmann\Diff\Output\UnifiedDiffOutputBuilder;
@@ -27,6 +28,7 @@ class FileTreeDriver implements DriverInterface
     {
     }
 
+    #[Override]
     public function match(string $expected, string $actual): void
     {
         $differences = $this->discoverDifferences($expected, $actual);
@@ -37,7 +39,7 @@ class FileTreeDriver implements DriverInterface
             Assert::fail($message);
         }
 
-        Assert::assertTrue($differences->isEmpty(), 'File tree matches snapshot');
+        Assert::assertCount(0, $differences->all(), 'File tree matches snapshot');
     }
 
     /** @return Collection<int, string> */
@@ -104,6 +106,8 @@ class FileTreeDriver implements DriverInterface
      * @param Collection<string, SplFileInfo> $actualFiles
      *
      * @return Collection<int, string>
+     * @psalm-return Collection<int<0, max>, string>
+     * @phpstan-return Collection<int, non-falsy-string>
      */
     private function discoverContentDiffs(
         Collection $expectedFiles,

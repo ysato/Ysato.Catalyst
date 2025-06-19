@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Ysato\Catalyst\Scaffold\Template;
 
 use Illuminate\Support\Str;
+use Override;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
 class CaseFilters extends AbstractExtension
 {
     /** @return TwigFilter[] */
+    #[Override]
     public function getFilters(): array
     {
         return [

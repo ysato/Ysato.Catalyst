@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Scaffold;
 
-use PHPUnit\Framework\TestCase;
+use Override;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
+use Tests\TestCase;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Ysato\Catalyst\Scaffold\FakeSandbox;
@@ -34,6 +35,7 @@ class ScaffolderTest extends TestCase
 
     private string $basePath;
 
+    #[Override]
     public function setUp(): void
     {
         $this->stubPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'stubs';
@@ -51,6 +53,7 @@ class ScaffolderTest extends TestCase
         $this->renderer = new Renderer($twig);
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         $this->temporaryDirectory->delete();
