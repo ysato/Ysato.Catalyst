@@ -4,13 +4,7 @@ ACT_IMAGE := "act:local"
 @help:
     echo "Usage:"
     echo "  just build        - Builds the necessary Docker images."
-    echo "  just install      - Installs project dependencies."
-    echo "  just test         - Runs the test suite."
-    echo "  just tests        - Runs tests and quality checks (lints, tests)."
-    echo "  just lints        - Runs code style and static analysis checks."
-    echo "  just coverage     - Generates a code coverage report."
-    echo "  just pcov         - Generates a coverage report using PCOV."
-    echo "  just fix          - Auto-fixes code style issues."
+    echo "  just composer     - Runs composer commands via Docker."
     echo "  just act          - Runs GitHub Actions locally."
     echo "  just clean        - Removes the Docker images."
     echo "  just help         - Displays this help message."
@@ -23,25 +17,8 @@ build-php:
 build-act:
     docker build -t {{ ACT_IMAGE }} -f docker/act/Dockerfile .
 
-install:
-    docker run --rm -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer install
-
-test:
-    docker run --rm -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer test
-
-coverage:
-    docker run --rm -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer coverage
-
-pcov:
-    docker run --rm -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer pcov
-
-lints:
-    docker run --rm -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer lints
-
-fix:
-    docker run --rm -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer cs-fix
-
-tests: lints test
+composer *arguments:
+    docker run --rm -it -v "$(pwd):/var/www/html" {{ PHP_IMAGE }} composer {{ arguments }}
 
 act *options:
     act {{ options }}
