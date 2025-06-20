@@ -13,6 +13,18 @@ Laravelプロジェクトのセットアップを加速させるスキャフォ�
 
 ## インストール
 
+### 前提条件（強く推奨）
+
+このパッケージでは、Dockerベースの開発ワークフローを簡素化するコマンドランナー [just](https://github.com/casey/just) のインストールを強く推奨します。
+
+お使いのプラットフォーム用の[インストールガイド](https://github.com/casey/just?tab=readme-ov-file#packages)を参照してください。例えば、macOSでHomebrewを使用する場合：
+
+```shell
+brew install just
+```
+
+### パッケージのインストール
+
 以下のコマンドでインストールします。
 
 ```shell
@@ -66,11 +78,11 @@ php artisan catalyst:scaffold MyCorp WebApp 8.3 --with-ca-file=./certs/certifica
 
 ### 初回QAセットアップ
 
-新しくスキャフォールドされたプロジェクトで初回 `just lint-php` を実行する際、既存のコードパターンが原因でPHPStan、PHPMD、PHPCSからエラーが発生する場合があります。これを解決するため、各QAツール用のベースラインファイルを作成してください：
+新しくスキャフォールドされたプロジェクトで初回 `just composer lints` を実行する際、既存のコードパターンが原因でエラーが発生する場合があります。これを解決するため、各QAツール用のベースラインファイルを作成してください：
 
-#### PHPStanベースライン
+#### PHP_CodeSnifferベースライン
 ```shell
-vendor/bin/phpstan analyse --generate-baseline
+vendor/bin/phpcs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --report-file=phpcs.baseline.xml --basepath=.
 ```
 
 #### PHPMDベースライン
@@ -78,9 +90,9 @@ vendor/bin/phpstan analyse --generate-baseline
 vendor/bin/phpmd app,src text ./phpmd.xml --generate-baseline
 ```
 
-#### PHPCSベースライン
+#### PHPStanベースライン
 ```shell
-vendor/bin/phpcs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --report-file=phpcs.baseline.xml --basepath=.
+vendor/bin/phpstan analyse --generate-baseline
 ```
 
 #### Psalmベースライン
@@ -113,13 +125,7 @@ vendor/bin/psalm --set-baseline
 
 ### 利用可能なコマンド
 - `just build` - 必要なDockerイメージをビルド
-- `just install` - プロジェクトの依存関係をインストール
-- `just test` - テストスイートを実行
-- `just tests` - テストと品質チェックを実行（lints、テスト）
-- `just lints` - コードスタイルと静的解析チェックを実行
-- `just coverage` - テストカバレッジレポートを生成
-- `just pcov` - PCOVでカバレッジレポートを生成
-- `just fix` - コードスタイルの問題を自動修正
+- `just composer` - Docker経由でcomposerコマンドを実行
 - `just act` - GitHub Actionsをローカルで実行
 - `just clean` - Dockerイメージを削除
 - `just help` - このヘルプメッセージを表示

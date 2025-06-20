@@ -5,12 +5,8 @@ SPECTRAL_IMAGE := "stoplight/spectral:latest"
 {% verbatim %}@help:
     echo "Usage:"
     echo "  just build        - Builds the necessary Docker images."
-    echo "  just install      - Installs project dependencies."
-    echo "  just test         - Runs the test suite."
-    echo "  just coverage     - Generates a code coverage report."
-    echo "  just pcov         - Generates a coverage report using PCOV."
-    echo "  just lints        - Runs code style and static analysis checks."
-    echo "  just tests        - Runs tests and quality checks (lints, tests)."
+    echo "  just composer     - Runs composer commands via Docker."
+    echo "  just spectral     - Runs OpenAPI linting with Spectral."
     echo "  just act          - Runs GitHub Actions locally."
     echo "  just clean        - Removes the Docker images."
     echo "  just help         - Displays this help message."
@@ -26,32 +22,16 @@ build-act:
 build-spectral:
     docker pull {{ SPECTRAL_IMAGE }}
 
-install:
-    docker run --rm -v "$(pwd):/var/www/html" {{ COMPOSER_IMAGE }} composer install
+composer *arguments:;
+    docker run --rm -v "$(pwd):/var/www/html" {{ COMPOSER_IMAGE }} composer {{ arguments }}
 
-test:
-    docker run --rm -v "$(pwd):/var/www/html" {{ COMPOSER_IMAGE }} composer test
-
-coverage:
-    docker run --rm -v "$(pwd):/var/www/html" {{ COMPOSER_IMAGE }} composer coverage
-
-pcov:
-    docker run --rm -v "$(pwd):/var/www/html" {{ COMPOSER_IMAGE }} composer pcov
-
-lints: lint-php lint-openapi
-
-lint-php:
-    docker run --rm -v "$(pwd):/var/www/html" {{ COMPOSER_IMAGE }} composer lints
-
-lint-openapi:
+spectral:
     @if {{ path_exists("openapi.yaml") }}; then \
         docker run --rm -it -v $(pwd):/tmp -w /tmp \
         {{ SPECTRAL_IMAGE }} lint openapi.yaml; \
     else \
         echo "\033[33mwarn\033[0m: No openapi.yaml found, skipping OpenAPI linting."; \
     fi
-
-tests: lints test
 
 act *options:
     act {{ options }}

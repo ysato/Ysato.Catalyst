@@ -13,6 +13,18 @@ The tool's role is to generate a diff based on the latest template; how that dif
 
 ## Installation
 
+### Prerequisites (Strongly Recommended)
+
+This package strongly recommends installing [just](https://github.com/casey/just), a command runner that simplifies Docker-based development workflows.
+
+Please refer to the [installation guide](https://github.com/casey/just?tab=readme-ov-file#packages) for your platform. For example, on macOS with Homebrew:
+
+```shell
+brew install just
+```
+
+### Package Installation
+
 Run the following command to install:
 
 ```shell
@@ -66,11 +78,11 @@ php artisan catalyst:scaffold MyCorp WebApp 8.3 --with-ca-file=./certs/certifica
 
 ### Initial QA Setup
 
-When running `just lint-php` for the first time on a newly scaffolded project, you may encounter errors from PHPStan, PHPMD, or PHPCS due to existing code patterns. To resolve these, create baseline files for each QA tool:
+When running `just composer lints` for the first time on a newly scaffolded project, you may encounter errors due to existing code patterns. To resolve these, create baseline files for each QA tool:
 
-#### PHPStan Baseline
+#### PHP_CodeSniffer Baseline
 ```shell
-vendor/bin/phpstan analyse --generate-baseline
+vendor/bin/phpcs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --report-file=phpcs.baseline.xml --basepath=.
 ```
 
 #### PHPMD Baseline
@@ -78,9 +90,9 @@ vendor/bin/phpstan analyse --generate-baseline
 vendor/bin/phpmd app,src text ./phpmd.xml --generate-baseline
 ```
 
-#### PHPCS Baseline
+#### PHPStan Baseline
 ```shell
-vendor/bin/phpcs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --report-file=phpcs.baseline.xml --basepath=.
+vendor/bin/phpstan analyse --generate-baseline
 ```
 
 #### Psalm Baseline
@@ -113,13 +125,7 @@ This project uses Docker for development. Use the provided `justfile` commands.
 
 ### Available Commands
 - `just build` - Builds the necessary Docker images
-- `just install` - Installs project dependencies
-- `just test` - Runs the test suite
-- `just tests` - Runs tests and quality checks (lints, tests)
-- `just lints` - Runs code style and static analysis checks
-- `just coverage` - Generates a code coverage report
-- `just pcov` - Generates a coverage report using PCOV
-- `just fix` - Auto-fixes code style issues
+- `just composer` - Runs composer commands via Docker
 - `just act` - Runs GitHub Actions locally
 - `just clean` - Removes the Docker images
 - `just help` - Displays this help message
