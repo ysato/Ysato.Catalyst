@@ -10,8 +10,7 @@
         <directory name="tests"/>
         <ignoreFiles>
             <directory name="vendor"/>
-            <directory name="tests/**/__snapshots__"/>
-            <directory name="tests/**/__sandbox__"/>
+            <directory name="tests/**/__*__"/>
         </ignoreFiles>
     </projectFiles>
 
