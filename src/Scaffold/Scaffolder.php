@@ -161,7 +161,7 @@ class Scaffolder
             ],
             'cs' => 'phpcs',
             'cs-fix' => 'phpcbf',
-            'qa' => ['phpmd app,src text ./phpmd.xml', 'phpstan'],
+            'qa' => ['phpmd app,src text ./phpmd.xml', 'phpstan', 'psalm --no-cache'],
             'lints' => ['@cs', '@qa'],
         ]);
     }
