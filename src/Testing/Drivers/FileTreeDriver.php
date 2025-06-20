@@ -41,7 +41,11 @@ class FileTreeDriver implements DriverInterface
         Assert::assertCount(0, $differences->all(), $message);
     }
 
-    /** @return Collection<int, string> */
+    /**
+     * @return Collection<int, string>
+     * @psalm-return Collection<int, non-empty-string>
+     * @phpstan-return Collection<int, string>
+     */
     private function discoverDifferences(string $expected, string $actual): Collection
     {
         $expectedFiles = $this->discoverFiles($expected);
@@ -73,6 +77,7 @@ class FileTreeDriver implements DriverInterface
      * @param Collection<string, SplFileInfo> $actualFiles
      *
      * @return Collection<int, string>
+     * @psalm-return Collection<int, non-empty-string>&static
      */
     private function discoverExtraFiles(Collection $expectedFiles, Collection $actualFiles): Collection
     {
@@ -89,6 +94,7 @@ class FileTreeDriver implements DriverInterface
      * @param Collection<string, SplFileInfo> $actualFiles
      *
      * @return Collection<int, string>
+     * @psalm-return Collection<int, non-empty-string>&static
      */
     private function discoverMissingFiles(Collection $expectedFiles, Collection $actualFiles): Collection
     {
@@ -105,7 +111,7 @@ class FileTreeDriver implements DriverInterface
      * @param Collection<string, SplFileInfo> $actualFiles
      *
      * @return Collection<int, string>
-     * @psalm-return Collection<int<0, max>, string>
+     * @psalm-return Collection<int<0, max>, non-empty-string>
      * @phpstan-return Collection<int, non-falsy-string>
      */
     private function discoverContentDiffs(
