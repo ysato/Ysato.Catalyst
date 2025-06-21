@@ -22,7 +22,7 @@ build-act:
 build-spectral:
     docker pull {{ SPECTRAL_IMAGE }}
 
-composer *arguments:;
+composer *arguments:
     docker run --rm -v "$(pwd):/var/www/html" {{ COMPOSER_IMAGE }} composer {{ arguments }}
 
 spectral:
