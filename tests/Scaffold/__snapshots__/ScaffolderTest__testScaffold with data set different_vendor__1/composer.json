@@ -64,8 +64,9 @@
         ],
         "cs": "phpcs",
         "cs-fix": "phpcbf",
+        "phpmd": "phpmd app,src text ./phpmd.xml",
         "qa": [
-            "phpmd app,src text ./phpmd.xml",
+            "@phpmd",
             "phpstan",
             "psalm --no-cache"
         ],

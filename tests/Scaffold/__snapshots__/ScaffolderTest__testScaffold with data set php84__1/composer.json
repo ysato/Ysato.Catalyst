@@ -4,7 +4,7 @@
     "type": "project",
     "license": "proprietary",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9"
     },
@@ -66,7 +66,6 @@
         "cs-fix": "phpcbf",
         "phpmd": "phpmd app,src text ./phpmd.xml",
         "qa": [
-            "@phpmd",
             "phpstan",
             "psalm --no-cache"
         ],
@@ -93,7 +92,7 @@
             "php-http/discovery": true
         },
         "platform": {
-            "php": "8.3"
+            "php": "8.4"
         }
     },
     "minimum-stability": "stable",

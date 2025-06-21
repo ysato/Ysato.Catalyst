@@ -1,4 +1,4 @@
-COMPOSER_IMAGE := "php-composer-8.2:local"
+COMPOSER_IMAGE := "php-composer-8.4:local"
 ACT_IMAGE := "act:local"
 SPECTRAL_IMAGE := "stoplight/spectral:latest"
 

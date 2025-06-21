@@ -60,7 +60,7 @@ class Scaffolder
         try {
             $this->sandbox->execute($this->copyStubsWithRenderedNames($context));
 
-            $this->sandbox->execute($this->generateComposerJson());
+            $this->sandbox->execute($this->generateComposerJson($context->php));
 
             $this->sandbox->execute($this->renderVariablesInSandboxFiles($context));
 
@@ -89,9 +89,9 @@ class Scaffolder
         };
     }
 
-    private function generateComposerJson(): callable
+    private function generateComposerJson(string $php): callable
     {
-        return function (string $path) {
+        return function (string $path) use ($php) {
             if (! $this->filesystem->exists($this->basePath . DIRECTORY_SEPARATOR . 'composer.json')) {
                 throw new RuntimeException('composer.json file not found in the project root');
             }
@@ -127,7 +127,7 @@ class Scaffolder
             $content['autoload'] = $this->buildAutoloadSection($content['autoload']);
 
             assert(array_key_exists('scripts', $content), 'scripts section must exist in composer.json');
-            $content['scripts'] = $this->buildScriptsSection($content['scripts']);
+            $content['scripts'] = $this->buildScriptsSection($content['scripts'], $php);
 
             assert(array_key_exists('config', $content), 'config section must exist in composer.json');
             $content['config'] = $this->buildConfigSection($content['config']);
@@ -144,9 +144,9 @@ class Scaffolder
      *
      * @return non-empty-array<string, string|string[]>
      */
-    private function buildScriptsSection(array $scripts): array
+    private function buildScriptsSection(array $scripts, string $php): array
     {
-        return array_merge($scripts, [
+        $newScripts = [
             'test' => [
                 '@php artisan config:clear --ansi',
                 '@php artisan test',
@@ -161,10 +161,18 @@ class Scaffolder
             ],
             'cs' => 'phpcs',
             'cs-fix' => 'phpcbf',
-            'qa' => ['phpmd app,src text ./phpmd.xml', 'phpstan', 'psalm --no-cache'],
+            'phpmd' => 'phpmd app,src text ./phpmd.xml',
+            'qa' => ['phpstan', 'psalm --no-cache'],
             'lints' => ['@cs', '@qa'],
             'tests' => ['@lints', '@test'],
-        ]);
+
+        ];
+
+        if ($php !== '8.4') {
+            array_unshift($newScripts['qa'], '@phpmd');
+        }
+
+        return array_merge($scripts, $newScripts);
     }
 
     /**

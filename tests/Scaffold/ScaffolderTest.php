@@ -79,6 +79,7 @@ class ScaffolderTest extends TestCase
             'with_ca' => ['vendor', 'package', '8.2', './certs/cert.pem'],
             'php83' => ['vendor', 'package', '8.3', null],
             'different_vendor' => ['acme', 'tool', '8.2', null],
+            'php84' => ['vendor', 'package', '8.4', null],
         ];
     }
 }
