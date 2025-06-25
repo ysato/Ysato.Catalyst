@@ -110,6 +110,37 @@ php artisan ide-helper:models -N
 php artisan ide-helper:meta
 ```
 
+### OpenAPI Validation in Feature Tests
+
+This package includes a `ValidatesOpenApiSpec` trait for validating API requests and responses against your OpenAPI specification in Feature tests. Add it to your test classes:
+
+```php
+use Tests\TestCase;
+use Ysato\Catalyst\ValidatesOpenApiSpec;
+
+class ApiTest extends TestCase
+{
+    use ValidatesOpenApiSpec;
+
+    public function test_api_endpoint_follows_openapi_spec()
+    {
+        // Automatically validates against openapi.yaml
+        $response = $this->get('/pets');
+        $response->assertStatus(200);
+    }
+
+    public function test_skip_request_validation_when_needed()
+    {
+        // Skip only request validation
+        $response = $this
+            ->withoutRequestValidation()
+            ->get('/pets/invalid');
+    }
+}
+```
+
+Place your OpenAPI specification at the project root as `openapi.yaml`, or configure the path via `OPENAPI_PATH` environment variable.
+
 ### Importing Branch Protection Rulesets
 
 This project generates predefined GitHub branch protection rulesets as JSON files in the `.github/rulesets` directory. These must be manually applied to your repository.

@@ -110,6 +110,37 @@ php artisan ide-helper:models -N
 php artisan ide-helper:meta
 ```
 
+### FeatureテストでのOpenAPI検証
+
+このパッケージには、FeatureテストでAPIリクエストとレスポンスをOpenAPI仕様に対して検証する`ValidatesOpenApiSpec`トレイトが含まれています。テストクラスに追加してください：
+
+```php
+use Tests\TestCase;
+use Ysato\Catalyst\ValidatesOpenApiSpec;
+
+class ApiTest extends TestCase
+{
+    use ValidatesOpenApiSpec;
+
+    public function test_api_endpoint_follows_openapi_spec()
+    {
+        // openapi.yamlに対して自動的に検証
+        $response = $this->get('/pets');
+        $response->assertStatus(200);
+    }
+
+    public function test_skip_request_validation_when_needed()
+    {
+        // リクエスト検証のみをスキップ
+        $response = $this
+            ->withoutRequestValidation()
+            ->get('/pets/invalid');
+    }
+}
+```
+
+OpenAPI仕様書をプロジェクトルートに`openapi.yaml`として配置するか、`OPENAPI_PATH`環境変数でパスを設定してください。
+
 ### ブランチ保護ルールセットのインポート
 
 このプロジェクトは、`.github/rulesets`ディレクトリに、あらかじめ定義されたGitHubブランチ保護ルールセットをJSONファイルとして生成します。これらは手動でリポジトリに適用する必要があります。
