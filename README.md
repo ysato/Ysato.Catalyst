@@ -100,6 +100,16 @@ vendor/bin/phpstan analyse --generate-baseline
 vendor/bin/psalm --set-baseline
 ```
 
+### Laravel IDE Helper Setup
+
+For enhanced IDE support and autocompletion, run the [Laravel IDE Helper](https://github.com/barryvdh/laravel-ide-helper) commands:
+
+```shell
+php artisan ide-helper:generate
+php artisan ide-helper:models -N
+php artisan ide-helper:meta
+```
+
 ### Importing Branch Protection Rulesets
 
 This project generates predefined GitHub branch protection rulesets as JSON files in the `.github/rulesets` directory. These must be manually applied to your repository.

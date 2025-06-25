@@ -100,6 +100,16 @@ vendor/bin/phpstan analyse --generate-baseline
 vendor/bin/psalm --set-baseline
 ```
 
+### Laravel IDE Helperセットアップ
+
+IDE支援とオートコンプリート機能を強化するために、[Laravel IDE Helper](https://github.com/barryvdh/laravel-ide-helper)コマンドを実行してください：
+
+```shell
+php artisan ide-helper:generate
+php artisan ide-helper:models -N
+php artisan ide-helper:meta
+```
+
 ### ブランチ保護ルールセットのインポート
 
 このプロジェクトは、`.github/rulesets`ディレクトリに、あらかじめ定義されたGitHubブランチ保護ルールセットをJSONファイルとして生成します。これらは手動でリポジトリに適用する必要があります。
