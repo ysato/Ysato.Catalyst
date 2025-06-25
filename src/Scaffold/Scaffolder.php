@@ -15,6 +15,7 @@ use Ysato\Catalyst\Scaffold\Template\Renderer;
 
 use function array_key_exists;
 use function array_merge;
+use function array_unshift;
 use function assert;
 use function is_array;
 use function json_decode;
