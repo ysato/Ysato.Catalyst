@@ -6,3 +6,4 @@
 {{ original_gitignore|trim }}
 /.php_cs.cache
 /.phpcs-cache
+/build
