@@ -163,10 +163,10 @@ class Scaffolder
             'cs' => 'phpcs',
             'cs-fix' => 'phpcbf',
             'phpmd' => 'phpmd app,src text ./phpmd.xml',
+            'follow' => 'OPENAPI_FOLLOW_REPORT=true ./vendor/bin/phpunit --no-progress --no-results',
             'qa' => ['phpstan', 'psalm --no-cache'],
             'lints' => ['@cs', '@qa'],
             'tests' => ['@lints', '@test'],
-
         ];
 
         if ($php !== '8.4') {
