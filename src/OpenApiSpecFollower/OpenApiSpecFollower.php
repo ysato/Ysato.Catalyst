@@ -84,9 +84,9 @@ class OpenApiSpecFollower
                 }
 
                 foreach ($operation->responses as $statusCode => $response) {
-                    assert(is_string($statusCode));
                     unset($response);
-                    $scenarios[] = new Scenario($path, $method, $statusCode);
+                    // @phpstan-ignore cast.string
+                    $scenarios[] = new Scenario($path, $method, (string) $statusCode);
                 }
             }
         }

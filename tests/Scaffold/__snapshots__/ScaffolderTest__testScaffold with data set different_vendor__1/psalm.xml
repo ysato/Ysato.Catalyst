@@ -15,6 +15,16 @@
 
     <issueHandlers>
         <ClassMustBeFinal errorLevel="suppress"/>
+        <PropertyNotSetInConstructor>
+            <errorLevel type="suppress">
+                <directory name="tests"/>
+            </errorLevel>
+        </PropertyNotSetInConstructor>
+        <UnusedClass>
+            <errorLevel type="suppress">
+                <directory name="tests"/>
+            </errorLevel>
+        </UnusedClass>
     </issueHandlers>
     <plugins>
         <pluginClass class="Psalm\LaravelPlugin\Plugin"/>

@@ -57,6 +57,7 @@ class Context
             '#^!?/?.idea(/?|/.*)$\R?#m',
             '#^/?.php_cs.cache$\R?#m',
             '#^/?.phpcs-cache$\R?#m',
+            '#^/?build$\R?#m',
         ];
 
         $replacements = array_fill(0, count($patterns), '');
