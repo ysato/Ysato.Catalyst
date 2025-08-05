@@ -72,7 +72,8 @@
             "@test"
         ],
         "coverage": "php -d zend_extension=xdebug.so -d xdebug.mode=coverage ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage",
-        "pcov": "php -d extension=pcov.so -d pcov.enabled=1 ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage --coverage-clover=build/coverage.xml"
+        "pcov": "php -d extension=pcov.so -d pcov.enabled=1 ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage --coverage-clover=build/coverage.xml",
+        "follow": "OPENAPI_FOLLOW_REPORT=true ./vendor/bin/phpunit --no-progress --no-results"
     },
     "scripts-descriptions": {
         "test": "Run unit tests",
@@ -81,7 +82,8 @@
         "qa": "Run static analysis (phpmd + phpstan)",
         "lints": "Run code style and static analysis checks",
         "coverage": "Generate test coverage report with Xdebug",
-        "pcov": "Generate test coverage report with PCOV"
+        "pcov": "Generate test coverage report with PCOV",
+        "follow": "Run tests with OpenAPI specification following report"
     },
     "config": {
         "optimize-autoloader": true,
