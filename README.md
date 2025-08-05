@@ -141,6 +141,90 @@ class ApiTest extends TestCase
 
 Place your OpenAPI specification at the project root as `openapi.yaml`, or configure the path via `OPENAPI_PATH` environment variable.
 
+#### Using Both Traits Together
+
+When you need both validation and following capabilities, you can use both `ValidatesOpenApiSpec` and `FollowsOpenApiSpec` traits in your `Tests\Feature\TestCase`. Since both traits define the same `getOpenApiSpecPath()` method, you need to resolve the conflict using the `insteadof` operator:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Feature;
+
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Http\Kernel as HttpKernel;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
+use Illuminate\Testing\TestResponse;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
+use Symfony\Component\HttpFoundation\Response;
+use Ysato\Catalyst\OpenApiSpecFollower\FollowsOpenApiSpec;
+use Ysato\Catalyst\ValidatesOpenApiSpec;
+
+abstract class TestCase extends \Tests\TestCase
+{
+    use RefreshDatabase;
+    use ValidatesOpenApiSpec;
+    use FollowsOpenApiSpec {
+        FollowsOpenApiSpec::getOpenApiSpecPath insteadof ValidatesOpenApiSpec;
+    }
+
+    /**
+     * @param string                  $method
+     * @param string                  $uri
+     * @param array<array-key, mixed> $parameters
+     * @param array<array-key, mixed> $cookies
+     * @param array<array-key, mixed> $files
+     * @param array<array-key, mixed> $server
+     * @param string|null             $content
+     *
+     * @return TestResponse<Response>
+     * @throws BindingResolutionException
+     */
+    public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
+    {
+        $kernel = $this->app->make(HttpKernel::class);
+
+        $files = array_merge($files, $this->extractFilesFromDataArray($parameters));
+
+        $symfonyRequest = SymfonyRequest::create(
+            $this->prepareUrlForRequest($uri),
+            $method,
+            $parameters,
+            $cookies,
+            $files,
+            array_replace($this->serverVariables, $server),
+            $content
+        );
+
+        $request = Request::createFromBase($symfonyRequest);
+
+        $address = $this->validateRequest($request);
+
+        $response = $kernel->handle($request);
+
+        if ($this->followRedirects) {
+            $response = $this->followRedirects($response);
+        }
+
+        $kernel->terminate($request, $response);
+
+        $testResponse = $this->createTestResponse($response, $request);
+
+        if ($address) {
+            $this->validateResponse($address, $testResponse->baseResponse);
+        }
+
+        $this->followed($method, $uri, $testResponse->getStatusCode());
+
+        return $testResponse;
+    }
+}
+```
+
+This setup automatically applies both OpenAPI validation and following functionality to all Feature tests.
+
 ### Importing Branch Protection Rulesets
 
 This project generates predefined GitHub branch protection rulesets as JSON files in the `.github/rulesets` directory. These must be manually applied to your repository.

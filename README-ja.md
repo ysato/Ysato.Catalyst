@@ -141,6 +141,90 @@ class ApiTest extends TestCase
 
 OpenAPI仕様書をプロジェクトルートに`openapi.yaml`として配置するか、`OPENAPI_PATH`環境変数でパスを設定してください。
 
+#### 両方のトレイトを同時に使用する場合
+
+OpenAPI検証とフォロー機能の両方が必要な場合は、`Tests\Feature\TestCase`で`ValidatesOpenApiSpec`と`FollowsOpenApiSpec`の両方のトレイトを使用できます。両方のトレイトが同じ`getOpenApiSpecPath()`メソッドを定義しているため、`insteadof`演算子を使用して競合を解決する必要があります：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Feature;
+
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Http\Kernel as HttpKernel;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
+use Illuminate\Testing\TestResponse;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
+use Symfony\Component\HttpFoundation\Response;
+use Ysato\Catalyst\OpenApiSpecFollower\FollowsOpenApiSpec;
+use Ysato\Catalyst\ValidatesOpenApiSpec;
+
+abstract class TestCase extends \Tests\TestCase
+{
+    use RefreshDatabase;
+    use ValidatesOpenApiSpec;
+    use FollowsOpenApiSpec {
+        FollowsOpenApiSpec::getOpenApiSpecPath insteadof ValidatesOpenApiSpec;
+    }
+
+    /**
+     * @param string                  $method
+     * @param string                  $uri
+     * @param array<array-key, mixed> $parameters
+     * @param array<array-key, mixed> $cookies
+     * @param array<array-key, mixed> $files
+     * @param array<array-key, mixed> $server
+     * @param string|null             $content
+     *
+     * @return TestResponse<Response>
+     * @throws BindingResolutionException
+     */
+    public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
+    {
+        $kernel = $this->app->make(HttpKernel::class);
+
+        $files = array_merge($files, $this->extractFilesFromDataArray($parameters));
+
+        $symfonyRequest = SymfonyRequest::create(
+            $this->prepareUrlForRequest($uri),
+            $method,
+            $parameters,
+            $cookies,
+            $files,
+            array_replace($this->serverVariables, $server),
+            $content
+        );
+
+        $request = Request::createFromBase($symfonyRequest);
+
+        $address = $this->validateRequest($request);
+
+        $response = $kernel->handle($request);
+
+        if ($this->followRedirects) {
+            $response = $this->followRedirects($response);
+        }
+
+        $kernel->terminate($request, $response);
+
+        $testResponse = $this->createTestResponse($response, $request);
+
+        if ($address) {
+            $this->validateResponse($address, $testResponse->baseResponse);
+        }
+
+        $this->followed($method, $uri, $testResponse->getStatusCode());
+
+        return $testResponse;
+    }
+}
+```
+
+この設定により、すべてのFeatureテストで自動的にOpenAPI検証とフォロー機能の両方が適用されます。
+
 ### ブランチ保護ルールセットのインポート
 
 このプロジェクトは、`.github/rulesets`ディレクトリに、あらかじめ定義されたGitHubブランチ保護ルールセットをJSONファイルとして生成します。これらは手動でリポジトリに適用する必要があります。
