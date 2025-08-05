@@ -39,6 +39,10 @@
         <exclude name="SlevomatCodingStandard.Functions.ArrowFunctionDeclaration.IncorrectSpacesAfterKeyword"/>
     </rule>
 
+    <rule ref="Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps">
+        <exclude-pattern>tests/Feature</exclude-pattern>
+    </rule>
+
     <rule ref="Generic.WhiteSpace.LanguageConstructSpacing"/>
 
     <rule ref="SlevomatCodingStandard.Functions.ArrowFunctionDeclaration">
