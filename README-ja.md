@@ -112,38 +112,19 @@ php artisan ide-helper:meta
 
 ### FeatureテストでのOpenAPI検証
 
-このパッケージには、FeatureテストでAPIリクエストとレスポンスをOpenAPI仕様に対して検証する`ValidatesOpenApiSpec`トレイトが含まれています。テストクラスに追加してください：
+このパッケージは、FeatureテストでOpenAPI検証を行う2種類の機能を提供します：
 
-```php
-use Tests\TestCase;
-use Ysato\Catalyst\ValidatesOpenApiSpec;
+#### 1. リクエスト・レスポンス検証 (`ValidatesOpenApiSpec`)
 
-class ApiTest extends TestCase
-{
-    use ValidatesOpenApiSpec;
+テストケースから呼び出されたリクエストと返却されたレスポンスがOpenAPI仕様書の仕様を満たしていることを検証します。
 
-    public function test_api_endpoint_follows_openapi_spec()
-    {
-        // openapi.yamlに対して自動的に検証
-        $response = $this->get('/pets');
-        $response->assertStatus(200);
-    }
+#### 2. 仕様カバレッジ検証 (`Spectatable`)
 
-    public function test_skip_request_validation_when_needed()
-    {
-        // リクエスト検証のみをスキップ
-        $response = $this
-            ->withoutRequestValidation()
-            ->get('/pets/invalid');
-    }
-}
-```
+OpenAPI仕様書に記述されている仕様がテストから呼び出されているかを検証します。
 
-OpenAPI仕様書をプロジェクトルートに`openapi.yaml`として配置するか、`OPENAPI_PATH`環境変数でパスを設定してください。
+#### 推奨セットアップ：両方のTraitをTestCaseで使用
 
-#### 両方のトレイトを同時に使用する場合
-
-OpenAPI検証とフォロー機能の両方が必要な場合は、`Tests\Feature\TestCase`で`ValidatesOpenApiSpec`と`FollowsOpenApiSpec`の両方のトレイトを使用できます。両方のトレイトが同じ`getOpenApiSpecPath()`メソッドを定義しているため、`insteadof`演算子を使用して競合を解決する必要があります：
+この2つのTraitによる検証は`Tests\Feature\TestCase`クラスに`use`し、TestCaseクラスで`call()`をオーバーライドすることでFeatureテスト全体に効果を及ぼすように使います：
 
 ```php
 <?php
@@ -159,15 +140,15 @@ use Illuminate\Http\Request;
 use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpFoundation\Response;
-use Ysato\Catalyst\OpenApiSpecFollower\FollowsOpenApiSpec;
 use Ysato\Catalyst\ValidatesOpenApiSpec;
+use Ysato\Spectator\Spectatable;
 
 abstract class TestCase extends \Tests\TestCase
 {
     use RefreshDatabase;
     use ValidatesOpenApiSpec;
-    use FollowsOpenApiSpec {
-        FollowsOpenApiSpec::getOpenApiSpecPath insteadof ValidatesOpenApiSpec;
+    use Spectatable {
+        Spectatable::getOpenApiSpecPath insteadof ValidatesOpenApiSpec;
     }
 
     /**
@@ -180,6 +161,7 @@ abstract class TestCase extends \Tests\TestCase
      * @param string|null             $content
      *
      * @return TestResponse<Response>
+     *
      * @throws BindingResolutionException
      */
     public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
@@ -195,7 +177,7 @@ abstract class TestCase extends \Tests\TestCase
             $cookies,
             $files,
             array_replace($this->serverVariables, $server),
-            $content
+            $content,
         );
 
         $request = Request::createFromBase($symfonyRequest);
@@ -216,14 +198,68 @@ abstract class TestCase extends \Tests\TestCase
             $this->validateResponse($address, $testResponse->baseResponse);
         }
 
-        $this->followed($method, $uri, $testResponse->getStatusCode());
+        $this->spectate($method, $uri, $testResponse->getStatusCode());
 
         return $testResponse;
     }
 }
 ```
 
-この設定により、すべてのFeatureテストで自動的にOpenAPI検証とフォロー機能の両方が適用されます。
+この設定により、すべてのFeatureテストで自動的にOpenAPI検証と仕様カバレッジ追跡の両方が適用されます。
+
+#### 使用方法
+
+`ValidatesOpenApiSpec`については、個別のテストクラスで`use`せずに`TestCase`クラスで`use`することで、すべてのFeatureテストで自動的に検証が行われます。
+
+`Spectatable`については、テスト実行後に`composer spectate`コマンドを実行することで、OpenAPIエンドポイントとステータスコードのテストカバレッジレポートを表示できます。
+
+OpenAPI仕様書をプロジェクトルートに`openapi.yaml`として配置するか、`OPENAPI_SPEC_PATH`環境変数でパスを設定してください。
+
+#### 仕様カバレッジレポートの表示
+
+テスト実行後、以下のコマンドでカバレッジレポートを表示できます：
+
+```shell
+composer spectate
+```
+
+以下のようなレポートが表示され、どのエンドポイントとステータスコードがテストされているかを確認できます：
+
+```
++-------------+--------+-------------------------------------------+-------------+
+| IMPLEMENTED | METHOD | ENDPOINT                                  | STATUS CODE |
++-------------+--------+-------------------------------------------+-------------+
+| ✅          | GET    | /threads                                  | 200         |
+| ✅          | POST   | /threads                                  | 201         |
+| ✅          | POST   | /threads                                  | 422         |
+| ✅          | POST   | /threads                                  | 401         |
+| ✅          | GET    | /threads/{threadid}                       | 200         |
+| ✅          | GET    | /threads/{threadid}                       | 404         |
+| ❌          | PUT    | /threads/{threadid}                       | 204         |
+| ❌          | PUT    | /threads/{threadid}                       | 401         |
+| ❌          | PUT    | /threads/{threadid}                       | 403         |
+| ❌          | PUT    | /threads/{threadid}                       | 404         |
+| ❌          | PUT    | /threads/{threadid}                       | 422         |
+| ❌          | DELETE | /threads/{threadid}                       | 204         |
+| ❌          | DELETE | /threads/{threadid}                       | 401         |
+| ❌          | DELETE | /threads/{threadid}                       | 403         |
+| ❌          | DELETE | /threads/{threadid}                       | 404         |
+| ❌          | POST   | /threads/{threadid}/scratches             | 201         |
+| ❌          | POST   | /threads/{threadid}/scratches             | 401         |
+| ❌          | POST   | /threads/{threadid}/scratches             | 403         |
+| ❌          | POST   | /threads/{threadid}/scratches             | 404         |
+| ❌          | POST   | /threads/{threadid}/scratches             | 422         |
+| ❌          | PUT    | /threads/{threadid}/scratches/{scratchid} | 204         |
+| ❌          | PUT    | /threads/{threadid}/scratches/{scratchid} | 401         |
+| ❌          | PUT    | /threads/{threadid}/scratches/{scratchid} | 403         |
+| ❌          | PUT    | /threads/{threadid}/scratches/{scratchid} | 404         |
+| ❌          | PUT    | /threads/{threadid}/scratches/{scratchid} | 422         |
+| ❌          | DELETE | /threads/{threadid}/scratches/{scratchid} | 204         |
+| ❌          | DELETE | /threads/{threadid}/scratches/{scratchid} | 401         |
+| ❌          | DELETE | /threads/{threadid}/scratches/{scratchid} | 403         |
+| ❌          | DELETE | /threads/{threadid}/scratches/{scratchid} | 404         |
++-------------+--------+-------------------------------------------+-------------+
+```
 
 ### ブランチ保護ルールセットのインポート
 

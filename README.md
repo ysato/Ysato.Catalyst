@@ -112,38 +112,19 @@ php artisan ide-helper:meta
 
 ### OpenAPI Validation in Feature Tests
 
-This package includes a `ValidatesOpenApiSpec` trait for validating API requests and responses against your OpenAPI specification in Feature tests. Add it to your test classes:
+This package provides two distinct OpenAPI verification capabilities for Feature tests:
 
-```php
-use Tests\TestCase;
-use Ysato\Catalyst\ValidatesOpenApiSpec;
+#### 1. Request/Response Validation (`ValidatesOpenApiSpec`)
 
-class ApiTest extends TestCase
-{
-    use ValidatesOpenApiSpec;
+Validates that requests and responses from test cases comply with the OpenAPI specification.
 
-    public function test_api_endpoint_follows_openapi_spec()
-    {
-        // Automatically validates against openapi.yaml
-        $response = $this->get('/pets');
-        $response->assertStatus(200);
-    }
+#### 2. Specification Coverage Verification (`Spectatable`)
 
-    public function test_skip_request_validation_when_needed()
-    {
-        // Skip only request validation
-        $response = $this
-            ->withoutRequestValidation()
-            ->get('/pets/invalid');
-    }
-}
-```
+Verifies that all endpoints and status codes defined in the OpenAPI specification are being tested.
 
-Place your OpenAPI specification at the project root as `openapi.yaml`, or configure the path via `OPENAPI_PATH` environment variable.
+#### Recommended Setup: Using Both Traits in TestCase
 
-#### Using Both Traits Together
-
-When you need both validation and following capabilities, you can use both `ValidatesOpenApiSpec` and `FollowsOpenApiSpec` traits in your `Tests\Feature\TestCase`. Since both traits define the same `getOpenApiSpecPath()` method, you need to resolve the conflict using the `insteadof` operator:
+These two traits should be used in your `Tests\Feature\TestCase` class by adding them with `use` and overriding the `call()` method to affect all Feature tests:
 
 ```php
 <?php
@@ -159,16 +140,14 @@ use Illuminate\Http\Request;
 use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpFoundation\Response;
-use Ysato\Catalyst\OpenApiSpecFollower\FollowsOpenApiSpec;
 use Ysato\Catalyst\ValidatesOpenApiSpec;
+use Ysato\Catalyst\Spectatable;
 
 abstract class TestCase extends \Tests\TestCase
 {
     use RefreshDatabase;
     use ValidatesOpenApiSpec;
-    use FollowsOpenApiSpec {
-        FollowsOpenApiSpec::getOpenApiSpecPath insteadof ValidatesOpenApiSpec;
-    }
+    use Spectatable;
 
     /**
      * @param string                  $method
@@ -180,6 +159,7 @@ abstract class TestCase extends \Tests\TestCase
      * @param string|null             $content
      *
      * @return TestResponse<Response>
+     *
      * @throws BindingResolutionException
      */
     public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
@@ -195,7 +175,7 @@ abstract class TestCase extends \Tests\TestCase
             $cookies,
             $files,
             array_replace($this->serverVariables, $server),
-            $content
+            $content,
         );
 
         $request = Request::createFromBase($symfonyRequest);
@@ -216,14 +196,68 @@ abstract class TestCase extends \Tests\TestCase
             $this->validateResponse($address, $testResponse->baseResponse);
         }
 
-        $this->followed($method, $uri, $testResponse->getStatusCode());
+        $this->spectate($method, $uri, $testResponse->getStatusCode());
 
         return $testResponse;
     }
 }
 ```
 
-This setup automatically applies both OpenAPI validation and following functionality to all Feature tests.
+This setup automatically applies both OpenAPI request/response validation and specification coverage tracking to all Feature tests.
+
+#### Usage
+
+For `ValidatesOpenApiSpec`, by using it in the `TestCase` class instead of individual test classes, validation is automatically performed for all Feature tests.
+
+For `Spectatable`, you can run the `composer spectate` command after test execution to display an OpenAPI endpoint and status code test coverage report.
+
+Place your OpenAPI specification at the project root as `openapi.yaml`, or configure the path via `OPENAPI_SPEC_PATH` environment variable.
+
+#### Viewing Specification Coverage Report
+
+After running your tests, display the coverage report with the following command:
+
+```shell
+composer spectate
+```
+
+This displays a report showing which endpoints and status codes have been tested:
+
+```
++-------------+--------+-------------------------------------------+-------------+
+| IMPLEMENTED | METHOD | ENDPOINT                                  | STATUS CODE |
++-------------+--------+-------------------------------------------+-------------+
+| ✅          | GET    | /threads                                  | 200         |
+| ✅          | POST   | /threads                                  | 201         |
+| ✅          | POST   | /threads                                  | 422         |
+| ✅          | POST   | /threads                                  | 401         |
+| ✅          | GET    | /threads/{threadid}                       | 200         |
+| ✅          | GET    | /threads/{threadid}                       | 404         |
+| ❌          | PUT    | /threads/{threadid}                       | 204         |
+| ❌          | PUT    | /threads/{threadid}                       | 401         |
+| ❌          | PUT    | /threads/{threadid}                       | 403         |
+| ❌          | PUT    | /threads/{threadid}                       | 404         |
+| ❌          | PUT    | /threads/{threadid}                       | 422         |
+| ❌          | DELETE | /threads/{threadid}                       | 204         |
+| ❌          | DELETE | /threads/{threadid}                       | 401         |
+| ❌          | DELETE | /threads/{threadid}                       | 403         |
+| ❌          | DELETE | /threads/{threadid}                       | 404         |
+| ❌          | POST   | /threads/{threadid}/scratches             | 201         |
+| ❌          | POST   | /threads/{threadid}/scratches             | 401         |
+| ❌          | POST   | /threads/{threadid}/scratches             | 403         |
+| ❌          | POST   | /threads/{threadid}/scratches             | 404         |
+| ❌          | POST   | /threads/{threadid}/scratches             | 422         |
+| ❌          | PUT    | /threads/{threadid}/scratches/{scratchid} | 204         |
+| ❌          | PUT    | /threads/{threadid}/scratches/{scratchid} | 401         |
+| ❌          | PUT    | /threads/{threadid}/scratches/{scratchid} | 403         |
+| ❌          | PUT    | /threads/{threadid}/scratches/{scratchid} | 404         |
+| ❌          | PUT    | /threads/{threadid}/scratches/{scratchid} | 422         |
+| ❌          | DELETE | /threads/{threadid}/scratches/{scratchid} | 204         |
+| ❌          | DELETE | /threads/{threadid}/scratches/{scratchid} | 401         |
+| ❌          | DELETE | /threads/{threadid}/scratches/{scratchid} | 403         |
+| ❌          | DELETE | /threads/{threadid}/scratches/{scratchid} | 404         |
++-------------+--------+-------------------------------------------+-------------+
+```
 
 ### Importing Branch Protection Rulesets
 
