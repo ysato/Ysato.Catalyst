@@ -26,7 +26,8 @@
         "symfony/filesystem": "^7.1",
         "symfony/finder": "^7.1",
         "twig/twig": "^3.20",
-        "vimeo/psalm": ">=6.12.0"
+        "vimeo/psalm": ">=6.12.0",
+        "ysato/spectator": "^1.0"
     },
     "require-dev": {
         "laravel/framework": "^11.43|^12.0",
@@ -72,8 +73,7 @@
             "@test"
         ],
         "coverage": "php -d zend_extension=xdebug.so -d xdebug.mode=coverage ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage",
-        "pcov": "php -d extension=pcov.so -d pcov.enabled=1 ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage --coverage-clover=build/coverage.xml",
-        "follow": "OPENAPI_FOLLOW_REPORT=true ./vendor/bin/phpunit --no-progress --no-results"
+        "pcov": "php -d extension=pcov.so -d pcov.enabled=1 ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage --coverage-clover=build/coverage.xml"
     },
     "scripts-descriptions": {
         "test": "Run unit tests",

@@ -163,8 +163,8 @@ class Scaffolder
             'cs' => 'phpcs',
             'cs-fix' => 'phpcbf',
             'phpmd' => 'phpmd app,src text ./phpmd.xml',
-            'follow' => 'OPENAPI_FOLLOW_REPORT=true ./vendor/bin/phpunit --no-progress --no-results',
             'qa' => ['phpstan', 'psalm --no-cache'],
+            'spectate' => 'RENDER_SPECTATION_RESULT=true ./vendor/bin/phpunit --no-progress --no-results',
             'lints' => ['@cs', '@qa'],
             'tests' => ['@lints', '@test'],
         ];
