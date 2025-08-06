@@ -4,7 +4,7 @@
     name="Ysato.Catalyst"
     xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd"
 >
-    <description>{{ vendor|pascal }}.{{ package|pascal }} Coding Standard</description>
+    <description>Ysato.Catalyst Coding Standard</description>
     <arg name="basepath" value="."/>
     <arg name="extensions" value="php"/>
     <arg name="parallel" value="80"/>
