@@ -18,7 +18,7 @@
         </include>
     </source>
     <extensions>
-        <bootstrap class="Ysato\Catalyst\OpenApiSpecFollower\Extensions\FollowsOpenApiSpecExtension"/>
+        <bootstrap class="Ysato\Spectator\SpectatorExtension"/>
     </extensions>
     <php>
         <env name="APP_ENV" value="testing"/>
