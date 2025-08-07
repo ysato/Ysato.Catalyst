@@ -57,6 +57,8 @@ class Context
             '#^!?/?.idea(/?|/.*)$\R?#m',
             '#^/?.php_cs.cache$\R?#m',
             '#^/?.phpcs-cache$\R?#m',
+            '#^/?.phpstorm.meta.php$\R?#m',
+            '#^/?_ide_helper.php$\R?#m',
             '#^/?build$\R?#m',
         ];
 

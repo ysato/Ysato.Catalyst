@@ -6,4 +6,6 @@
 {{ original_gitignore|trim }}
 /.php_cs.cache
 /.phpcs-cache
+/.phpstorm.meta.php
+/_ide_helper.php
 /build
