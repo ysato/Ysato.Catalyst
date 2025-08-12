@@ -92,7 +92,17 @@ vendor/bin/phpmd app,src text ./phpmd.xml --generate-baseline
 
 #### PHPStan Baseline
 ```shell
-vendor/bin/phpstan analyse --generate-baseline
+vendor/bin/phpstan --generate-baseline
+```
+
+Add the generated baseline file to the includes in phpstan.neon:
+```neon
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/nesbot/carbon/extension.neon
++    - phpstan-baseline.neon
+
+...
 ```
 
 #### Psalm Baseline
@@ -112,110 +122,17 @@ php artisan ide-helper:meta
 
 ### OpenAPI Validation in Feature Tests
 
-This package provides two distinct OpenAPI verification capabilities for Feature tests:
-
-#### 1. Request/Response Validation (`ValidatesOpenApiSpec`)
-
-Validates that requests and responses from test cases comply with the OpenAPI specification.
-
-#### 2. Specification Coverage Verification (`Spectatable`)
-
-Verifies that all endpoints and status codes defined in the OpenAPI specification are being tested.
-
-#### Recommended Setup: Using Both Traits in TestCase
-
-These two traits should be used in your `Tests\Feature\TestCase` class by adding them with `use` and overriding the `call()` method to affect all Feature tests:
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace Tests\Feature;
-
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Contracts\Http\Kernel as HttpKernel;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Request;
-use Illuminate\Testing\TestResponse;
-use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
-use Symfony\Component\HttpFoundation\Response;
-use Ysato\Catalyst\ValidatesOpenApiSpec;
-use Ysato\Catalyst\Spectatable;
-
-abstract class TestCase extends \Tests\TestCase
-{
-    use RefreshDatabase;
-    use ValidatesOpenApiSpec;
-    use Spectatable;
-
-    /**
-     * @param string                  $method
-     * @param string                  $uri
-     * @param array<array-key, mixed> $parameters
-     * @param array<array-key, mixed> $cookies
-     * @param array<array-key, mixed> $files
-     * @param array<array-key, mixed> $server
-     * @param string|null             $content
-     *
-     * @return TestResponse<Response>
-     *
-     * @throws BindingResolutionException
-     */
-    public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
-    {
-        $kernel = $this->app->make(HttpKernel::class);
-
-        $files = array_merge($files, $this->extractFilesFromDataArray($parameters));
-
-        $symfonyRequest = SymfonyRequest::create(
-            $this->prepareUrlForRequest($uri),
-            $method,
-            $parameters,
-            $cookies,
-            $files,
-            array_replace($this->serverVariables, $server),
-            $content,
-        );
-
-        $request = Request::createFromBase($symfonyRequest);
-
-        $address = $this->validateRequest($request);
-
-        $response = $kernel->handle($request);
-
-        if ($this->followRedirects) {
-            $response = $this->followRedirects($response);
-        }
-
-        $kernel->terminate($request, $response);
-
-        $testResponse = $this->createTestResponse($response, $request);
-
-        if ($address) {
-            $this->validateResponse($address, $testResponse->baseResponse);
-        }
-
-        $this->spectate($method, $uri, $testResponse->getStatusCode());
-
-        return $testResponse;
-    }
-}
-```
-
-This setup automatically applies both OpenAPI request/response validation and specification coverage tracking to all Feature tests.
-
-#### Usage
-
-For `ValidatesOpenApiSpec`, by using it in the `TestCase` class instead of individual test classes, validation is automatically performed for all Feature tests.
-
-For `Spectatable`, you can run the `composer spectate` command after test execution to display an OpenAPI endpoint and status code test coverage report.
+This package provides two types of OpenAPI validation capabilities for Feature tests:
 
 Place your OpenAPI specification at the project root as `openapi.yaml`, or configure the path via `OPENAPI_SPEC_PATH` environment variable.
 
-#### Viewing Specification Coverage Report
+#### 1. Request/Response Validation (`ValidatesOpenApiSpec`)
 
-After running your tests, display the coverage report with the following command:
+Automatically validates that requests called from test cases and returned responses comply with the OpenAPI specification.
+
+#### 2. Specification Coverage Verification (`Spectatable`)
+
+Verifies whether the specifications described in the OpenAPI specification are being called from tests.
 
 ```shell
 composer spectate
@@ -259,9 +176,9 @@ This displays a report showing which endpoints and status codes have been tested
 +-------------+--------+-------------------------------------------+-------------+
 ```
 
-### Importing Branch Protection Rulesets
+### Importing GitHub Rulesets
 
-This project generates predefined GitHub branch protection rulesets as JSON files in the `.github/rulesets` directory. These must be manually applied to your repository.
+This project generates predefined GitHub rulesets as JSON files in the `.github/rulesets` directory. These must be manually applied to your repository.
 
 #### Prerequisites
 * You need **admin access** to the GitHub repository where you want to import these rulesets.
@@ -276,6 +193,10 @@ This project generates predefined GitHub branch protection rulesets as JSON file
 7.  Repeat for other ruleset files as needed.
 
     **Note:** Carefully review the "Target branches" section for each ruleset after import to ensure they apply to the intended branches (e.g., `main`, `develop`).
+
+## Documentation
+
+Detailed documentation is available on the [GitHub wiki](https://github.com/ysato/Ysato.Catalyst/wiki).
 
 ## For Contributors
 

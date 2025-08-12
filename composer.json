@@ -15,7 +15,7 @@
         "doctrine/coding-standard": ">=10.0.0",
         "illuminate/console": "^11.43|^12.0",
         "illuminate/support": "^11.43|^12.0",
-        "kirschbaum-development/laravel-openapi-validator": "^1.1",
+        "kirschbaum-development/laravel-openapi-validator": "^1.1.1",
         "larastan/larastan": "^3.0",
         "laravel/prompts": "^0.3.5",
         "phpmd/phpmd": ">=2.12.0",
@@ -27,7 +27,7 @@
         "symfony/finder": "^7.1",
         "twig/twig": "^3.20",
         "vimeo/psalm": ">=6.12.0",
-        "ysato/spectator": "^1.0"
+        "ysato/spectator": "^1.0.5"
     },
     "require-dev": {
         "laravel/framework": "^11.43|^12.0",

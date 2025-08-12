@@ -5,5 +5,5 @@ parameters:
         - tests
     excludePaths:
         - tests/project
-        - tests/**/__sandbox__
-        - tests/**/__snapshots__
+        - tests/*/__sandbox__/*
+        - tests/*/__snapshots__/*

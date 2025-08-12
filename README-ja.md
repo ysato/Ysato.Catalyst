@@ -92,7 +92,17 @@ vendor/bin/phpmd app,src text ./phpmd.xml --generate-baseline
 
 #### PHPStanベースライン
 ```shell
-vendor/bin/phpstan analyse --generate-baseline
+vendor/bin/phpstan --generate-baseline
+```
+
+phpstan.neonのincludesに生成されたbaselineファイルを追加
+```neon
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/nesbot/carbon/extension.neon
++    - phpstan-baseline.neon
+
+...
 ```
 
 #### Psalmベースライン
@@ -114,110 +124,15 @@ php artisan ide-helper:meta
 
 このパッケージは、FeatureテストでOpenAPI検証を行う2種類の機能を提供します：
 
+OpenAPI仕様書をプロジェクトルートに`openapi.yaml`として配置するか、`OPENAPI_SPEC_PATH`環境変数でパスを設定してください。
+
 #### 1. リクエスト・レスポンス検証 (`ValidatesOpenApiSpec`)
 
-テストケースから呼び出されたリクエストと返却されたレスポンスがOpenAPI仕様書の仕様を満たしていることを検証します。
+テストケースから呼び出されたリクエストと返却されたレスポンスがOpenAPI仕様書の仕様を満たしていることを自動的に検証します。
 
 #### 2. 仕様カバレッジ検証 (`Spectatable`)
 
 OpenAPI仕様書に記述されている仕様がテストから呼び出されているかを検証します。
-
-#### 推奨セットアップ：両方のTraitをTestCaseで使用
-
-この2つのTraitによる検証は`Tests\Feature\TestCase`クラスに`use`し、TestCaseクラスで`call()`をオーバーライドすることでFeatureテスト全体に効果を及ぼすように使います：
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace Tests\Feature;
-
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Contracts\Http\Kernel as HttpKernel;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Request;
-use Illuminate\Testing\TestResponse;
-use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
-use Symfony\Component\HttpFoundation\Response;
-use Ysato\Catalyst\ValidatesOpenApiSpec;
-use Ysato\Spectator\Spectatable;
-
-abstract class TestCase extends \Tests\TestCase
-{
-    use RefreshDatabase;
-    use ValidatesOpenApiSpec;
-    use Spectatable {
-        Spectatable::getOpenApiSpecPath insteadof ValidatesOpenApiSpec;
-    }
-
-    /**
-     * @param string                  $method
-     * @param string                  $uri
-     * @param array<array-key, mixed> $parameters
-     * @param array<array-key, mixed> $cookies
-     * @param array<array-key, mixed> $files
-     * @param array<array-key, mixed> $server
-     * @param string|null             $content
-     *
-     * @return TestResponse<Response>
-     *
-     * @throws BindingResolutionException
-     */
-    public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
-    {
-        $kernel = $this->app->make(HttpKernel::class);
-
-        $files = array_merge($files, $this->extractFilesFromDataArray($parameters));
-
-        $symfonyRequest = SymfonyRequest::create(
-            $this->prepareUrlForRequest($uri),
-            $method,
-            $parameters,
-            $cookies,
-            $files,
-            array_replace($this->serverVariables, $server),
-            $content,
-        );
-
-        $request = Request::createFromBase($symfonyRequest);
-
-        $address = $this->validateRequest($request);
-
-        $response = $kernel->handle($request);
-
-        if ($this->followRedirects) {
-            $response = $this->followRedirects($response);
-        }
-
-        $kernel->terminate($request, $response);
-
-        $testResponse = $this->createTestResponse($response, $request);
-
-        if ($address) {
-            $this->validateResponse($address, $testResponse->baseResponse);
-        }
-
-        $this->spectate($method, $uri, $testResponse->getStatusCode());
-
-        return $testResponse;
-    }
-}
-```
-
-この設定により、すべてのFeatureテストで自動的にOpenAPI検証と仕様カバレッジ追跡の両方が適用されます。
-
-#### 使用方法
-
-`ValidatesOpenApiSpec`については、個別のテストクラスで`use`せずに`TestCase`クラスで`use`することで、すべてのFeatureテストで自動的に検証が行われます。
-
-`Spectatable`については、テスト実行後に`composer spectate`コマンドを実行することで、OpenAPIエンドポイントとステータスコードのテストカバレッジレポートを表示できます。
-
-OpenAPI仕様書をプロジェクトルートに`openapi.yaml`として配置するか、`OPENAPI_SPEC_PATH`環境変数でパスを設定してください。
-
-#### 仕様カバレッジレポートの表示
-
-テスト実行後、以下のコマンドでカバレッジレポートを表示できます：
 
 ```shell
 composer spectate
@@ -261,9 +176,9 @@ composer spectate
 +-------------+--------+-------------------------------------------+-------------+
 ```
 
-### ブランチ保護ルールセットのインポート
+### GitHubルールセットのインポート
 
-このプロジェクトは、`.github/rulesets`ディレクトリに、あらかじめ定義されたGitHubブランチ保護ルールセットをJSONファイルとして生成します。これらは手動でリポジトリに適用する必要があります。
+このプロジェクトは、`.github/rulesets`ディレクトリに、あらかじめ定義されたGitHubルールセットをJSONファイルとして生成します。これらは手動でリポジトリに適用する必要があります。
 
 #### 前提条件
 * ルールセットをインポートしたいGitHubリポジトリへの**管理者アクセス権**が必要です。
@@ -278,6 +193,10 @@ composer spectate
 7.  必要に応じて、他のルールセットファイルについてもこの手順を繰り返します。
 
     **注意:** インポート後、各ルールセットの "Target branches" セクションを注意深く確認し、意図したブランチ（例: `main`, `develop`）に適用されていることを確かめてください。
+
+## ドキュメント
+
+詳細なドキュメントは[GitHub wiki](https://github.com/ysato/Ysato.Catalyst/wiki)で提供されています。
 
 ## コントリビューター向け
 
