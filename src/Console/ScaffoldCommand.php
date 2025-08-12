@@ -33,7 +33,7 @@ class ScaffoldCommand extends Command
     /**
      * The console command description.
      *
-     * @var string|null
+     * @var string
      *
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
      */

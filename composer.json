@@ -8,18 +8,18 @@
     "homepage": "https://github.com/ysato/Ysato.Catalyst",
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "~8.2.27 || ~8.3.16 || ~8.4.3",
         "barryvdh/laravel-ide-helper": "^3.5",
         "composer/composer": "^2.6",
         "digitalrevolution/php-codesniffer-baseline": ">=1.0.0",
         "doctrine/coding-standard": ">=10.0.0",
-        "illuminate/console": "^11.43|^12.0",
-        "illuminate/support": "^11.43|^12.0",
+        "illuminate/console": "^11.43 || ^12.0",
+        "illuminate/support": "^11.43 || ^12.0",
         "kirschbaum-development/laravel-openapi-validator": "^1.1.1",
         "larastan/larastan": "^3.0",
         "laravel/prompts": "^0.3.5",
         "phpmd/phpmd": ">=2.12.0",
-        "phpunit/phpunit": "^10.5|^11.0|^12.0.1",
+        "phpunit/phpunit": "^10.5 || ^11.0 || ^12.0.1",
         "psalm/plugin-laravel": "^3.0",
         "spatie/temporary-directory": "^2.2",
         "squizlabs/php_codesniffer": ">=3.7.1",
@@ -30,7 +30,7 @@
         "ysato/spectator": "^1.0.5"
     },
     "require-dev": {
-        "laravel/framework": "^11.43|^12.0",
+        "laravel/framework": "^11.43 || ^12.0",
         "sebastian/diff": "^5.1",
         "spatie/phpunit-snapshot-assertions": "^5.2"
     },
@@ -61,7 +61,7 @@
         "cs-fix": "phpcbf",
         "qa": [
             "phpmd src text phpmd.xml",
-            "phpstan",
+            "phpstan --memory-limit=-1",
             "psalm --no-cache"
         ],
         "lints": [
@@ -86,12 +86,13 @@
         "follow": "Run tests with OpenAPI specification following report"
     },
     "config": {
-        "optimize-autoloader": true,
-        "sort-packages": true,
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "digitalrevolution/php-codesniffer-baseline": true
-        }
+        },
+        "optimize-autoloader": true,
+        "platform-check": true,
+        "sort-packages": true
     },
     "extra": {
         "laravel": {
