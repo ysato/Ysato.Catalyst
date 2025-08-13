@@ -33,11 +33,6 @@ class Context
         return new self($input->vendor, $input->package, $input->php, $input->caFilePath, $originalGitignore);
     }
 
-    public function hasCA(): bool
-    {
-        return $this->caFilePath !== null;
-    }
-
     /** @return array<string, string|bool|null> */
     public function toArray(): array
     {
@@ -47,7 +42,6 @@ class Context
             'php' => $this->php,
             'with_ca' => $this->caFilePath,
             'original_gitignore' => $this->originalGitignore,
-            'has_ca' => $this->hasCA(),
         ];
     }
 

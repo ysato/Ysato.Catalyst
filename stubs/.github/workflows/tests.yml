@@ -15,13 +15,6 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v4
-{% if has_ca %}
-
-      - name: Setup CA Certificate
-        run: |
-          sudo cp {{ with_ca }} /usr/local/share/ca-certificates/certificate.crt
-          sudo update-ca-certificates
-{% endif %}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2

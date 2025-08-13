@@ -32,7 +32,6 @@ Ysato.Catalyst は新しい PHP プロジェクトのためのスキャフォー
 
 **主要な特性:**
 1. **条件分岐レンダリング**: 単なる文字列置換ではなく、if文やループなどの制御構造を含むテンプレート処理
-   - 例: `{% if has_ca %}` による CA 証明書設定の有無による出し分け
    
 2. **動的ファイル名レンダリング**: ファイル名自体も変数置換の対象
    - 例: `__Package__.php` → `MyPackage.php`
@@ -99,8 +98,7 @@ Ysato.Catalyst は新しい PHP プロジェクトのためのスキャフォー
 
 **Twigテンプレート機能:**
 - ケース変換フィルター: `{{ vendor|pascal }}`, `{{ package|kebab }}`, `{{ package|snake }}`
-- 条件分岐レンダリング: `{% if has_ca %}` でCA証明書設定の有無による出し分け
-- Context変数アクセス: `vendor`, `package`, `php`, `with_ca`, `gitignore_content`, `has_ca`
+- Context変数アクセス: `vendor`, `package`, `php`, `with_ca`, `gitignore_content`
 
 **Sandboxパターン:**
 トランザクション的処理を保証するSandboxパターンを実装：
