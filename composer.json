@@ -27,7 +27,7 @@
         "symfony/finder": "^7.1",
         "twig/twig": "^3.20",
         "vimeo/psalm": ">=6.12.0",
-        "ysato/spectator": "^1.0.5"
+        "ysato/spectator": "^1.1.0"
     },
     "require-dev": {
         "laravel/framework": "^11.43 || ^12.0",
@@ -82,8 +82,7 @@
         "qa": "Run static analysis (phpmd + phpstan)",
         "lints": "Run code style and static analysis checks",
         "coverage": "Generate test coverage report with Xdebug",
-        "pcov": "Generate test coverage report with PCOV",
-        "follow": "Run tests with OpenAPI specification following report"
+        "pcov": "Generate test coverage report with PCOV"
     },
     "config": {
         "allow-plugins": {

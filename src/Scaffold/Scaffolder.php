@@ -164,7 +164,7 @@ class Scaffolder
             'cs-fix' => 'phpcbf',
             'phpmd' => 'phpmd app,src text ./phpmd.xml',
             'qa' => ['phpstan --memory-limit=-1', 'psalm --no-cache'],
-            'spectate' => 'RENDER_SPECTATION_RESULT=true ./vendor/bin/phpunit --no-progress --no-results',
+            'spectate' => 'ENABLE_SPECTATION_REPORT=true ./vendor/bin/phpunit --no-progress --no-results',
             'lints' => ['@cs', '@qa'],
             'tests' => ['@lints', '@test'],
         ];
