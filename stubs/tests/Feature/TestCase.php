@@ -14,6 +14,9 @@ use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Ysato\Spectator\Spectatable;
 
+use function array_merge;
+use function array_replace;
+
 abstract class TestCase extends \Tests\TestCase
 {
     use RefreshDatabase;
@@ -58,6 +61,7 @@ abstract class TestCase extends \Tests\TestCase
         $response = $kernel->handle($request);
 
         if ($this->followRedirects) {
+            /** @phpstan-var \Illuminate\Http\Response $response */
             $response = $this->followRedirects($response);
         }
 
