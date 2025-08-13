@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Testing\TestResponse;
 use Kirschbaum\OpenApiValidator\ValidatesOpenApiSpec;
+use Override;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Ysato\Spectator\Spectatable;
@@ -38,6 +39,7 @@ abstract class TestCase extends \Tests\TestCase
      *
      * @throws BindingResolutionException
      */
+    #[Override]
     public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
     {
         $kernel = $this->app->make(HttpKernel::class);
